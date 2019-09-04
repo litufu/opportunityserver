@@ -1,0 +1,94 @@
+enum TimeKind {
+  PAST
+  FUTRUE
+}
+
+enum Role {
+  ADMIN
+  CUSTOMER
+}
+
+type User {
+  id: ID! @id
+  username: String! @unique
+  password: String!
+  role: Role! @default(value: CUSTOMER)
+}
+
+enum SrcKind {
+  INNER
+  OUTER
+}
+
+type KeyWord{
+  id: ID! @id
+  name:String!
+}
+
+type Event{
+  id: ID! @id
+  title:String!
+  src:String!
+  srcKind:SrcKind!
+  reportTime:DateTime!
+  happen:TimeKind!
+  happenTime:DateTime!
+  content:String!
+  keyWords:[KeyWord!]!
+}
+
+enum Direction{
+  GOOD
+  BAD
+}
+
+
+
+enum FactorKind{
+  ASSET
+  DEBT
+  EQUITY
+  INCOME
+  COST
+  FEE
+  BRAND
+}
+
+type Influence{
+  id: ID! @id
+  keywords:[KeyWord!]!
+  kind:FactorKind!
+  name:String!
+  desc:String!
+  company:Company!
+  dierction:Direction!
+}
+
+type Product{
+  id: ID! @id
+  name:String!
+  inputs:[Company!]! @relation(name: "Input")
+  outputs:[Company!]! @relation(name: "Output")
+}
+
+type Company{
+  id: ID! @id
+  symbol:String! @unique
+  name:String!
+  area:String
+  industry:String
+  fullname:String
+  enname:String
+  market:String
+  exchange:String
+  currType:String
+  listStatus:String
+  listDate:String
+  delistDate:String
+  isHS:String
+  scope:String
+  desc:String
+  influences:[Influence!]!
+  purchases:[Product!]!@relation(name: "Input")
+  selles:[Product!]! @relation(name: "Output")
+}
