@@ -96,22 +96,41 @@ const Mutation = {
         introduce
       })
   },
-  productLinkCompany:async (parent,{companyName,productName,deal}, ctx) => {
-    let newCompany
+  createIndustry:async (parent,{name,desc}, ctx) => {
+    const industries = await ctx.prisma.industries({
+      where:{name}
+    })
+    if(industries.length>0){
+      throw new Error("该行业已经存在，无需重复输入")
+    }
+    return ctx.prisma.createIndustry({
+      name,
+      desc
+    })
+},
+  productLinkIndustry:async (parent,{industryName,productName,deal}, ctx) => {
+    let newIndustry
     if(deal==="purchase"){
-      newCompany = await ctx.prisma.updateCompany({
-        where:{name:companyName},
+      newIndustry = await ctx.prisma.updateIndustry({
+        where:{name:industryName},
         data:{purchases:{connect:{name:productName}}}
       })
     }else if(deal==="sell"){
-      newCompany = await ctx.prisma.updateCompany({
-        where:{name:companyName},
+      newIndustry = await ctx.prisma.updateIndustry({
+        where:{name:industryName},
         data:{selles:{connect:{name:productName}}}
       })
     }else{
       throw new Error("交易性质错误")
     }
-    return newCompany
+    return newIndustry
+  },
+  companyLinkIndustry:async (parent,{companyNames,industryName}, ctx) => {
+    const companyConnectNames = companyNames.map(companyName=>({name:companyName}))
+    return ctx.prisma.updateIndustry({
+      where:{name:industryName},
+      data:{companies:{connect:companyConnectNames}}
+    })
   },
 }
 

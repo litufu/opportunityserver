@@ -15,21 +15,16 @@ type User {
   role: Role! @default(value: CUSTOMER)
 }
 
-enum SrcKind {
-  INNER
-  OUTER
-}
 
 type KeyWord{
   id: ID! @id
   name:String!
 }
 
-type Event{
+type IndustryEvent{
   id: ID! @id
   title:String!
   src:String!
-  srcKind:SrcKind!
   reportTime:DateTime!
   happen:TimeKind!
   happenTime:DateTime!
@@ -37,12 +32,23 @@ type Event{
   keyWords:[KeyWord!]!
 }
 
+type CompanyEvent{
+  id: ID! @id
+  title:String!
+  content:String!
+  reportTime:DateTime!
+  happen:TimeKind!
+  happenTime:DateTime
+  influence:String!
+  kind:FactorKind!
+  dierction:Direction!
+  company:Company!
+}
+
 enum Direction{
   GOOD
   BAD
 }
-
-
 
 enum FactorKind{
   ASSET
@@ -54,13 +60,13 @@ enum FactorKind{
   BRAND
 }
 
-type Influence{
+type IndustryInfluence{
   id: ID! @id
   keywords:[KeyWord!]!
   kind:FactorKind!
   name:String!
   desc:String!
-  company:Company!
+  industry:Industry!
   dierction:Direction!
 }
 
@@ -68,11 +74,25 @@ type Product{
   id: ID! @id
   name:String!  @unique
   introduce:String!
-  firstClass:String
-  secondClass:String
-  thirdClass:String
-  inputs:[Company!]! @relation(name: "Input")
-  outputs:[Company!]! @relation(name: "Output")
+  inputs:[Industry!]! @relation(name: "Input")
+  outputs:[Industry!]! @relation(name: "Output")
+}
+
+type Research{
+  id: ID! @id
+  desc:String!
+}
+
+type Industry{
+  id: ID! @id
+  code:String
+  name:String! @unique
+  desc:String!
+  researches:[Research!]!
+  companies:[Company!]!
+  influences:[IndustryInfluence!]!
+  purchases:[Product!]!@relation(name: "Input")
+  selles:[Product!]! @relation(name: "Output")
 }
 
 type Company{
@@ -92,7 +112,6 @@ type Company{
   isHS:String
   scope:String
   desc:String
-  influences:[Influence!]!
-  purchases:[Product!]!@relation(name: "Input")
-  selles:[Product!]! @relation(name: "Output")
+  trades:[Industry!]!
+  events:[CompanyEvent!]!
 }

@@ -7,6 +7,7 @@ const typeDefs = gql`
     companies(keyword:String!): [Company]
     companiesByCodeOrName(inputvalue:String!):[Company]
     products(inputvalue:String!):[Product]
+    industries(inputvalue:String!):[Industry]
   }
 
   type Mutation {
@@ -14,7 +15,9 @@ const typeDefs = gql`
     getCompanies:Boolean!
     updateCompanyScopAndDesc:Boolean!
     createProduct(name:String!,introduce:String!):Product!
-    productLinkCompany(companyName:String!,productName:String!,deal:String!):Company
+    createIndustry(name:String!,desc:String!):Industry!
+    productLinkIndustry(industryName:String!,productName:String!,deal:String!):Industry
+    companyLinkIndustry(companyNames:[String!]!,industryName:String!):Industry
   }
 
   type AuthPayload {
@@ -49,16 +52,28 @@ type KeyWord{
   name:String!
 }
 
-type Event{
+type IndustryEvent{
   id: ID!
   title:String!
   src:String!
-  srcKind:SrcKind!
   reportTime:DateTime!
   happen:TimeKind!
   happenTime:DateTime!
   content:String!
-  keyWords:[KeyWord]
+  keyWords:[KeyWord!]!
+}
+
+type CompanyEvent{
+  id: ID!
+  title:String!
+  content:String!
+  reportTime:DateTime!
+  happen:TimeKind!
+  happenTime:DateTime!
+  influence:String!
+  kind:FactorKind!
+  dierction:Direction!
+  company:Company!
 }
 
 enum Direction{
@@ -78,13 +93,13 @@ enum FactorKind{
   BRAND
 }
 
-type Influence{
+type IndustryInfluence{
   id: ID!
-  keywords:[KeyWord]!
+  keywords:[KeyWord!]!
   kind:FactorKind!
   name:String!
   desc:String!
-  company:Company!
+  industry:Industry!
   dierction:Direction!
 }
 
@@ -92,22 +107,32 @@ type Product{
   id: ID!
   name:String!
   introduce:String!
-  firstClass:String
-  secondClass:String
-  thirdClass:String
-  inputs:[Company]
-  outputs:[Company]
+  inputs:[Industry!]!
+  outputs:[Industry!]!
 }
+
+type Industry{
+  id: ID!
+  code:String
+  name:String! 
+  desc:String!
+  companies:[Company]
+  influences:[IndustryInfluence]
+  purchases:[Product]
+  selles:[Product]
+}
+
+
 
 type Company{
   id: ID!
   symbol:String!
   name:String!
-  area:String!
-  industry:String!
-  fullname:String!
-  enname:String!
-  market:String!
+  area:String
+  industry:String
+  fullname:String
+  enname:String
+  market:String
   exchange:String
   currType:String
   listStatus:String
@@ -116,9 +141,8 @@ type Company{
   isHS:String
   scope:String
   desc:String
-  influences:[Influence]
-  purchases:[Product] 
-  selles:[Product]
+  trades:[Industry]
+  events:[CompanyEvent]
 }
 
   

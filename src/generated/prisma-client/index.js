@@ -17,15 +17,15 @@ var models = [
     embedded: false
   },
   {
-    name: "SrcKind",
-    embedded: false
-  },
-  {
     name: "KeyWord",
     embedded: false
   },
   {
-    name: "Event",
+    name: "IndustryEvent",
+    embedded: false
+  },
+  {
+    name: "CompanyEvent",
     embedded: false
   },
   {
@@ -37,11 +37,19 @@ var models = [
     embedded: false
   },
   {
-    name: "Influence",
+    name: "IndustryInfluence",
     embedded: false
   },
   {
     name: "Product",
+    embedded: false
+  },
+  {
+    name: "Research",
+    embedded: false
+  },
+  {
+    name: "Industry",
     embedded: false
   },
   {

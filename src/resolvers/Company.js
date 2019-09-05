@@ -1,12 +1,9 @@
 const Company = {
-    influences: ({ id }, args, context) => {
-        return context.prisma.company({ id }).influences()
+    trades: ({ id }, args, context) => {
+        return context.prisma.company({ id }).trades()
     },
-    purchases: ({ id }, args, context) => {
-        return context.prisma.company({ id }).purchases()
-    },
-    selles: ({ id }, args, context) => {
-        return context.prisma.company({ id }).selles()
+    events: ({ id }, args, context) => {
+        return context.prisma.company({ id }).events()
     },
   }
     

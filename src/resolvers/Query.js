@@ -25,6 +25,12 @@ const Query = {
       first:10
      })
   },
+  industries:(parent, {inputvalue}, ctx) => {
+    return ctx.prisma.industries({ 
+      where:{name_contains:inputvalue},
+      first:10
+     })
+  },
 }
 
 module.exports = {

@@ -7,11 +7,19 @@ module.exports = {
   count: Int!
 }
 
-type AggregateEvent {
+type AggregateCompanyEvent {
   count: Int!
 }
 
-type AggregateInfluence {
+type AggregateIndustry {
+  count: Int!
+}
+
+type AggregateIndustryEvent {
+  count: Int!
+}
+
+type AggregateIndustryInfluence {
   count: Int!
 }
 
@@ -20,6 +28,10 @@ type AggregateKeyWord {
 }
 
 type AggregateProduct {
+  count: Int!
+}
+
+type AggregateResearch {
   count: Int!
 }
 
@@ -48,9 +60,8 @@ type Company {
   isHS: String
   scope: String
   desc: String
-  influences(where: InfluenceWhereInput, orderBy: InfluenceOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Influence!]
-  purchases(where: ProductWhereInput, orderBy: ProductOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Product!]
-  selles(where: ProductWhereInput, orderBy: ProductOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Product!]
+  trades(where: IndustryWhereInput, orderBy: IndustryOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Industry!]
+  events(where: CompanyEventWhereInput, orderBy: CompanyEventOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [CompanyEvent!]
 }
 
 type CompanyConnection {
@@ -76,27 +87,21 @@ input CompanyCreateInput {
   isHS: String
   scope: String
   desc: String
-  influences: InfluenceCreateManyWithoutCompanyInput
-  purchases: ProductCreateManyWithoutInputsInput
-  selles: ProductCreateManyWithoutOutputsInput
+  trades: IndustryCreateManyWithoutCompaniesInput
+  events: CompanyEventCreateManyWithoutCompanyInput
 }
 
-input CompanyCreateManyWithoutPurchasesInput {
-  create: [CompanyCreateWithoutPurchasesInput!]
+input CompanyCreateManyWithoutTradesInput {
+  create: [CompanyCreateWithoutTradesInput!]
   connect: [CompanyWhereUniqueInput!]
 }
 
-input CompanyCreateManyWithoutSellesInput {
-  create: [CompanyCreateWithoutSellesInput!]
-  connect: [CompanyWhereUniqueInput!]
-}
-
-input CompanyCreateOneWithoutInfluencesInput {
-  create: CompanyCreateWithoutInfluencesInput
+input CompanyCreateOneWithoutEventsInput {
+  create: CompanyCreateWithoutEventsInput
   connect: CompanyWhereUniqueInput
 }
 
-input CompanyCreateWithoutInfluencesInput {
+input CompanyCreateWithoutEventsInput {
   id: ID
   symbol: String!
   name: String!
@@ -113,11 +118,10 @@ input CompanyCreateWithoutInfluencesInput {
   isHS: String
   scope: String
   desc: String
-  purchases: ProductCreateManyWithoutInputsInput
-  selles: ProductCreateManyWithoutOutputsInput
+  trades: IndustryCreateManyWithoutCompaniesInput
 }
 
-input CompanyCreateWithoutPurchasesInput {
+input CompanyCreateWithoutTradesInput {
   id: ID
   symbol: String!
   name: String!
@@ -134,34 +138,375 @@ input CompanyCreateWithoutPurchasesInput {
   isHS: String
   scope: String
   desc: String
-  influences: InfluenceCreateManyWithoutCompanyInput
-  selles: ProductCreateManyWithoutOutputsInput
-}
-
-input CompanyCreateWithoutSellesInput {
-  id: ID
-  symbol: String!
-  name: String!
-  area: String
-  industry: String
-  fullname: String
-  enname: String
-  market: String
-  exchange: String
-  currType: String
-  listStatus: String
-  listDate: String
-  delistDate: String
-  isHS: String
-  scope: String
-  desc: String
-  influences: InfluenceCreateManyWithoutCompanyInput
-  purchases: ProductCreateManyWithoutInputsInput
+  events: CompanyEventCreateManyWithoutCompanyInput
 }
 
 type CompanyEdge {
   node: Company!
   cursor: String!
+}
+
+type CompanyEvent {
+  id: ID!
+  title: String!
+  content: String!
+  reportTime: DateTime!
+  happen: TimeKind!
+  happenTime: DateTime
+  influence: String!
+  kind: FactorKind!
+  dierction: Direction!
+  company: Company!
+}
+
+type CompanyEventConnection {
+  pageInfo: PageInfo!
+  edges: [CompanyEventEdge]!
+  aggregate: AggregateCompanyEvent!
+}
+
+input CompanyEventCreateInput {
+  id: ID
+  title: String!
+  content: String!
+  reportTime: DateTime!
+  happen: TimeKind!
+  happenTime: DateTime
+  influence: String!
+  kind: FactorKind!
+  dierction: Direction!
+  company: CompanyCreateOneWithoutEventsInput!
+}
+
+input CompanyEventCreateManyWithoutCompanyInput {
+  create: [CompanyEventCreateWithoutCompanyInput!]
+  connect: [CompanyEventWhereUniqueInput!]
+}
+
+input CompanyEventCreateWithoutCompanyInput {
+  id: ID
+  title: String!
+  content: String!
+  reportTime: DateTime!
+  happen: TimeKind!
+  happenTime: DateTime
+  influence: String!
+  kind: FactorKind!
+  dierction: Direction!
+}
+
+type CompanyEventEdge {
+  node: CompanyEvent!
+  cursor: String!
+}
+
+enum CompanyEventOrderByInput {
+  id_ASC
+  id_DESC
+  title_ASC
+  title_DESC
+  content_ASC
+  content_DESC
+  reportTime_ASC
+  reportTime_DESC
+  happen_ASC
+  happen_DESC
+  happenTime_ASC
+  happenTime_DESC
+  influence_ASC
+  influence_DESC
+  kind_ASC
+  kind_DESC
+  dierction_ASC
+  dierction_DESC
+}
+
+type CompanyEventPreviousValues {
+  id: ID!
+  title: String!
+  content: String!
+  reportTime: DateTime!
+  happen: TimeKind!
+  happenTime: DateTime
+  influence: String!
+  kind: FactorKind!
+  dierction: Direction!
+}
+
+input CompanyEventScalarWhereInput {
+  id: ID
+  id_not: ID
+  id_in: [ID!]
+  id_not_in: [ID!]
+  id_lt: ID
+  id_lte: ID
+  id_gt: ID
+  id_gte: ID
+  id_contains: ID
+  id_not_contains: ID
+  id_starts_with: ID
+  id_not_starts_with: ID
+  id_ends_with: ID
+  id_not_ends_with: ID
+  title: String
+  title_not: String
+  title_in: [String!]
+  title_not_in: [String!]
+  title_lt: String
+  title_lte: String
+  title_gt: String
+  title_gte: String
+  title_contains: String
+  title_not_contains: String
+  title_starts_with: String
+  title_not_starts_with: String
+  title_ends_with: String
+  title_not_ends_with: String
+  content: String
+  content_not: String
+  content_in: [String!]
+  content_not_in: [String!]
+  content_lt: String
+  content_lte: String
+  content_gt: String
+  content_gte: String
+  content_contains: String
+  content_not_contains: String
+  content_starts_with: String
+  content_not_starts_with: String
+  content_ends_with: String
+  content_not_ends_with: String
+  reportTime: DateTime
+  reportTime_not: DateTime
+  reportTime_in: [DateTime!]
+  reportTime_not_in: [DateTime!]
+  reportTime_lt: DateTime
+  reportTime_lte: DateTime
+  reportTime_gt: DateTime
+  reportTime_gte: DateTime
+  happen: TimeKind
+  happen_not: TimeKind
+  happen_in: [TimeKind!]
+  happen_not_in: [TimeKind!]
+  happenTime: DateTime
+  happenTime_not: DateTime
+  happenTime_in: [DateTime!]
+  happenTime_not_in: [DateTime!]
+  happenTime_lt: DateTime
+  happenTime_lte: DateTime
+  happenTime_gt: DateTime
+  happenTime_gte: DateTime
+  influence: String
+  influence_not: String
+  influence_in: [String!]
+  influence_not_in: [String!]
+  influence_lt: String
+  influence_lte: String
+  influence_gt: String
+  influence_gte: String
+  influence_contains: String
+  influence_not_contains: String
+  influence_starts_with: String
+  influence_not_starts_with: String
+  influence_ends_with: String
+  influence_not_ends_with: String
+  kind: FactorKind
+  kind_not: FactorKind
+  kind_in: [FactorKind!]
+  kind_not_in: [FactorKind!]
+  dierction: Direction
+  dierction_not: Direction
+  dierction_in: [Direction!]
+  dierction_not_in: [Direction!]
+  AND: [CompanyEventScalarWhereInput!]
+  OR: [CompanyEventScalarWhereInput!]
+  NOT: [CompanyEventScalarWhereInput!]
+}
+
+type CompanyEventSubscriptionPayload {
+  mutation: MutationType!
+  node: CompanyEvent
+  updatedFields: [String!]
+  previousValues: CompanyEventPreviousValues
+}
+
+input CompanyEventSubscriptionWhereInput {
+  mutation_in: [MutationType!]
+  updatedFields_contains: String
+  updatedFields_contains_every: [String!]
+  updatedFields_contains_some: [String!]
+  node: CompanyEventWhereInput
+  AND: [CompanyEventSubscriptionWhereInput!]
+  OR: [CompanyEventSubscriptionWhereInput!]
+  NOT: [CompanyEventSubscriptionWhereInput!]
+}
+
+input CompanyEventUpdateInput {
+  title: String
+  content: String
+  reportTime: DateTime
+  happen: TimeKind
+  happenTime: DateTime
+  influence: String
+  kind: FactorKind
+  dierction: Direction
+  company: CompanyUpdateOneRequiredWithoutEventsInput
+}
+
+input CompanyEventUpdateManyDataInput {
+  title: String
+  content: String
+  reportTime: DateTime
+  happen: TimeKind
+  happenTime: DateTime
+  influence: String
+  kind: FactorKind
+  dierction: Direction
+}
+
+input CompanyEventUpdateManyMutationInput {
+  title: String
+  content: String
+  reportTime: DateTime
+  happen: TimeKind
+  happenTime: DateTime
+  influence: String
+  kind: FactorKind
+  dierction: Direction
+}
+
+input CompanyEventUpdateManyWithoutCompanyInput {
+  create: [CompanyEventCreateWithoutCompanyInput!]
+  delete: [CompanyEventWhereUniqueInput!]
+  connect: [CompanyEventWhereUniqueInput!]
+  set: [CompanyEventWhereUniqueInput!]
+  disconnect: [CompanyEventWhereUniqueInput!]
+  update: [CompanyEventUpdateWithWhereUniqueWithoutCompanyInput!]
+  upsert: [CompanyEventUpsertWithWhereUniqueWithoutCompanyInput!]
+  deleteMany: [CompanyEventScalarWhereInput!]
+  updateMany: [CompanyEventUpdateManyWithWhereNestedInput!]
+}
+
+input CompanyEventUpdateManyWithWhereNestedInput {
+  where: CompanyEventScalarWhereInput!
+  data: CompanyEventUpdateManyDataInput!
+}
+
+input CompanyEventUpdateWithoutCompanyDataInput {
+  title: String
+  content: String
+  reportTime: DateTime
+  happen: TimeKind
+  happenTime: DateTime
+  influence: String
+  kind: FactorKind
+  dierction: Direction
+}
+
+input CompanyEventUpdateWithWhereUniqueWithoutCompanyInput {
+  where: CompanyEventWhereUniqueInput!
+  data: CompanyEventUpdateWithoutCompanyDataInput!
+}
+
+input CompanyEventUpsertWithWhereUniqueWithoutCompanyInput {
+  where: CompanyEventWhereUniqueInput!
+  update: CompanyEventUpdateWithoutCompanyDataInput!
+  create: CompanyEventCreateWithoutCompanyInput!
+}
+
+input CompanyEventWhereInput {
+  id: ID
+  id_not: ID
+  id_in: [ID!]
+  id_not_in: [ID!]
+  id_lt: ID
+  id_lte: ID
+  id_gt: ID
+  id_gte: ID
+  id_contains: ID
+  id_not_contains: ID
+  id_starts_with: ID
+  id_not_starts_with: ID
+  id_ends_with: ID
+  id_not_ends_with: ID
+  title: String
+  title_not: String
+  title_in: [String!]
+  title_not_in: [String!]
+  title_lt: String
+  title_lte: String
+  title_gt: String
+  title_gte: String
+  title_contains: String
+  title_not_contains: String
+  title_starts_with: String
+  title_not_starts_with: String
+  title_ends_with: String
+  title_not_ends_with: String
+  content: String
+  content_not: String
+  content_in: [String!]
+  content_not_in: [String!]
+  content_lt: String
+  content_lte: String
+  content_gt: String
+  content_gte: String
+  content_contains: String
+  content_not_contains: String
+  content_starts_with: String
+  content_not_starts_with: String
+  content_ends_with: String
+  content_not_ends_with: String
+  reportTime: DateTime
+  reportTime_not: DateTime
+  reportTime_in: [DateTime!]
+  reportTime_not_in: [DateTime!]
+  reportTime_lt: DateTime
+  reportTime_lte: DateTime
+  reportTime_gt: DateTime
+  reportTime_gte: DateTime
+  happen: TimeKind
+  happen_not: TimeKind
+  happen_in: [TimeKind!]
+  happen_not_in: [TimeKind!]
+  happenTime: DateTime
+  happenTime_not: DateTime
+  happenTime_in: [DateTime!]
+  happenTime_not_in: [DateTime!]
+  happenTime_lt: DateTime
+  happenTime_lte: DateTime
+  happenTime_gt: DateTime
+  happenTime_gte: DateTime
+  influence: String
+  influence_not: String
+  influence_in: [String!]
+  influence_not_in: [String!]
+  influence_lt: String
+  influence_lte: String
+  influence_gt: String
+  influence_gte: String
+  influence_contains: String
+  influence_not_contains: String
+  influence_starts_with: String
+  influence_not_starts_with: String
+  influence_ends_with: String
+  influence_not_ends_with: String
+  kind: FactorKind
+  kind_not: FactorKind
+  kind_in: [FactorKind!]
+  kind_not_in: [FactorKind!]
+  dierction: Direction
+  dierction_not: Direction
+  dierction_in: [Direction!]
+  dierction_not_in: [Direction!]
+  company: CompanyWhereInput
+  AND: [CompanyEventWhereInput!]
+  OR: [CompanyEventWhereInput!]
+  NOT: [CompanyEventWhereInput!]
+}
+
+input CompanyEventWhereUniqueInput {
+  id: ID
 }
 
 enum CompanyOrderByInput {
@@ -482,9 +827,8 @@ input CompanyUpdateInput {
   isHS: String
   scope: String
   desc: String
-  influences: InfluenceUpdateManyWithoutCompanyInput
-  purchases: ProductUpdateManyWithoutInputsInput
-  selles: ProductUpdateManyWithoutOutputsInput
+  trades: IndustryUpdateManyWithoutCompaniesInput
+  events: CompanyEventUpdateManyWithoutCompanyInput
 }
 
 input CompanyUpdateManyDataInput {
@@ -523,26 +867,14 @@ input CompanyUpdateManyMutationInput {
   desc: String
 }
 
-input CompanyUpdateManyWithoutPurchasesInput {
-  create: [CompanyCreateWithoutPurchasesInput!]
+input CompanyUpdateManyWithoutTradesInput {
+  create: [CompanyCreateWithoutTradesInput!]
   delete: [CompanyWhereUniqueInput!]
   connect: [CompanyWhereUniqueInput!]
   set: [CompanyWhereUniqueInput!]
   disconnect: [CompanyWhereUniqueInput!]
-  update: [CompanyUpdateWithWhereUniqueWithoutPurchasesInput!]
-  upsert: [CompanyUpsertWithWhereUniqueWithoutPurchasesInput!]
-  deleteMany: [CompanyScalarWhereInput!]
-  updateMany: [CompanyUpdateManyWithWhereNestedInput!]
-}
-
-input CompanyUpdateManyWithoutSellesInput {
-  create: [CompanyCreateWithoutSellesInput!]
-  delete: [CompanyWhereUniqueInput!]
-  connect: [CompanyWhereUniqueInput!]
-  set: [CompanyWhereUniqueInput!]
-  disconnect: [CompanyWhereUniqueInput!]
-  update: [CompanyUpdateWithWhereUniqueWithoutSellesInput!]
-  upsert: [CompanyUpsertWithWhereUniqueWithoutSellesInput!]
+  update: [CompanyUpdateWithWhereUniqueWithoutTradesInput!]
+  upsert: [CompanyUpsertWithWhereUniqueWithoutTradesInput!]
   deleteMany: [CompanyScalarWhereInput!]
   updateMany: [CompanyUpdateManyWithWhereNestedInput!]
 }
@@ -552,14 +884,14 @@ input CompanyUpdateManyWithWhereNestedInput {
   data: CompanyUpdateManyDataInput!
 }
 
-input CompanyUpdateOneRequiredWithoutInfluencesInput {
-  create: CompanyCreateWithoutInfluencesInput
-  update: CompanyUpdateWithoutInfluencesDataInput
-  upsert: CompanyUpsertWithoutInfluencesInput
+input CompanyUpdateOneRequiredWithoutEventsInput {
+  create: CompanyCreateWithoutEventsInput
+  update: CompanyUpdateWithoutEventsDataInput
+  upsert: CompanyUpsertWithoutEventsInput
   connect: CompanyWhereUniqueInput
 }
 
-input CompanyUpdateWithoutInfluencesDataInput {
+input CompanyUpdateWithoutEventsDataInput {
   symbol: String
   name: String
   area: String
@@ -575,11 +907,10 @@ input CompanyUpdateWithoutInfluencesDataInput {
   isHS: String
   scope: String
   desc: String
-  purchases: ProductUpdateManyWithoutInputsInput
-  selles: ProductUpdateManyWithoutOutputsInput
+  trades: IndustryUpdateManyWithoutCompaniesInput
 }
 
-input CompanyUpdateWithoutPurchasesDataInput {
+input CompanyUpdateWithoutTradesDataInput {
   symbol: String
   name: String
   area: String
@@ -595,55 +926,23 @@ input CompanyUpdateWithoutPurchasesDataInput {
   isHS: String
   scope: String
   desc: String
-  influences: InfluenceUpdateManyWithoutCompanyInput
-  selles: ProductUpdateManyWithoutOutputsInput
+  events: CompanyEventUpdateManyWithoutCompanyInput
 }
 
-input CompanyUpdateWithoutSellesDataInput {
-  symbol: String
-  name: String
-  area: String
-  industry: String
-  fullname: String
-  enname: String
-  market: String
-  exchange: String
-  currType: String
-  listStatus: String
-  listDate: String
-  delistDate: String
-  isHS: String
-  scope: String
-  desc: String
-  influences: InfluenceUpdateManyWithoutCompanyInput
-  purchases: ProductUpdateManyWithoutInputsInput
-}
-
-input CompanyUpdateWithWhereUniqueWithoutPurchasesInput {
+input CompanyUpdateWithWhereUniqueWithoutTradesInput {
   where: CompanyWhereUniqueInput!
-  data: CompanyUpdateWithoutPurchasesDataInput!
+  data: CompanyUpdateWithoutTradesDataInput!
 }
 
-input CompanyUpdateWithWhereUniqueWithoutSellesInput {
+input CompanyUpsertWithoutEventsInput {
+  update: CompanyUpdateWithoutEventsDataInput!
+  create: CompanyCreateWithoutEventsInput!
+}
+
+input CompanyUpsertWithWhereUniqueWithoutTradesInput {
   where: CompanyWhereUniqueInput!
-  data: CompanyUpdateWithoutSellesDataInput!
-}
-
-input CompanyUpsertWithoutInfluencesInput {
-  update: CompanyUpdateWithoutInfluencesDataInput!
-  create: CompanyCreateWithoutInfluencesInput!
-}
-
-input CompanyUpsertWithWhereUniqueWithoutPurchasesInput {
-  where: CompanyWhereUniqueInput!
-  update: CompanyUpdateWithoutPurchasesDataInput!
-  create: CompanyCreateWithoutPurchasesInput!
-}
-
-input CompanyUpsertWithWhereUniqueWithoutSellesInput {
-  where: CompanyWhereUniqueInput!
-  update: CompanyUpdateWithoutSellesDataInput!
-  create: CompanyCreateWithoutSellesInput!
+  update: CompanyUpdateWithoutTradesDataInput!
+  create: CompanyCreateWithoutTradesInput!
 }
 
 input CompanyWhereInput {
@@ -871,15 +1170,12 @@ input CompanyWhereInput {
   desc_not_starts_with: String
   desc_ends_with: String
   desc_not_ends_with: String
-  influences_every: InfluenceWhereInput
-  influences_some: InfluenceWhereInput
-  influences_none: InfluenceWhereInput
-  purchases_every: ProductWhereInput
-  purchases_some: ProductWhereInput
-  purchases_none: ProductWhereInput
-  selles_every: ProductWhereInput
-  selles_some: ProductWhereInput
-  selles_none: ProductWhereInput
+  trades_every: IndustryWhereInput
+  trades_some: IndustryWhereInput
+  trades_none: IndustryWhereInput
+  events_every: CompanyEventWhereInput
+  events_some: CompanyEventWhereInput
+  events_none: CompanyEventWhereInput
   AND: [CompanyWhereInput!]
   OR: [CompanyWhereInput!]
   NOT: [CompanyWhereInput!]
@@ -898,11 +1194,119 @@ enum Direction {
   BAD
 }
 
-type Event {
+enum FactorKind {
+  ASSET
+  DEBT
+  EQUITY
+  INCOME
+  COST
+  FEE
+  BRAND
+}
+
+type Industry {
+  id: ID!
+  code: String
+  name: String!
+  desc: String!
+  researches(where: ResearchWhereInput, orderBy: ResearchOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Research!]
+  companies(where: CompanyWhereInput, orderBy: CompanyOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Company!]
+  influences(where: IndustryInfluenceWhereInput, orderBy: IndustryInfluenceOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [IndustryInfluence!]
+  purchases(where: ProductWhereInput, orderBy: ProductOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Product!]
+  selles(where: ProductWhereInput, orderBy: ProductOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Product!]
+}
+
+type IndustryConnection {
+  pageInfo: PageInfo!
+  edges: [IndustryEdge]!
+  aggregate: AggregateIndustry!
+}
+
+input IndustryCreateInput {
+  id: ID
+  code: String
+  name: String!
+  desc: String!
+  researches: ResearchCreateManyInput
+  companies: CompanyCreateManyWithoutTradesInput
+  influences: IndustryInfluenceCreateManyWithoutIndustryInput
+  purchases: ProductCreateManyWithoutInputsInput
+  selles: ProductCreateManyWithoutOutputsInput
+}
+
+input IndustryCreateManyWithoutCompaniesInput {
+  create: [IndustryCreateWithoutCompaniesInput!]
+  connect: [IndustryWhereUniqueInput!]
+}
+
+input IndustryCreateManyWithoutPurchasesInput {
+  create: [IndustryCreateWithoutPurchasesInput!]
+  connect: [IndustryWhereUniqueInput!]
+}
+
+input IndustryCreateManyWithoutSellesInput {
+  create: [IndustryCreateWithoutSellesInput!]
+  connect: [IndustryWhereUniqueInput!]
+}
+
+input IndustryCreateOneWithoutInfluencesInput {
+  create: IndustryCreateWithoutInfluencesInput
+  connect: IndustryWhereUniqueInput
+}
+
+input IndustryCreateWithoutCompaniesInput {
+  id: ID
+  code: String
+  name: String!
+  desc: String!
+  researches: ResearchCreateManyInput
+  influences: IndustryInfluenceCreateManyWithoutIndustryInput
+  purchases: ProductCreateManyWithoutInputsInput
+  selles: ProductCreateManyWithoutOutputsInput
+}
+
+input IndustryCreateWithoutInfluencesInput {
+  id: ID
+  code: String
+  name: String!
+  desc: String!
+  researches: ResearchCreateManyInput
+  companies: CompanyCreateManyWithoutTradesInput
+  purchases: ProductCreateManyWithoutInputsInput
+  selles: ProductCreateManyWithoutOutputsInput
+}
+
+input IndustryCreateWithoutPurchasesInput {
+  id: ID
+  code: String
+  name: String!
+  desc: String!
+  researches: ResearchCreateManyInput
+  companies: CompanyCreateManyWithoutTradesInput
+  influences: IndustryInfluenceCreateManyWithoutIndustryInput
+  selles: ProductCreateManyWithoutOutputsInput
+}
+
+input IndustryCreateWithoutSellesInput {
+  id: ID
+  code: String
+  name: String!
+  desc: String!
+  researches: ResearchCreateManyInput
+  companies: CompanyCreateManyWithoutTradesInput
+  influences: IndustryInfluenceCreateManyWithoutIndustryInput
+  purchases: ProductCreateManyWithoutInputsInput
+}
+
+type IndustryEdge {
+  node: Industry!
+  cursor: String!
+}
+
+type IndustryEvent {
   id: ID!
   title: String!
   src: String!
-  srcKind: SrcKind!
   reportTime: DateTime!
   happen: TimeKind!
   happenTime: DateTime!
@@ -910,17 +1314,16 @@ type Event {
   keyWords(where: KeyWordWhereInput, orderBy: KeyWordOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [KeyWord!]
 }
 
-type EventConnection {
+type IndustryEventConnection {
   pageInfo: PageInfo!
-  edges: [EventEdge]!
-  aggregate: AggregateEvent!
+  edges: [IndustryEventEdge]!
+  aggregate: AggregateIndustryEvent!
 }
 
-input EventCreateInput {
+input IndustryEventCreateInput {
   id: ID
   title: String!
   src: String!
-  srcKind: SrcKind!
   reportTime: DateTime!
   happen: TimeKind!
   happenTime: DateTime!
@@ -928,20 +1331,18 @@ input EventCreateInput {
   keyWords: KeyWordCreateManyInput
 }
 
-type EventEdge {
-  node: Event!
+type IndustryEventEdge {
+  node: IndustryEvent!
   cursor: String!
 }
 
-enum EventOrderByInput {
+enum IndustryEventOrderByInput {
   id_ASC
   id_DESC
   title_ASC
   title_DESC
   src_ASC
   src_DESC
-  srcKind_ASC
-  srcKind_DESC
   reportTime_ASC
   reportTime_DESC
   happen_ASC
@@ -952,39 +1353,37 @@ enum EventOrderByInput {
   content_DESC
 }
 
-type EventPreviousValues {
+type IndustryEventPreviousValues {
   id: ID!
   title: String!
   src: String!
-  srcKind: SrcKind!
   reportTime: DateTime!
   happen: TimeKind!
   happenTime: DateTime!
   content: String!
 }
 
-type EventSubscriptionPayload {
+type IndustryEventSubscriptionPayload {
   mutation: MutationType!
-  node: Event
+  node: IndustryEvent
   updatedFields: [String!]
-  previousValues: EventPreviousValues
+  previousValues: IndustryEventPreviousValues
 }
 
-input EventSubscriptionWhereInput {
+input IndustryEventSubscriptionWhereInput {
   mutation_in: [MutationType!]
   updatedFields_contains: String
   updatedFields_contains_every: [String!]
   updatedFields_contains_some: [String!]
-  node: EventWhereInput
-  AND: [EventSubscriptionWhereInput!]
-  OR: [EventSubscriptionWhereInput!]
-  NOT: [EventSubscriptionWhereInput!]
+  node: IndustryEventWhereInput
+  AND: [IndustryEventSubscriptionWhereInput!]
+  OR: [IndustryEventSubscriptionWhereInput!]
+  NOT: [IndustryEventSubscriptionWhereInput!]
 }
 
-input EventUpdateInput {
+input IndustryEventUpdateInput {
   title: String
   src: String
-  srcKind: SrcKind
   reportTime: DateTime
   happen: TimeKind
   happenTime: DateTime
@@ -992,17 +1391,16 @@ input EventUpdateInput {
   keyWords: KeyWordUpdateManyInput
 }
 
-input EventUpdateManyMutationInput {
+input IndustryEventUpdateManyMutationInput {
   title: String
   src: String
-  srcKind: SrcKind
   reportTime: DateTime
   happen: TimeKind
   happenTime: DateTime
   content: String
 }
 
-input EventWhereInput {
+input IndustryEventWhereInput {
   id: ID
   id_not: ID
   id_in: [ID!]
@@ -1045,10 +1443,6 @@ input EventWhereInput {
   src_not_starts_with: String
   src_ends_with: String
   src_not_ends_with: String
-  srcKind: SrcKind
-  srcKind_not: SrcKind
-  srcKind_in: [SrcKind!]
-  srcKind_not_in: [SrcKind!]
   reportTime: DateTime
   reportTime_not: DateTime
   reportTime_in: [DateTime!]
@@ -1086,57 +1480,47 @@ input EventWhereInput {
   keyWords_every: KeyWordWhereInput
   keyWords_some: KeyWordWhereInput
   keyWords_none: KeyWordWhereInput
-  AND: [EventWhereInput!]
-  OR: [EventWhereInput!]
-  NOT: [EventWhereInput!]
+  AND: [IndustryEventWhereInput!]
+  OR: [IndustryEventWhereInput!]
+  NOT: [IndustryEventWhereInput!]
 }
 
-input EventWhereUniqueInput {
+input IndustryEventWhereUniqueInput {
   id: ID
 }
 
-enum FactorKind {
-  ASSET
-  DEBT
-  EQUITY
-  INCOME
-  COST
-  FEE
-  BRAND
-}
-
-type Influence {
+type IndustryInfluence {
   id: ID!
   keywords(where: KeyWordWhereInput, orderBy: KeyWordOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [KeyWord!]
   kind: FactorKind!
   name: String!
   desc: String!
-  company: Company!
+  industry: Industry!
   dierction: Direction!
 }
 
-type InfluenceConnection {
+type IndustryInfluenceConnection {
   pageInfo: PageInfo!
-  edges: [InfluenceEdge]!
-  aggregate: AggregateInfluence!
+  edges: [IndustryInfluenceEdge]!
+  aggregate: AggregateIndustryInfluence!
 }
 
-input InfluenceCreateInput {
+input IndustryInfluenceCreateInput {
   id: ID
   keywords: KeyWordCreateManyInput
   kind: FactorKind!
   name: String!
   desc: String!
-  company: CompanyCreateOneWithoutInfluencesInput!
+  industry: IndustryCreateOneWithoutInfluencesInput!
   dierction: Direction!
 }
 
-input InfluenceCreateManyWithoutCompanyInput {
-  create: [InfluenceCreateWithoutCompanyInput!]
-  connect: [InfluenceWhereUniqueInput!]
+input IndustryInfluenceCreateManyWithoutIndustryInput {
+  create: [IndustryInfluenceCreateWithoutIndustryInput!]
+  connect: [IndustryInfluenceWhereUniqueInput!]
 }
 
-input InfluenceCreateWithoutCompanyInput {
+input IndustryInfluenceCreateWithoutIndustryInput {
   id: ID
   keywords: KeyWordCreateManyInput
   kind: FactorKind!
@@ -1145,12 +1529,12 @@ input InfluenceCreateWithoutCompanyInput {
   dierction: Direction!
 }
 
-type InfluenceEdge {
-  node: Influence!
+type IndustryInfluenceEdge {
+  node: IndustryInfluence!
   cursor: String!
 }
 
-enum InfluenceOrderByInput {
+enum IndustryInfluenceOrderByInput {
   id_ASC
   id_DESC
   kind_ASC
@@ -1163,7 +1547,7 @@ enum InfluenceOrderByInput {
   dierction_DESC
 }
 
-type InfluencePreviousValues {
+type IndustryInfluencePreviousValues {
   id: ID!
   kind: FactorKind!
   name: String!
@@ -1171,7 +1555,7 @@ type InfluencePreviousValues {
   dierction: Direction!
 }
 
-input InfluenceScalarWhereInput {
+input IndustryInfluenceScalarWhereInput {
   id: ID
   id_not: ID
   id_in: [ID!]
@@ -1222,70 +1606,70 @@ input InfluenceScalarWhereInput {
   dierction_not: Direction
   dierction_in: [Direction!]
   dierction_not_in: [Direction!]
-  AND: [InfluenceScalarWhereInput!]
-  OR: [InfluenceScalarWhereInput!]
-  NOT: [InfluenceScalarWhereInput!]
+  AND: [IndustryInfluenceScalarWhereInput!]
+  OR: [IndustryInfluenceScalarWhereInput!]
+  NOT: [IndustryInfluenceScalarWhereInput!]
 }
 
-type InfluenceSubscriptionPayload {
+type IndustryInfluenceSubscriptionPayload {
   mutation: MutationType!
-  node: Influence
+  node: IndustryInfluence
   updatedFields: [String!]
-  previousValues: InfluencePreviousValues
+  previousValues: IndustryInfluencePreviousValues
 }
 
-input InfluenceSubscriptionWhereInput {
+input IndustryInfluenceSubscriptionWhereInput {
   mutation_in: [MutationType!]
   updatedFields_contains: String
   updatedFields_contains_every: [String!]
   updatedFields_contains_some: [String!]
-  node: InfluenceWhereInput
-  AND: [InfluenceSubscriptionWhereInput!]
-  OR: [InfluenceSubscriptionWhereInput!]
-  NOT: [InfluenceSubscriptionWhereInput!]
+  node: IndustryInfluenceWhereInput
+  AND: [IndustryInfluenceSubscriptionWhereInput!]
+  OR: [IndustryInfluenceSubscriptionWhereInput!]
+  NOT: [IndustryInfluenceSubscriptionWhereInput!]
 }
 
-input InfluenceUpdateInput {
+input IndustryInfluenceUpdateInput {
   keywords: KeyWordUpdateManyInput
   kind: FactorKind
   name: String
   desc: String
-  company: CompanyUpdateOneRequiredWithoutInfluencesInput
+  industry: IndustryUpdateOneRequiredWithoutInfluencesInput
   dierction: Direction
 }
 
-input InfluenceUpdateManyDataInput {
+input IndustryInfluenceUpdateManyDataInput {
   kind: FactorKind
   name: String
   desc: String
   dierction: Direction
 }
 
-input InfluenceUpdateManyMutationInput {
+input IndustryInfluenceUpdateManyMutationInput {
   kind: FactorKind
   name: String
   desc: String
   dierction: Direction
 }
 
-input InfluenceUpdateManyWithoutCompanyInput {
-  create: [InfluenceCreateWithoutCompanyInput!]
-  delete: [InfluenceWhereUniqueInput!]
-  connect: [InfluenceWhereUniqueInput!]
-  set: [InfluenceWhereUniqueInput!]
-  disconnect: [InfluenceWhereUniqueInput!]
-  update: [InfluenceUpdateWithWhereUniqueWithoutCompanyInput!]
-  upsert: [InfluenceUpsertWithWhereUniqueWithoutCompanyInput!]
-  deleteMany: [InfluenceScalarWhereInput!]
-  updateMany: [InfluenceUpdateManyWithWhereNestedInput!]
+input IndustryInfluenceUpdateManyWithoutIndustryInput {
+  create: [IndustryInfluenceCreateWithoutIndustryInput!]
+  delete: [IndustryInfluenceWhereUniqueInput!]
+  connect: [IndustryInfluenceWhereUniqueInput!]
+  set: [IndustryInfluenceWhereUniqueInput!]
+  disconnect: [IndustryInfluenceWhereUniqueInput!]
+  update: [IndustryInfluenceUpdateWithWhereUniqueWithoutIndustryInput!]
+  upsert: [IndustryInfluenceUpsertWithWhereUniqueWithoutIndustryInput!]
+  deleteMany: [IndustryInfluenceScalarWhereInput!]
+  updateMany: [IndustryInfluenceUpdateManyWithWhereNestedInput!]
 }
 
-input InfluenceUpdateManyWithWhereNestedInput {
-  where: InfluenceScalarWhereInput!
-  data: InfluenceUpdateManyDataInput!
+input IndustryInfluenceUpdateManyWithWhereNestedInput {
+  where: IndustryInfluenceScalarWhereInput!
+  data: IndustryInfluenceUpdateManyDataInput!
 }
 
-input InfluenceUpdateWithoutCompanyDataInput {
+input IndustryInfluenceUpdateWithoutIndustryDataInput {
   keywords: KeyWordUpdateManyInput
   kind: FactorKind
   name: String
@@ -1293,18 +1677,18 @@ input InfluenceUpdateWithoutCompanyDataInput {
   dierction: Direction
 }
 
-input InfluenceUpdateWithWhereUniqueWithoutCompanyInput {
-  where: InfluenceWhereUniqueInput!
-  data: InfluenceUpdateWithoutCompanyDataInput!
+input IndustryInfluenceUpdateWithWhereUniqueWithoutIndustryInput {
+  where: IndustryInfluenceWhereUniqueInput!
+  data: IndustryInfluenceUpdateWithoutIndustryDataInput!
 }
 
-input InfluenceUpsertWithWhereUniqueWithoutCompanyInput {
-  where: InfluenceWhereUniqueInput!
-  update: InfluenceUpdateWithoutCompanyDataInput!
-  create: InfluenceCreateWithoutCompanyInput!
+input IndustryInfluenceUpsertWithWhereUniqueWithoutIndustryInput {
+  where: IndustryInfluenceWhereUniqueInput!
+  update: IndustryInfluenceUpdateWithoutIndustryDataInput!
+  create: IndustryInfluenceCreateWithoutIndustryInput!
 }
 
-input InfluenceWhereInput {
+input IndustryInfluenceWhereInput {
   id: ID
   id_not: ID
   id_in: [ID!]
@@ -1354,18 +1738,347 @@ input InfluenceWhereInput {
   desc_not_starts_with: String
   desc_ends_with: String
   desc_not_ends_with: String
-  company: CompanyWhereInput
+  industry: IndustryWhereInput
   dierction: Direction
   dierction_not: Direction
   dierction_in: [Direction!]
   dierction_not_in: [Direction!]
-  AND: [InfluenceWhereInput!]
-  OR: [InfluenceWhereInput!]
-  NOT: [InfluenceWhereInput!]
+  AND: [IndustryInfluenceWhereInput!]
+  OR: [IndustryInfluenceWhereInput!]
+  NOT: [IndustryInfluenceWhereInput!]
 }
 
-input InfluenceWhereUniqueInput {
+input IndustryInfluenceWhereUniqueInput {
   id: ID
+}
+
+enum IndustryOrderByInput {
+  id_ASC
+  id_DESC
+  code_ASC
+  code_DESC
+  name_ASC
+  name_DESC
+  desc_ASC
+  desc_DESC
+}
+
+type IndustryPreviousValues {
+  id: ID!
+  code: String
+  name: String!
+  desc: String!
+}
+
+input IndustryScalarWhereInput {
+  id: ID
+  id_not: ID
+  id_in: [ID!]
+  id_not_in: [ID!]
+  id_lt: ID
+  id_lte: ID
+  id_gt: ID
+  id_gte: ID
+  id_contains: ID
+  id_not_contains: ID
+  id_starts_with: ID
+  id_not_starts_with: ID
+  id_ends_with: ID
+  id_not_ends_with: ID
+  code: String
+  code_not: String
+  code_in: [String!]
+  code_not_in: [String!]
+  code_lt: String
+  code_lte: String
+  code_gt: String
+  code_gte: String
+  code_contains: String
+  code_not_contains: String
+  code_starts_with: String
+  code_not_starts_with: String
+  code_ends_with: String
+  code_not_ends_with: String
+  name: String
+  name_not: String
+  name_in: [String!]
+  name_not_in: [String!]
+  name_lt: String
+  name_lte: String
+  name_gt: String
+  name_gte: String
+  name_contains: String
+  name_not_contains: String
+  name_starts_with: String
+  name_not_starts_with: String
+  name_ends_with: String
+  name_not_ends_with: String
+  desc: String
+  desc_not: String
+  desc_in: [String!]
+  desc_not_in: [String!]
+  desc_lt: String
+  desc_lte: String
+  desc_gt: String
+  desc_gte: String
+  desc_contains: String
+  desc_not_contains: String
+  desc_starts_with: String
+  desc_not_starts_with: String
+  desc_ends_with: String
+  desc_not_ends_with: String
+  AND: [IndustryScalarWhereInput!]
+  OR: [IndustryScalarWhereInput!]
+  NOT: [IndustryScalarWhereInput!]
+}
+
+type IndustrySubscriptionPayload {
+  mutation: MutationType!
+  node: Industry
+  updatedFields: [String!]
+  previousValues: IndustryPreviousValues
+}
+
+input IndustrySubscriptionWhereInput {
+  mutation_in: [MutationType!]
+  updatedFields_contains: String
+  updatedFields_contains_every: [String!]
+  updatedFields_contains_some: [String!]
+  node: IndustryWhereInput
+  AND: [IndustrySubscriptionWhereInput!]
+  OR: [IndustrySubscriptionWhereInput!]
+  NOT: [IndustrySubscriptionWhereInput!]
+}
+
+input IndustryUpdateInput {
+  code: String
+  name: String
+  desc: String
+  researches: ResearchUpdateManyInput
+  companies: CompanyUpdateManyWithoutTradesInput
+  influences: IndustryInfluenceUpdateManyWithoutIndustryInput
+  purchases: ProductUpdateManyWithoutInputsInput
+  selles: ProductUpdateManyWithoutOutputsInput
+}
+
+input IndustryUpdateManyDataInput {
+  code: String
+  name: String
+  desc: String
+}
+
+input IndustryUpdateManyMutationInput {
+  code: String
+  name: String
+  desc: String
+}
+
+input IndustryUpdateManyWithoutCompaniesInput {
+  create: [IndustryCreateWithoutCompaniesInput!]
+  delete: [IndustryWhereUniqueInput!]
+  connect: [IndustryWhereUniqueInput!]
+  set: [IndustryWhereUniqueInput!]
+  disconnect: [IndustryWhereUniqueInput!]
+  update: [IndustryUpdateWithWhereUniqueWithoutCompaniesInput!]
+  upsert: [IndustryUpsertWithWhereUniqueWithoutCompaniesInput!]
+  deleteMany: [IndustryScalarWhereInput!]
+  updateMany: [IndustryUpdateManyWithWhereNestedInput!]
+}
+
+input IndustryUpdateManyWithoutPurchasesInput {
+  create: [IndustryCreateWithoutPurchasesInput!]
+  delete: [IndustryWhereUniqueInput!]
+  connect: [IndustryWhereUniqueInput!]
+  set: [IndustryWhereUniqueInput!]
+  disconnect: [IndustryWhereUniqueInput!]
+  update: [IndustryUpdateWithWhereUniqueWithoutPurchasesInput!]
+  upsert: [IndustryUpsertWithWhereUniqueWithoutPurchasesInput!]
+  deleteMany: [IndustryScalarWhereInput!]
+  updateMany: [IndustryUpdateManyWithWhereNestedInput!]
+}
+
+input IndustryUpdateManyWithoutSellesInput {
+  create: [IndustryCreateWithoutSellesInput!]
+  delete: [IndustryWhereUniqueInput!]
+  connect: [IndustryWhereUniqueInput!]
+  set: [IndustryWhereUniqueInput!]
+  disconnect: [IndustryWhereUniqueInput!]
+  update: [IndustryUpdateWithWhereUniqueWithoutSellesInput!]
+  upsert: [IndustryUpsertWithWhereUniqueWithoutSellesInput!]
+  deleteMany: [IndustryScalarWhereInput!]
+  updateMany: [IndustryUpdateManyWithWhereNestedInput!]
+}
+
+input IndustryUpdateManyWithWhereNestedInput {
+  where: IndustryScalarWhereInput!
+  data: IndustryUpdateManyDataInput!
+}
+
+input IndustryUpdateOneRequiredWithoutInfluencesInput {
+  create: IndustryCreateWithoutInfluencesInput
+  update: IndustryUpdateWithoutInfluencesDataInput
+  upsert: IndustryUpsertWithoutInfluencesInput
+  connect: IndustryWhereUniqueInput
+}
+
+input IndustryUpdateWithoutCompaniesDataInput {
+  code: String
+  name: String
+  desc: String
+  researches: ResearchUpdateManyInput
+  influences: IndustryInfluenceUpdateManyWithoutIndustryInput
+  purchases: ProductUpdateManyWithoutInputsInput
+  selles: ProductUpdateManyWithoutOutputsInput
+}
+
+input IndustryUpdateWithoutInfluencesDataInput {
+  code: String
+  name: String
+  desc: String
+  researches: ResearchUpdateManyInput
+  companies: CompanyUpdateManyWithoutTradesInput
+  purchases: ProductUpdateManyWithoutInputsInput
+  selles: ProductUpdateManyWithoutOutputsInput
+}
+
+input IndustryUpdateWithoutPurchasesDataInput {
+  code: String
+  name: String
+  desc: String
+  researches: ResearchUpdateManyInput
+  companies: CompanyUpdateManyWithoutTradesInput
+  influences: IndustryInfluenceUpdateManyWithoutIndustryInput
+  selles: ProductUpdateManyWithoutOutputsInput
+}
+
+input IndustryUpdateWithoutSellesDataInput {
+  code: String
+  name: String
+  desc: String
+  researches: ResearchUpdateManyInput
+  companies: CompanyUpdateManyWithoutTradesInput
+  influences: IndustryInfluenceUpdateManyWithoutIndustryInput
+  purchases: ProductUpdateManyWithoutInputsInput
+}
+
+input IndustryUpdateWithWhereUniqueWithoutCompaniesInput {
+  where: IndustryWhereUniqueInput!
+  data: IndustryUpdateWithoutCompaniesDataInput!
+}
+
+input IndustryUpdateWithWhereUniqueWithoutPurchasesInput {
+  where: IndustryWhereUniqueInput!
+  data: IndustryUpdateWithoutPurchasesDataInput!
+}
+
+input IndustryUpdateWithWhereUniqueWithoutSellesInput {
+  where: IndustryWhereUniqueInput!
+  data: IndustryUpdateWithoutSellesDataInput!
+}
+
+input IndustryUpsertWithoutInfluencesInput {
+  update: IndustryUpdateWithoutInfluencesDataInput!
+  create: IndustryCreateWithoutInfluencesInput!
+}
+
+input IndustryUpsertWithWhereUniqueWithoutCompaniesInput {
+  where: IndustryWhereUniqueInput!
+  update: IndustryUpdateWithoutCompaniesDataInput!
+  create: IndustryCreateWithoutCompaniesInput!
+}
+
+input IndustryUpsertWithWhereUniqueWithoutPurchasesInput {
+  where: IndustryWhereUniqueInput!
+  update: IndustryUpdateWithoutPurchasesDataInput!
+  create: IndustryCreateWithoutPurchasesInput!
+}
+
+input IndustryUpsertWithWhereUniqueWithoutSellesInput {
+  where: IndustryWhereUniqueInput!
+  update: IndustryUpdateWithoutSellesDataInput!
+  create: IndustryCreateWithoutSellesInput!
+}
+
+input IndustryWhereInput {
+  id: ID
+  id_not: ID
+  id_in: [ID!]
+  id_not_in: [ID!]
+  id_lt: ID
+  id_lte: ID
+  id_gt: ID
+  id_gte: ID
+  id_contains: ID
+  id_not_contains: ID
+  id_starts_with: ID
+  id_not_starts_with: ID
+  id_ends_with: ID
+  id_not_ends_with: ID
+  code: String
+  code_not: String
+  code_in: [String!]
+  code_not_in: [String!]
+  code_lt: String
+  code_lte: String
+  code_gt: String
+  code_gte: String
+  code_contains: String
+  code_not_contains: String
+  code_starts_with: String
+  code_not_starts_with: String
+  code_ends_with: String
+  code_not_ends_with: String
+  name: String
+  name_not: String
+  name_in: [String!]
+  name_not_in: [String!]
+  name_lt: String
+  name_lte: String
+  name_gt: String
+  name_gte: String
+  name_contains: String
+  name_not_contains: String
+  name_starts_with: String
+  name_not_starts_with: String
+  name_ends_with: String
+  name_not_ends_with: String
+  desc: String
+  desc_not: String
+  desc_in: [String!]
+  desc_not_in: [String!]
+  desc_lt: String
+  desc_lte: String
+  desc_gt: String
+  desc_gte: String
+  desc_contains: String
+  desc_not_contains: String
+  desc_starts_with: String
+  desc_not_starts_with: String
+  desc_ends_with: String
+  desc_not_ends_with: String
+  researches_every: ResearchWhereInput
+  researches_some: ResearchWhereInput
+  researches_none: ResearchWhereInput
+  companies_every: CompanyWhereInput
+  companies_some: CompanyWhereInput
+  companies_none: CompanyWhereInput
+  influences_every: IndustryInfluenceWhereInput
+  influences_some: IndustryInfluenceWhereInput
+  influences_none: IndustryInfluenceWhereInput
+  purchases_every: ProductWhereInput
+  purchases_some: ProductWhereInput
+  purchases_none: ProductWhereInput
+  selles_every: ProductWhereInput
+  selles_some: ProductWhereInput
+  selles_none: ProductWhereInput
+  AND: [IndustryWhereInput!]
+  OR: [IndustryWhereInput!]
+  NOT: [IndustryWhereInput!]
+}
+
+input IndustryWhereUniqueInput {
+  id: ID
+  name: String
 }
 
 type KeyWord {
@@ -1549,18 +2262,30 @@ type Mutation {
   upsertCompany(where: CompanyWhereUniqueInput!, create: CompanyCreateInput!, update: CompanyUpdateInput!): Company!
   deleteCompany(where: CompanyWhereUniqueInput!): Company
   deleteManyCompanies(where: CompanyWhereInput): BatchPayload!
-  createEvent(data: EventCreateInput!): Event!
-  updateEvent(data: EventUpdateInput!, where: EventWhereUniqueInput!): Event
-  updateManyEvents(data: EventUpdateManyMutationInput!, where: EventWhereInput): BatchPayload!
-  upsertEvent(where: EventWhereUniqueInput!, create: EventCreateInput!, update: EventUpdateInput!): Event!
-  deleteEvent(where: EventWhereUniqueInput!): Event
-  deleteManyEvents(where: EventWhereInput): BatchPayload!
-  createInfluence(data: InfluenceCreateInput!): Influence!
-  updateInfluence(data: InfluenceUpdateInput!, where: InfluenceWhereUniqueInput!): Influence
-  updateManyInfluences(data: InfluenceUpdateManyMutationInput!, where: InfluenceWhereInput): BatchPayload!
-  upsertInfluence(where: InfluenceWhereUniqueInput!, create: InfluenceCreateInput!, update: InfluenceUpdateInput!): Influence!
-  deleteInfluence(where: InfluenceWhereUniqueInput!): Influence
-  deleteManyInfluences(where: InfluenceWhereInput): BatchPayload!
+  createCompanyEvent(data: CompanyEventCreateInput!): CompanyEvent!
+  updateCompanyEvent(data: CompanyEventUpdateInput!, where: CompanyEventWhereUniqueInput!): CompanyEvent
+  updateManyCompanyEvents(data: CompanyEventUpdateManyMutationInput!, where: CompanyEventWhereInput): BatchPayload!
+  upsertCompanyEvent(where: CompanyEventWhereUniqueInput!, create: CompanyEventCreateInput!, update: CompanyEventUpdateInput!): CompanyEvent!
+  deleteCompanyEvent(where: CompanyEventWhereUniqueInput!): CompanyEvent
+  deleteManyCompanyEvents(where: CompanyEventWhereInput): BatchPayload!
+  createIndustry(data: IndustryCreateInput!): Industry!
+  updateIndustry(data: IndustryUpdateInput!, where: IndustryWhereUniqueInput!): Industry
+  updateManyIndustries(data: IndustryUpdateManyMutationInput!, where: IndustryWhereInput): BatchPayload!
+  upsertIndustry(where: IndustryWhereUniqueInput!, create: IndustryCreateInput!, update: IndustryUpdateInput!): Industry!
+  deleteIndustry(where: IndustryWhereUniqueInput!): Industry
+  deleteManyIndustries(where: IndustryWhereInput): BatchPayload!
+  createIndustryEvent(data: IndustryEventCreateInput!): IndustryEvent!
+  updateIndustryEvent(data: IndustryEventUpdateInput!, where: IndustryEventWhereUniqueInput!): IndustryEvent
+  updateManyIndustryEvents(data: IndustryEventUpdateManyMutationInput!, where: IndustryEventWhereInput): BatchPayload!
+  upsertIndustryEvent(where: IndustryEventWhereUniqueInput!, create: IndustryEventCreateInput!, update: IndustryEventUpdateInput!): IndustryEvent!
+  deleteIndustryEvent(where: IndustryEventWhereUniqueInput!): IndustryEvent
+  deleteManyIndustryEvents(where: IndustryEventWhereInput): BatchPayload!
+  createIndustryInfluence(data: IndustryInfluenceCreateInput!): IndustryInfluence!
+  updateIndustryInfluence(data: IndustryInfluenceUpdateInput!, where: IndustryInfluenceWhereUniqueInput!): IndustryInfluence
+  updateManyIndustryInfluences(data: IndustryInfluenceUpdateManyMutationInput!, where: IndustryInfluenceWhereInput): BatchPayload!
+  upsertIndustryInfluence(where: IndustryInfluenceWhereUniqueInput!, create: IndustryInfluenceCreateInput!, update: IndustryInfluenceUpdateInput!): IndustryInfluence!
+  deleteIndustryInfluence(where: IndustryInfluenceWhereUniqueInput!): IndustryInfluence
+  deleteManyIndustryInfluences(where: IndustryInfluenceWhereInput): BatchPayload!
   createKeyWord(data: KeyWordCreateInput!): KeyWord!
   updateKeyWord(data: KeyWordUpdateInput!, where: KeyWordWhereUniqueInput!): KeyWord
   updateManyKeyWords(data: KeyWordUpdateManyMutationInput!, where: KeyWordWhereInput): BatchPayload!
@@ -1573,6 +2298,12 @@ type Mutation {
   upsertProduct(where: ProductWhereUniqueInput!, create: ProductCreateInput!, update: ProductUpdateInput!): Product!
   deleteProduct(where: ProductWhereUniqueInput!): Product
   deleteManyProducts(where: ProductWhereInput): BatchPayload!
+  createResearch(data: ResearchCreateInput!): Research!
+  updateResearch(data: ResearchUpdateInput!, where: ResearchWhereUniqueInput!): Research
+  updateManyResearches(data: ResearchUpdateManyMutationInput!, where: ResearchWhereInput): BatchPayload!
+  upsertResearch(where: ResearchWhereUniqueInput!, create: ResearchCreateInput!, update: ResearchUpdateInput!): Research!
+  deleteResearch(where: ResearchWhereUniqueInput!): Research
+  deleteManyResearches(where: ResearchWhereInput): BatchPayload!
   createUser(data: UserCreateInput!): User!
   updateUser(data: UserUpdateInput!, where: UserWhereUniqueInput!): User
   updateManyUsers(data: UserUpdateManyMutationInput!, where: UserWhereInput): BatchPayload!
@@ -1602,11 +2333,8 @@ type Product {
   id: ID!
   name: String!
   introduce: String!
-  firstClass: String
-  secondClass: String
-  thirdClass: String
-  inputs(where: CompanyWhereInput, orderBy: CompanyOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Company!]
-  outputs(where: CompanyWhereInput, orderBy: CompanyOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Company!]
+  inputs(where: IndustryWhereInput, orderBy: IndustryOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Industry!]
+  outputs(where: IndustryWhereInput, orderBy: IndustryOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Industry!]
 }
 
 type ProductConnection {
@@ -1619,11 +2347,8 @@ input ProductCreateInput {
   id: ID
   name: String!
   introduce: String!
-  firstClass: String
-  secondClass: String
-  thirdClass: String
-  inputs: CompanyCreateManyWithoutPurchasesInput
-  outputs: CompanyCreateManyWithoutSellesInput
+  inputs: IndustryCreateManyWithoutPurchasesInput
+  outputs: IndustryCreateManyWithoutSellesInput
 }
 
 input ProductCreateManyWithoutInputsInput {
@@ -1640,20 +2365,14 @@ input ProductCreateWithoutInputsInput {
   id: ID
   name: String!
   introduce: String!
-  firstClass: String
-  secondClass: String
-  thirdClass: String
-  outputs: CompanyCreateManyWithoutSellesInput
+  outputs: IndustryCreateManyWithoutSellesInput
 }
 
 input ProductCreateWithoutOutputsInput {
   id: ID
   name: String!
   introduce: String!
-  firstClass: String
-  secondClass: String
-  thirdClass: String
-  inputs: CompanyCreateManyWithoutPurchasesInput
+  inputs: IndustryCreateManyWithoutPurchasesInput
 }
 
 type ProductEdge {
@@ -1668,21 +2387,12 @@ enum ProductOrderByInput {
   name_DESC
   introduce_ASC
   introduce_DESC
-  firstClass_ASC
-  firstClass_DESC
-  secondClass_ASC
-  secondClass_DESC
-  thirdClass_ASC
-  thirdClass_DESC
 }
 
 type ProductPreviousValues {
   id: ID!
   name: String!
   introduce: String!
-  firstClass: String
-  secondClass: String
-  thirdClass: String
 }
 
 input ProductScalarWhereInput {
@@ -1728,48 +2438,6 @@ input ProductScalarWhereInput {
   introduce_not_starts_with: String
   introduce_ends_with: String
   introduce_not_ends_with: String
-  firstClass: String
-  firstClass_not: String
-  firstClass_in: [String!]
-  firstClass_not_in: [String!]
-  firstClass_lt: String
-  firstClass_lte: String
-  firstClass_gt: String
-  firstClass_gte: String
-  firstClass_contains: String
-  firstClass_not_contains: String
-  firstClass_starts_with: String
-  firstClass_not_starts_with: String
-  firstClass_ends_with: String
-  firstClass_not_ends_with: String
-  secondClass: String
-  secondClass_not: String
-  secondClass_in: [String!]
-  secondClass_not_in: [String!]
-  secondClass_lt: String
-  secondClass_lte: String
-  secondClass_gt: String
-  secondClass_gte: String
-  secondClass_contains: String
-  secondClass_not_contains: String
-  secondClass_starts_with: String
-  secondClass_not_starts_with: String
-  secondClass_ends_with: String
-  secondClass_not_ends_with: String
-  thirdClass: String
-  thirdClass_not: String
-  thirdClass_in: [String!]
-  thirdClass_not_in: [String!]
-  thirdClass_lt: String
-  thirdClass_lte: String
-  thirdClass_gt: String
-  thirdClass_gte: String
-  thirdClass_contains: String
-  thirdClass_not_contains: String
-  thirdClass_starts_with: String
-  thirdClass_not_starts_with: String
-  thirdClass_ends_with: String
-  thirdClass_not_ends_with: String
   AND: [ProductScalarWhereInput!]
   OR: [ProductScalarWhereInput!]
   NOT: [ProductScalarWhereInput!]
@@ -1796,27 +2464,18 @@ input ProductSubscriptionWhereInput {
 input ProductUpdateInput {
   name: String
   introduce: String
-  firstClass: String
-  secondClass: String
-  thirdClass: String
-  inputs: CompanyUpdateManyWithoutPurchasesInput
-  outputs: CompanyUpdateManyWithoutSellesInput
+  inputs: IndustryUpdateManyWithoutPurchasesInput
+  outputs: IndustryUpdateManyWithoutSellesInput
 }
 
 input ProductUpdateManyDataInput {
   name: String
   introduce: String
-  firstClass: String
-  secondClass: String
-  thirdClass: String
 }
 
 input ProductUpdateManyMutationInput {
   name: String
   introduce: String
-  firstClass: String
-  secondClass: String
-  thirdClass: String
 }
 
 input ProductUpdateManyWithoutInputsInput {
@@ -1851,19 +2510,13 @@ input ProductUpdateManyWithWhereNestedInput {
 input ProductUpdateWithoutInputsDataInput {
   name: String
   introduce: String
-  firstClass: String
-  secondClass: String
-  thirdClass: String
-  outputs: CompanyUpdateManyWithoutSellesInput
+  outputs: IndustryUpdateManyWithoutSellesInput
 }
 
 input ProductUpdateWithoutOutputsDataInput {
   name: String
   introduce: String
-  firstClass: String
-  secondClass: String
-  thirdClass: String
-  inputs: CompanyUpdateManyWithoutPurchasesInput
+  inputs: IndustryUpdateManyWithoutPurchasesInput
 }
 
 input ProductUpdateWithWhereUniqueWithoutInputsInput {
@@ -1931,54 +2584,12 @@ input ProductWhereInput {
   introduce_not_starts_with: String
   introduce_ends_with: String
   introduce_not_ends_with: String
-  firstClass: String
-  firstClass_not: String
-  firstClass_in: [String!]
-  firstClass_not_in: [String!]
-  firstClass_lt: String
-  firstClass_lte: String
-  firstClass_gt: String
-  firstClass_gte: String
-  firstClass_contains: String
-  firstClass_not_contains: String
-  firstClass_starts_with: String
-  firstClass_not_starts_with: String
-  firstClass_ends_with: String
-  firstClass_not_ends_with: String
-  secondClass: String
-  secondClass_not: String
-  secondClass_in: [String!]
-  secondClass_not_in: [String!]
-  secondClass_lt: String
-  secondClass_lte: String
-  secondClass_gt: String
-  secondClass_gte: String
-  secondClass_contains: String
-  secondClass_not_contains: String
-  secondClass_starts_with: String
-  secondClass_not_starts_with: String
-  secondClass_ends_with: String
-  secondClass_not_ends_with: String
-  thirdClass: String
-  thirdClass_not: String
-  thirdClass_in: [String!]
-  thirdClass_not_in: [String!]
-  thirdClass_lt: String
-  thirdClass_lte: String
-  thirdClass_gt: String
-  thirdClass_gte: String
-  thirdClass_contains: String
-  thirdClass_not_contains: String
-  thirdClass_starts_with: String
-  thirdClass_not_starts_with: String
-  thirdClass_ends_with: String
-  thirdClass_not_ends_with: String
-  inputs_every: CompanyWhereInput
-  inputs_some: CompanyWhereInput
-  inputs_none: CompanyWhereInput
-  outputs_every: CompanyWhereInput
-  outputs_some: CompanyWhereInput
-  outputs_none: CompanyWhereInput
+  inputs_every: IndustryWhereInput
+  inputs_some: IndustryWhereInput
+  inputs_none: IndustryWhereInput
+  outputs_every: IndustryWhereInput
+  outputs_some: IndustryWhereInput
+  outputs_none: IndustryWhereInput
   AND: [ProductWhereInput!]
   OR: [ProductWhereInput!]
   NOT: [ProductWhereInput!]
@@ -1993,22 +2604,203 @@ type Query {
   company(where: CompanyWhereUniqueInput!): Company
   companies(where: CompanyWhereInput, orderBy: CompanyOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Company]!
   companiesConnection(where: CompanyWhereInput, orderBy: CompanyOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): CompanyConnection!
-  event(where: EventWhereUniqueInput!): Event
-  events(where: EventWhereInput, orderBy: EventOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Event]!
-  eventsConnection(where: EventWhereInput, orderBy: EventOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): EventConnection!
-  influence(where: InfluenceWhereUniqueInput!): Influence
-  influences(where: InfluenceWhereInput, orderBy: InfluenceOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Influence]!
-  influencesConnection(where: InfluenceWhereInput, orderBy: InfluenceOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): InfluenceConnection!
+  companyEvent(where: CompanyEventWhereUniqueInput!): CompanyEvent
+  companyEvents(where: CompanyEventWhereInput, orderBy: CompanyEventOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [CompanyEvent]!
+  companyEventsConnection(where: CompanyEventWhereInput, orderBy: CompanyEventOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): CompanyEventConnection!
+  industry(where: IndustryWhereUniqueInput!): Industry
+  industries(where: IndustryWhereInput, orderBy: IndustryOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Industry]!
+  industriesConnection(where: IndustryWhereInput, orderBy: IndustryOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): IndustryConnection!
+  industryEvent(where: IndustryEventWhereUniqueInput!): IndustryEvent
+  industryEvents(where: IndustryEventWhereInput, orderBy: IndustryEventOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [IndustryEvent]!
+  industryEventsConnection(where: IndustryEventWhereInput, orderBy: IndustryEventOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): IndustryEventConnection!
+  industryInfluence(where: IndustryInfluenceWhereUniqueInput!): IndustryInfluence
+  industryInfluences(where: IndustryInfluenceWhereInput, orderBy: IndustryInfluenceOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [IndustryInfluence]!
+  industryInfluencesConnection(where: IndustryInfluenceWhereInput, orderBy: IndustryInfluenceOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): IndustryInfluenceConnection!
   keyWord(where: KeyWordWhereUniqueInput!): KeyWord
   keyWords(where: KeyWordWhereInput, orderBy: KeyWordOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [KeyWord]!
   keyWordsConnection(where: KeyWordWhereInput, orderBy: KeyWordOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): KeyWordConnection!
   product(where: ProductWhereUniqueInput!): Product
   products(where: ProductWhereInput, orderBy: ProductOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Product]!
   productsConnection(where: ProductWhereInput, orderBy: ProductOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): ProductConnection!
+  research(where: ResearchWhereUniqueInput!): Research
+  researches(where: ResearchWhereInput, orderBy: ResearchOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Research]!
+  researchesConnection(where: ResearchWhereInput, orderBy: ResearchOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): ResearchConnection!
   user(where: UserWhereUniqueInput!): User
   users(where: UserWhereInput, orderBy: UserOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [User]!
   usersConnection(where: UserWhereInput, orderBy: UserOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): UserConnection!
   node(id: ID!): Node
+}
+
+type Research {
+  id: ID!
+  desc: String!
+}
+
+type ResearchConnection {
+  pageInfo: PageInfo!
+  edges: [ResearchEdge]!
+  aggregate: AggregateResearch!
+}
+
+input ResearchCreateInput {
+  id: ID
+  desc: String!
+}
+
+input ResearchCreateManyInput {
+  create: [ResearchCreateInput!]
+  connect: [ResearchWhereUniqueInput!]
+}
+
+type ResearchEdge {
+  node: Research!
+  cursor: String!
+}
+
+enum ResearchOrderByInput {
+  id_ASC
+  id_DESC
+  desc_ASC
+  desc_DESC
+}
+
+type ResearchPreviousValues {
+  id: ID!
+  desc: String!
+}
+
+input ResearchScalarWhereInput {
+  id: ID
+  id_not: ID
+  id_in: [ID!]
+  id_not_in: [ID!]
+  id_lt: ID
+  id_lte: ID
+  id_gt: ID
+  id_gte: ID
+  id_contains: ID
+  id_not_contains: ID
+  id_starts_with: ID
+  id_not_starts_with: ID
+  id_ends_with: ID
+  id_not_ends_with: ID
+  desc: String
+  desc_not: String
+  desc_in: [String!]
+  desc_not_in: [String!]
+  desc_lt: String
+  desc_lte: String
+  desc_gt: String
+  desc_gte: String
+  desc_contains: String
+  desc_not_contains: String
+  desc_starts_with: String
+  desc_not_starts_with: String
+  desc_ends_with: String
+  desc_not_ends_with: String
+  AND: [ResearchScalarWhereInput!]
+  OR: [ResearchScalarWhereInput!]
+  NOT: [ResearchScalarWhereInput!]
+}
+
+type ResearchSubscriptionPayload {
+  mutation: MutationType!
+  node: Research
+  updatedFields: [String!]
+  previousValues: ResearchPreviousValues
+}
+
+input ResearchSubscriptionWhereInput {
+  mutation_in: [MutationType!]
+  updatedFields_contains: String
+  updatedFields_contains_every: [String!]
+  updatedFields_contains_some: [String!]
+  node: ResearchWhereInput
+  AND: [ResearchSubscriptionWhereInput!]
+  OR: [ResearchSubscriptionWhereInput!]
+  NOT: [ResearchSubscriptionWhereInput!]
+}
+
+input ResearchUpdateDataInput {
+  desc: String
+}
+
+input ResearchUpdateInput {
+  desc: String
+}
+
+input ResearchUpdateManyDataInput {
+  desc: String
+}
+
+input ResearchUpdateManyInput {
+  create: [ResearchCreateInput!]
+  update: [ResearchUpdateWithWhereUniqueNestedInput!]
+  upsert: [ResearchUpsertWithWhereUniqueNestedInput!]
+  delete: [ResearchWhereUniqueInput!]
+  connect: [ResearchWhereUniqueInput!]
+  set: [ResearchWhereUniqueInput!]
+  disconnect: [ResearchWhereUniqueInput!]
+  deleteMany: [ResearchScalarWhereInput!]
+  updateMany: [ResearchUpdateManyWithWhereNestedInput!]
+}
+
+input ResearchUpdateManyMutationInput {
+  desc: String
+}
+
+input ResearchUpdateManyWithWhereNestedInput {
+  where: ResearchScalarWhereInput!
+  data: ResearchUpdateManyDataInput!
+}
+
+input ResearchUpdateWithWhereUniqueNestedInput {
+  where: ResearchWhereUniqueInput!
+  data: ResearchUpdateDataInput!
+}
+
+input ResearchUpsertWithWhereUniqueNestedInput {
+  where: ResearchWhereUniqueInput!
+  update: ResearchUpdateDataInput!
+  create: ResearchCreateInput!
+}
+
+input ResearchWhereInput {
+  id: ID
+  id_not: ID
+  id_in: [ID!]
+  id_not_in: [ID!]
+  id_lt: ID
+  id_lte: ID
+  id_gt: ID
+  id_gte: ID
+  id_contains: ID
+  id_not_contains: ID
+  id_starts_with: ID
+  id_not_starts_with: ID
+  id_ends_with: ID
+  id_not_ends_with: ID
+  desc: String
+  desc_not: String
+  desc_in: [String!]
+  desc_not_in: [String!]
+  desc_lt: String
+  desc_lte: String
+  desc_gt: String
+  desc_gte: String
+  desc_contains: String
+  desc_not_contains: String
+  desc_starts_with: String
+  desc_not_starts_with: String
+  desc_ends_with: String
+  desc_not_ends_with: String
+  AND: [ResearchWhereInput!]
+  OR: [ResearchWhereInput!]
+  NOT: [ResearchWhereInput!]
+}
+
+input ResearchWhereUniqueInput {
+  id: ID
 }
 
 enum Role {
@@ -2016,17 +2808,15 @@ enum Role {
   CUSTOMER
 }
 
-enum SrcKind {
-  INNER
-  OUTER
-}
-
 type Subscription {
   company(where: CompanySubscriptionWhereInput): CompanySubscriptionPayload
-  event(where: EventSubscriptionWhereInput): EventSubscriptionPayload
-  influence(where: InfluenceSubscriptionWhereInput): InfluenceSubscriptionPayload
+  companyEvent(where: CompanyEventSubscriptionWhereInput): CompanyEventSubscriptionPayload
+  industry(where: IndustrySubscriptionWhereInput): IndustrySubscriptionPayload
+  industryEvent(where: IndustryEventSubscriptionWhereInput): IndustryEventSubscriptionPayload
+  industryInfluence(where: IndustryInfluenceSubscriptionWhereInput): IndustryInfluenceSubscriptionPayload
   keyWord(where: KeyWordSubscriptionWhereInput): KeyWordSubscriptionPayload
   product(where: ProductSubscriptionWhereInput): ProductSubscriptionPayload
+  research(where: ResearchSubscriptionWhereInput): ResearchSubscriptionPayload
   user(where: UserSubscriptionWhereInput): UserSubscriptionPayload
 }
 
