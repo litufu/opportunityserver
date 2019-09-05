@@ -4,13 +4,17 @@ const typeDefs = gql`
   scalar DateTime
 
   type Query {
-    me: User
+    companies(keyword:String!): [Company]
+    companiesByCodeOrName(inputvalue:String!):[Company]
+    products(inputvalue:String!):[Product]
   }
 
   type Mutation {
     login(username: String!, password: String!): AuthPayload!
     getCompanies:Boolean!
     updateCompanyScopAndDesc:Boolean!
+    createProduct(name:String!,introduce:String!):Product!
+    productLinkCompany(companyName:String!,productName:String!,deal:String!):Company
   }
 
   type AuthPayload {
@@ -87,6 +91,10 @@ type Influence{
 type Product{
   id: ID!
   name:String!
+  introduce:String!
+  firstClass:String
+  secondClass:String
+  thirdClass:String
   inputs:[Company]
   outputs:[Company]
 }

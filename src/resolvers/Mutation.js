@@ -71,6 +71,7 @@ const Mutation = {
       const getCompanyScopeAndDescProcess = spawn('python',[scopeAndDescPath]);
       getCompanyScopeAndDescProcess.stdout.on('data', async (data) => {
         res = JSON.parse(data)
+        console.log(res.symbol)
         await ctx.prisma.updateCompany({
           where:{symbol:res.symbol},
           data:{
@@ -84,7 +85,34 @@ const Mutation = {
         });
        
       return true
-  }
+  },
+  createProduct:async (parent,{name,introduce}, ctx) => {
+      const products = await ctx.prisma.products({where:{name}})
+      if(products.length>0){
+        throw new Error("该产品已经存在，无需重复输入")
+      }
+      return ctx.prisma.createProduct({
+        name,
+        introduce
+      })
+  },
+  productLinkCompany:async (parent,{companyName,productName,deal}, ctx) => {
+    let newCompany
+    if(deal==="purchase"){
+      newCompany = await ctx.prisma.updateCompany({
+        where:{name:companyName},
+        data:{purchases:{connect:{name:productName}}}
+      })
+    }else if(deal==="sell"){
+      newCompany = await ctx.prisma.updateCompany({
+        where:{name:companyName},
+        data:{selles:{connect:{name:productName}}}
+      })
+    }else{
+      throw new Error("交易性质错误")
+    }
+    return newCompany
+  },
 }
 
 module.exports = {

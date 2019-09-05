@@ -320,7 +320,15 @@ export type ProductOrderByInput =
   | "id_ASC"
   | "id_DESC"
   | "name_ASC"
-  | "name_DESC";
+  | "name_DESC"
+  | "introduce_ASC"
+  | "introduce_DESC"
+  | "firstClass_ASC"
+  | "firstClass_DESC"
+  | "secondClass_ASC"
+  | "secondClass_DESC"
+  | "thirdClass_ASC"
+  | "thirdClass_DESC";
 
 export type CompanyOrderByInput =
   | "id_ASC"
@@ -409,6 +417,7 @@ export interface KeyWordUpdateWithWhereUniqueNestedInput {
 export type CompanyWhereUniqueInput = AtLeastOne<{
   id: Maybe<ID_Input>;
   symbol?: Maybe<String>;
+  name?: Maybe<String>;
 }>;
 
 export interface KeyWordCreateInput {
@@ -502,6 +511,10 @@ export interface InfluenceScalarWhereInput {
 export interface ProductCreateWithoutInputsInput {
   id?: Maybe<ID_Input>;
   name: String;
+  introduce: String;
+  firstClass?: Maybe<String>;
+  secondClass?: Maybe<String>;
+  thirdClass?: Maybe<String>;
   outputs?: Maybe<CompanyCreateManyWithoutSellesInput>;
 }
 
@@ -586,6 +599,10 @@ export type EventWhereUniqueInput = AtLeastOne<{
 export interface ProductCreateWithoutOutputsInput {
   id?: Maybe<ID_Input>;
   name: String;
+  introduce: String;
+  firstClass?: Maybe<String>;
+  secondClass?: Maybe<String>;
+  thirdClass?: Maybe<String>;
   inputs?: Maybe<CompanyCreateManyWithoutPurchasesInput>;
 }
 
@@ -618,6 +635,62 @@ export interface ProductWhereInput {
   name_not_starts_with?: Maybe<String>;
   name_ends_with?: Maybe<String>;
   name_not_ends_with?: Maybe<String>;
+  introduce?: Maybe<String>;
+  introduce_not?: Maybe<String>;
+  introduce_in?: Maybe<String[] | String>;
+  introduce_not_in?: Maybe<String[] | String>;
+  introduce_lt?: Maybe<String>;
+  introduce_lte?: Maybe<String>;
+  introduce_gt?: Maybe<String>;
+  introduce_gte?: Maybe<String>;
+  introduce_contains?: Maybe<String>;
+  introduce_not_contains?: Maybe<String>;
+  introduce_starts_with?: Maybe<String>;
+  introduce_not_starts_with?: Maybe<String>;
+  introduce_ends_with?: Maybe<String>;
+  introduce_not_ends_with?: Maybe<String>;
+  firstClass?: Maybe<String>;
+  firstClass_not?: Maybe<String>;
+  firstClass_in?: Maybe<String[] | String>;
+  firstClass_not_in?: Maybe<String[] | String>;
+  firstClass_lt?: Maybe<String>;
+  firstClass_lte?: Maybe<String>;
+  firstClass_gt?: Maybe<String>;
+  firstClass_gte?: Maybe<String>;
+  firstClass_contains?: Maybe<String>;
+  firstClass_not_contains?: Maybe<String>;
+  firstClass_starts_with?: Maybe<String>;
+  firstClass_not_starts_with?: Maybe<String>;
+  firstClass_ends_with?: Maybe<String>;
+  firstClass_not_ends_with?: Maybe<String>;
+  secondClass?: Maybe<String>;
+  secondClass_not?: Maybe<String>;
+  secondClass_in?: Maybe<String[] | String>;
+  secondClass_not_in?: Maybe<String[] | String>;
+  secondClass_lt?: Maybe<String>;
+  secondClass_lte?: Maybe<String>;
+  secondClass_gt?: Maybe<String>;
+  secondClass_gte?: Maybe<String>;
+  secondClass_contains?: Maybe<String>;
+  secondClass_not_contains?: Maybe<String>;
+  secondClass_starts_with?: Maybe<String>;
+  secondClass_not_starts_with?: Maybe<String>;
+  secondClass_ends_with?: Maybe<String>;
+  secondClass_not_ends_with?: Maybe<String>;
+  thirdClass?: Maybe<String>;
+  thirdClass_not?: Maybe<String>;
+  thirdClass_in?: Maybe<String[] | String>;
+  thirdClass_not_in?: Maybe<String[] | String>;
+  thirdClass_lt?: Maybe<String>;
+  thirdClass_lte?: Maybe<String>;
+  thirdClass_gt?: Maybe<String>;
+  thirdClass_gte?: Maybe<String>;
+  thirdClass_contains?: Maybe<String>;
+  thirdClass_not_contains?: Maybe<String>;
+  thirdClass_starts_with?: Maybe<String>;
+  thirdClass_not_starts_with?: Maybe<String>;
+  thirdClass_ends_with?: Maybe<String>;
+  thirdClass_not_ends_with?: Maybe<String>;
   inputs_every?: Maybe<CompanyWhereInput>;
   inputs_some?: Maybe<CompanyWhereInput>;
   inputs_none?: Maybe<CompanyWhereInput>;
@@ -953,6 +1026,10 @@ export interface CompanyUpdateInput {
 
 export interface ProductUpdateInput {
   name?: Maybe<String>;
+  introduce?: Maybe<String>;
+  firstClass?: Maybe<String>;
+  secondClass?: Maybe<String>;
+  thirdClass?: Maybe<String>;
   inputs?: Maybe<CompanyUpdateManyWithoutPurchasesInput>;
   outputs?: Maybe<CompanyUpdateManyWithoutSellesInput>;
 }
@@ -1054,6 +1131,7 @@ export interface ProductUpsertWithWhereUniqueWithoutOutputsInput {
 
 export type ProductWhereUniqueInput = AtLeastOne<{
   id: Maybe<ID_Input>;
+  name?: Maybe<String>;
 }>;
 
 export interface KeyWordUpdateDataInput {
@@ -1307,10 +1385,18 @@ export interface ProductUpdateWithWhereUniqueWithoutInputsInput {
 
 export interface ProductUpdateManyMutationInput {
   name?: Maybe<String>;
+  introduce?: Maybe<String>;
+  firstClass?: Maybe<String>;
+  secondClass?: Maybe<String>;
+  thirdClass?: Maybe<String>;
 }
 
 export interface ProductUpdateWithoutInputsDataInput {
   name?: Maybe<String>;
+  introduce?: Maybe<String>;
+  firstClass?: Maybe<String>;
+  secondClass?: Maybe<String>;
+  thirdClass?: Maybe<String>;
   outputs?: Maybe<CompanyUpdateManyWithoutSellesInput>;
 }
 
@@ -1708,6 +1794,10 @@ export interface ProductUpsertWithWhereUniqueWithoutInputsInput {
 export interface ProductCreateInput {
   id?: Maybe<ID_Input>;
   name: String;
+  introduce: String;
+  firstClass?: Maybe<String>;
+  secondClass?: Maybe<String>;
+  thirdClass?: Maybe<String>;
   inputs?: Maybe<CompanyCreateManyWithoutPurchasesInput>;
   outputs?: Maybe<CompanyCreateManyWithoutSellesInput>;
 }
@@ -1741,6 +1831,62 @@ export interface ProductScalarWhereInput {
   name_not_starts_with?: Maybe<String>;
   name_ends_with?: Maybe<String>;
   name_not_ends_with?: Maybe<String>;
+  introduce?: Maybe<String>;
+  introduce_not?: Maybe<String>;
+  introduce_in?: Maybe<String[] | String>;
+  introduce_not_in?: Maybe<String[] | String>;
+  introduce_lt?: Maybe<String>;
+  introduce_lte?: Maybe<String>;
+  introduce_gt?: Maybe<String>;
+  introduce_gte?: Maybe<String>;
+  introduce_contains?: Maybe<String>;
+  introduce_not_contains?: Maybe<String>;
+  introduce_starts_with?: Maybe<String>;
+  introduce_not_starts_with?: Maybe<String>;
+  introduce_ends_with?: Maybe<String>;
+  introduce_not_ends_with?: Maybe<String>;
+  firstClass?: Maybe<String>;
+  firstClass_not?: Maybe<String>;
+  firstClass_in?: Maybe<String[] | String>;
+  firstClass_not_in?: Maybe<String[] | String>;
+  firstClass_lt?: Maybe<String>;
+  firstClass_lte?: Maybe<String>;
+  firstClass_gt?: Maybe<String>;
+  firstClass_gte?: Maybe<String>;
+  firstClass_contains?: Maybe<String>;
+  firstClass_not_contains?: Maybe<String>;
+  firstClass_starts_with?: Maybe<String>;
+  firstClass_not_starts_with?: Maybe<String>;
+  firstClass_ends_with?: Maybe<String>;
+  firstClass_not_ends_with?: Maybe<String>;
+  secondClass?: Maybe<String>;
+  secondClass_not?: Maybe<String>;
+  secondClass_in?: Maybe<String[] | String>;
+  secondClass_not_in?: Maybe<String[] | String>;
+  secondClass_lt?: Maybe<String>;
+  secondClass_lte?: Maybe<String>;
+  secondClass_gt?: Maybe<String>;
+  secondClass_gte?: Maybe<String>;
+  secondClass_contains?: Maybe<String>;
+  secondClass_not_contains?: Maybe<String>;
+  secondClass_starts_with?: Maybe<String>;
+  secondClass_not_starts_with?: Maybe<String>;
+  secondClass_ends_with?: Maybe<String>;
+  secondClass_not_ends_with?: Maybe<String>;
+  thirdClass?: Maybe<String>;
+  thirdClass_not?: Maybe<String>;
+  thirdClass_in?: Maybe<String[] | String>;
+  thirdClass_not_in?: Maybe<String[] | String>;
+  thirdClass_lt?: Maybe<String>;
+  thirdClass_lte?: Maybe<String>;
+  thirdClass_gt?: Maybe<String>;
+  thirdClass_gte?: Maybe<String>;
+  thirdClass_contains?: Maybe<String>;
+  thirdClass_not_contains?: Maybe<String>;
+  thirdClass_starts_with?: Maybe<String>;
+  thirdClass_not_starts_with?: Maybe<String>;
+  thirdClass_ends_with?: Maybe<String>;
+  thirdClass_not_ends_with?: Maybe<String>;
   AND?: Maybe<ProductScalarWhereInput[] | ProductScalarWhereInput>;
   OR?: Maybe<ProductScalarWhereInput[] | ProductScalarWhereInput>;
   NOT?: Maybe<ProductScalarWhereInput[] | ProductScalarWhereInput>;
@@ -1812,6 +1958,10 @@ export interface UserWhereInput {
 
 export interface ProductUpdateManyDataInput {
   name?: Maybe<String>;
+  introduce?: Maybe<String>;
+  firstClass?: Maybe<String>;
+  secondClass?: Maybe<String>;
+  thirdClass?: Maybe<String>;
 }
 
 export interface InfluenceCreateWithoutCompanyInput {
@@ -1965,6 +2115,10 @@ export interface CompanyUpdateManyWithoutPurchasesInput {
 
 export interface ProductUpdateWithoutOutputsDataInput {
   name?: Maybe<String>;
+  introduce?: Maybe<String>;
+  firstClass?: Maybe<String>;
+  secondClass?: Maybe<String>;
+  thirdClass?: Maybe<String>;
   inputs?: Maybe<CompanyUpdateManyWithoutPurchasesInput>;
 }
 
@@ -2520,11 +2674,19 @@ export interface AggregateProductSubscription
 export interface Product {
   id: ID_Output;
   name: String;
+  introduce: String;
+  firstClass?: String;
+  secondClass?: String;
+  thirdClass?: String;
 }
 
 export interface ProductPromise extends Promise<Product>, Fragmentable {
   id: () => Promise<ID_Output>;
   name: () => Promise<String>;
+  introduce: () => Promise<String>;
+  firstClass: () => Promise<String>;
+  secondClass: () => Promise<String>;
+  thirdClass: () => Promise<String>;
   inputs: <T = FragmentableArray<Company>>(args?: {
     where?: CompanyWhereInput;
     orderBy?: CompanyOrderByInput;
@@ -2550,6 +2712,10 @@ export interface ProductSubscription
     Fragmentable {
   id: () => Promise<AsyncIterator<ID_Output>>;
   name: () => Promise<AsyncIterator<String>>;
+  introduce: () => Promise<AsyncIterator<String>>;
+  firstClass: () => Promise<AsyncIterator<String>>;
+  secondClass: () => Promise<AsyncIterator<String>>;
+  thirdClass: () => Promise<AsyncIterator<String>>;
   inputs: <T = Promise<AsyncIterator<CompanySubscription>>>(args?: {
     where?: CompanyWhereInput;
     orderBy?: CompanyOrderByInput;
@@ -2575,6 +2741,10 @@ export interface ProductNullablePromise
     Fragmentable {
   id: () => Promise<ID_Output>;
   name: () => Promise<String>;
+  introduce: () => Promise<String>;
+  firstClass: () => Promise<String>;
+  secondClass: () => Promise<String>;
+  thirdClass: () => Promise<String>;
   inputs: <T = FragmentableArray<Company>>(args?: {
     where?: CompanyWhereInput;
     orderBy?: CompanyOrderByInput;
@@ -2738,6 +2908,10 @@ export interface AggregateInfluenceSubscription
 export interface ProductPreviousValues {
   id: ID_Output;
   name: String;
+  introduce: String;
+  firstClass?: String;
+  secondClass?: String;
+  thirdClass?: String;
 }
 
 export interface ProductPreviousValuesPromise
@@ -2745,6 +2919,10 @@ export interface ProductPreviousValuesPromise
     Fragmentable {
   id: () => Promise<ID_Output>;
   name: () => Promise<String>;
+  introduce: () => Promise<String>;
+  firstClass: () => Promise<String>;
+  secondClass: () => Promise<String>;
+  thirdClass: () => Promise<String>;
 }
 
 export interface ProductPreviousValuesSubscription
@@ -2752,6 +2930,10 @@ export interface ProductPreviousValuesSubscription
     Fragmentable {
   id: () => Promise<AsyncIterator<ID_Output>>;
   name: () => Promise<AsyncIterator<String>>;
+  introduce: () => Promise<AsyncIterator<String>>;
+  firstClass: () => Promise<AsyncIterator<String>>;
+  secondClass: () => Promise<AsyncIterator<String>>;
+  thirdClass: () => Promise<AsyncIterator<String>>;
 }
 
 export interface InfluenceConnection {

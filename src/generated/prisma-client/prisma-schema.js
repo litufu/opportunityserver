@@ -888,6 +888,7 @@ input CompanyWhereInput {
 input CompanyWhereUniqueInput {
   id: ID
   symbol: String
+  name: String
 }
 
 scalar DateTime
@@ -1600,6 +1601,10 @@ type PageInfo {
 type Product {
   id: ID!
   name: String!
+  introduce: String!
+  firstClass: String
+  secondClass: String
+  thirdClass: String
   inputs(where: CompanyWhereInput, orderBy: CompanyOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Company!]
   outputs(where: CompanyWhereInput, orderBy: CompanyOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Company!]
 }
@@ -1613,6 +1618,10 @@ type ProductConnection {
 input ProductCreateInput {
   id: ID
   name: String!
+  introduce: String!
+  firstClass: String
+  secondClass: String
+  thirdClass: String
   inputs: CompanyCreateManyWithoutPurchasesInput
   outputs: CompanyCreateManyWithoutSellesInput
 }
@@ -1630,12 +1639,20 @@ input ProductCreateManyWithoutOutputsInput {
 input ProductCreateWithoutInputsInput {
   id: ID
   name: String!
+  introduce: String!
+  firstClass: String
+  secondClass: String
+  thirdClass: String
   outputs: CompanyCreateManyWithoutSellesInput
 }
 
 input ProductCreateWithoutOutputsInput {
   id: ID
   name: String!
+  introduce: String!
+  firstClass: String
+  secondClass: String
+  thirdClass: String
   inputs: CompanyCreateManyWithoutPurchasesInput
 }
 
@@ -1649,11 +1666,23 @@ enum ProductOrderByInput {
   id_DESC
   name_ASC
   name_DESC
+  introduce_ASC
+  introduce_DESC
+  firstClass_ASC
+  firstClass_DESC
+  secondClass_ASC
+  secondClass_DESC
+  thirdClass_ASC
+  thirdClass_DESC
 }
 
 type ProductPreviousValues {
   id: ID!
   name: String!
+  introduce: String!
+  firstClass: String
+  secondClass: String
+  thirdClass: String
 }
 
 input ProductScalarWhereInput {
@@ -1685,6 +1714,62 @@ input ProductScalarWhereInput {
   name_not_starts_with: String
   name_ends_with: String
   name_not_ends_with: String
+  introduce: String
+  introduce_not: String
+  introduce_in: [String!]
+  introduce_not_in: [String!]
+  introduce_lt: String
+  introduce_lte: String
+  introduce_gt: String
+  introduce_gte: String
+  introduce_contains: String
+  introduce_not_contains: String
+  introduce_starts_with: String
+  introduce_not_starts_with: String
+  introduce_ends_with: String
+  introduce_not_ends_with: String
+  firstClass: String
+  firstClass_not: String
+  firstClass_in: [String!]
+  firstClass_not_in: [String!]
+  firstClass_lt: String
+  firstClass_lte: String
+  firstClass_gt: String
+  firstClass_gte: String
+  firstClass_contains: String
+  firstClass_not_contains: String
+  firstClass_starts_with: String
+  firstClass_not_starts_with: String
+  firstClass_ends_with: String
+  firstClass_not_ends_with: String
+  secondClass: String
+  secondClass_not: String
+  secondClass_in: [String!]
+  secondClass_not_in: [String!]
+  secondClass_lt: String
+  secondClass_lte: String
+  secondClass_gt: String
+  secondClass_gte: String
+  secondClass_contains: String
+  secondClass_not_contains: String
+  secondClass_starts_with: String
+  secondClass_not_starts_with: String
+  secondClass_ends_with: String
+  secondClass_not_ends_with: String
+  thirdClass: String
+  thirdClass_not: String
+  thirdClass_in: [String!]
+  thirdClass_not_in: [String!]
+  thirdClass_lt: String
+  thirdClass_lte: String
+  thirdClass_gt: String
+  thirdClass_gte: String
+  thirdClass_contains: String
+  thirdClass_not_contains: String
+  thirdClass_starts_with: String
+  thirdClass_not_starts_with: String
+  thirdClass_ends_with: String
+  thirdClass_not_ends_with: String
   AND: [ProductScalarWhereInput!]
   OR: [ProductScalarWhereInput!]
   NOT: [ProductScalarWhereInput!]
@@ -1710,16 +1795,28 @@ input ProductSubscriptionWhereInput {
 
 input ProductUpdateInput {
   name: String
+  introduce: String
+  firstClass: String
+  secondClass: String
+  thirdClass: String
   inputs: CompanyUpdateManyWithoutPurchasesInput
   outputs: CompanyUpdateManyWithoutSellesInput
 }
 
 input ProductUpdateManyDataInput {
   name: String
+  introduce: String
+  firstClass: String
+  secondClass: String
+  thirdClass: String
 }
 
 input ProductUpdateManyMutationInput {
   name: String
+  introduce: String
+  firstClass: String
+  secondClass: String
+  thirdClass: String
 }
 
 input ProductUpdateManyWithoutInputsInput {
@@ -1753,11 +1850,19 @@ input ProductUpdateManyWithWhereNestedInput {
 
 input ProductUpdateWithoutInputsDataInput {
   name: String
+  introduce: String
+  firstClass: String
+  secondClass: String
+  thirdClass: String
   outputs: CompanyUpdateManyWithoutSellesInput
 }
 
 input ProductUpdateWithoutOutputsDataInput {
   name: String
+  introduce: String
+  firstClass: String
+  secondClass: String
+  thirdClass: String
   inputs: CompanyUpdateManyWithoutPurchasesInput
 }
 
@@ -1812,6 +1917,62 @@ input ProductWhereInput {
   name_not_starts_with: String
   name_ends_with: String
   name_not_ends_with: String
+  introduce: String
+  introduce_not: String
+  introduce_in: [String!]
+  introduce_not_in: [String!]
+  introduce_lt: String
+  introduce_lte: String
+  introduce_gt: String
+  introduce_gte: String
+  introduce_contains: String
+  introduce_not_contains: String
+  introduce_starts_with: String
+  introduce_not_starts_with: String
+  introduce_ends_with: String
+  introduce_not_ends_with: String
+  firstClass: String
+  firstClass_not: String
+  firstClass_in: [String!]
+  firstClass_not_in: [String!]
+  firstClass_lt: String
+  firstClass_lte: String
+  firstClass_gt: String
+  firstClass_gte: String
+  firstClass_contains: String
+  firstClass_not_contains: String
+  firstClass_starts_with: String
+  firstClass_not_starts_with: String
+  firstClass_ends_with: String
+  firstClass_not_ends_with: String
+  secondClass: String
+  secondClass_not: String
+  secondClass_in: [String!]
+  secondClass_not_in: [String!]
+  secondClass_lt: String
+  secondClass_lte: String
+  secondClass_gt: String
+  secondClass_gte: String
+  secondClass_contains: String
+  secondClass_not_contains: String
+  secondClass_starts_with: String
+  secondClass_not_starts_with: String
+  secondClass_ends_with: String
+  secondClass_not_ends_with: String
+  thirdClass: String
+  thirdClass_not: String
+  thirdClass_in: [String!]
+  thirdClass_not_in: [String!]
+  thirdClass_lt: String
+  thirdClass_lte: String
+  thirdClass_gt: String
+  thirdClass_gte: String
+  thirdClass_contains: String
+  thirdClass_not_contains: String
+  thirdClass_starts_with: String
+  thirdClass_not_starts_with: String
+  thirdClass_ends_with: String
+  thirdClass_not_ends_with: String
   inputs_every: CompanyWhereInput
   inputs_some: CompanyWhereInput
   inputs_none: CompanyWhereInput
@@ -1825,6 +1986,7 @@ input ProductWhereInput {
 
 input ProductWhereUniqueInput {
   id: ID
+  name: String
 }
 
 type Query {

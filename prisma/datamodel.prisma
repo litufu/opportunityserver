@@ -66,7 +66,11 @@ type Influence{
 
 type Product{
   id: ID! @id
-  name:String!
+  name:String!  @unique
+  introduce:String!
+  firstClass:String
+  secondClass:String
+  thirdClass:String
   inputs:[Company!]! @relation(name: "Input")
   outputs:[Company!]! @relation(name: "Output")
 }
@@ -74,7 +78,7 @@ type Product{
 type Company{
   id: ID! @id
   symbol:String! @unique
-  name:String!
+  name:String! @unique
   area:String
   industry:String
   fullname:String
