@@ -1,10 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="be54856e-9ab2-490b-af25-0dfd1ed5f1b9" name="Default Changelist" comment="">
-      <change beforePath="$PROJECT_DIR$/company.sqlite" beforeDir="false" afterPath="$PROJECT_DIR$/company.sqlite" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/get_scope_and_desc.py" beforeDir="false" afterPath="$PROJECT_DIR$/get_scope_and_desc.py" afterDir="false" />
-    </list>
+    <list default="true" id="be54856e-9ab2-490b-af25-0dfd1ed5f1b9" name="Default Changelist" comment="" />
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />

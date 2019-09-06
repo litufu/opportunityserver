@@ -6,6 +6,7 @@ const typeDefs = gql`
   type Query {
     companies(keyword:String!): [Company]
     companiesByCodeOrName(inputvalue:String!):[Company]
+    companiesByInfluence(keyword:String!,keywordDirection:Direction!):[Company]
     products(inputvalue:String!):[Product]
     industries(inputvalue:String!):[Industry]
     keywords(inputvalue:String!):[Keyword]

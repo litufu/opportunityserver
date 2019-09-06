@@ -19,6 +19,22 @@ const Query = {
       first:10
      })
   },
+  companiesByInfluence: async (parent, {keyword,keywordDirection}, ctx) => {
+    const industryInfluences = await ctx.prisma.industryInfluences({
+      where:{
+        AND:[
+          {keyword:{name:keyword}},
+          {keywordDirection}
+        ]
+      }
+    })
+    let allCompanies = []
+    for(const industryInfluence of industryInfluences){
+      const companies = await ctx.prisma.industryInfluence({id:industryInfluence.id}).industry().companies()
+      allCompanies = [...allCompanies,...companies]
+    } 
+    return allCompanies
+  },
   products:(parent, {inputvalue}, ctx) => {
     return ctx.prisma.products({ 
       where:{name_contains:inputvalue},
