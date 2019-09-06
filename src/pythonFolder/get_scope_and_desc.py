@@ -53,7 +53,7 @@ if __name__ == '__main__':
     goon = False
     for symbol in data["symbol"]:
         print(symbol)
-        if symbol == "601106":
+        if symbol == "603803":
             goon = True
         if goon:
             res = get_desc_and_scope(symbol)

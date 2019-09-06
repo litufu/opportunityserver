@@ -18,6 +18,7 @@ const typeDefs = gql`
     createIndustry(name:String!,desc:String!):Industry!
     productLinkIndustry(industryName:String!,productName:String!,deal:String!):Industry
     companyLinkIndustry(companyNames:[String!]!,industryName:String!):Industry
+    industryResearch(industryName:String!,research:String!):Industry!
   }
 
   type AuthPayload {
@@ -111,11 +112,17 @@ type Product{
   outputs:[Industry!]!
 }
 
+type Research{
+  id: ID!
+  desc:String!
+}
+
 type Industry{
   id: ID!
   code:String
   name:String! 
   desc:String!
+  researches:[Research!]!
   companies:[Company]
   influences:[IndustryInfluence]
   purchases:[Product]

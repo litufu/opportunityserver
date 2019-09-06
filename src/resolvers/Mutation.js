@@ -132,6 +132,12 @@ const Mutation = {
       data:{companies:{connect:companyConnectNames}}
     })
   },
+  industryResearch:async (parent,{industryName,research}, ctx) => {
+    return ctx.prisma.updateIndustry({
+      where:{name:industryName},
+      data:{researches:{create:{desc:research}}}
+    })
+  },
 }
 
 module.exports = {

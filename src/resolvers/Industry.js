@@ -11,6 +11,9 @@ const Industry = {
     selles: ({ id }, args, context) => {
         return context.prisma.industry({ id }).selles()
     },
+    researches: ({ id }, args, context) => {
+        return context.prisma.industry({ id }).researches()
+    },
   }
     
   module.exports = {
