@@ -17,7 +17,7 @@ var models = [
     embedded: false
   },
   {
-    name: "KeyWord",
+    name: "Keyword",
     embedded: false
   },
   {

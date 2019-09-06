@@ -16,9 +16,10 @@ type User {
 }
 
 
-type KeyWord{
+type Keyword{
   id: ID! @id
-  name:String!
+  name:String! @unique
+  
 }
 
 type IndustryEvent{
@@ -29,7 +30,7 @@ type IndustryEvent{
   happen:TimeKind!
   happenTime:DateTime!
   content:String!
-  keyWords:[KeyWord!]!
+  Keywords:[Keyword!]!
 }
 
 type CompanyEvent{
@@ -62,12 +63,12 @@ enum FactorKind{
 
 type IndustryInfluence{
   id: ID! @id
-  keywords:[KeyWord!]!
+  keyword:Keyword
+  keywordDirection:Direction!
   kind:FactorKind!
-  name:String!
   desc:String!
   industry:Industry!
-  dierction:Direction!
+  direction:Direction!
 }
 
 type Product{

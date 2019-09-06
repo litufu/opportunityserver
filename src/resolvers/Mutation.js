@@ -138,6 +138,34 @@ const Mutation = {
       data:{researches:{create:{desc:research}}}
     })
   },
+  addKeyword:async (parent,{keyword}, ctx) => {
+    return ctx.prisma.createKeyword({
+      name:keyword,
+    })
+  },
+  addIndustryInfluence:async (parent,{industryName,keyword,keywordDirection,kind,desc,direction}, ctx) => {
+    console.log(industryName)
+    const industryInfluences = await ctx.prisma.industryInfluences({
+      where:{
+        AND:[
+          {keyword:{name:keyword}},
+          {keywordDirection},
+          {industry:{name:industryName}}
+        ]
+      }
+    })
+    if(industryInfluences.length>0){
+      throw new Error("已经存储过该关键因素的影响了")
+    }
+    return ctx.prisma.createIndustryInfluence({
+      kind,
+      desc,
+      direction,
+      keywordDirection,
+      keyword:{connect:{name:keyword}},
+      industry:{connect:{name:industryName}}
+    })
+  },
 }
 
 module.exports = {

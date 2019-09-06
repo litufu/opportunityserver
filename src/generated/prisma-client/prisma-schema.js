@@ -23,7 +23,7 @@ type AggregateIndustryInfluence {
   count: Int!
 }
 
-type AggregateKeyWord {
+type AggregateKeyword {
   count: Int!
 }
 
@@ -1311,7 +1311,7 @@ type IndustryEvent {
   happen: TimeKind!
   happenTime: DateTime!
   content: String!
-  keyWords(where: KeyWordWhereInput, orderBy: KeyWordOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [KeyWord!]
+  Keywords(where: KeywordWhereInput, orderBy: KeywordOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Keyword!]
 }
 
 type IndustryEventConnection {
@@ -1328,7 +1328,7 @@ input IndustryEventCreateInput {
   happen: TimeKind!
   happenTime: DateTime!
   content: String!
-  keyWords: KeyWordCreateManyInput
+  Keywords: KeywordCreateManyInput
 }
 
 type IndustryEventEdge {
@@ -1388,7 +1388,7 @@ input IndustryEventUpdateInput {
   happen: TimeKind
   happenTime: DateTime
   content: String
-  keyWords: KeyWordUpdateManyInput
+  Keywords: KeywordUpdateManyInput
 }
 
 input IndustryEventUpdateManyMutationInput {
@@ -1477,9 +1477,9 @@ input IndustryEventWhereInput {
   content_not_starts_with: String
   content_ends_with: String
   content_not_ends_with: String
-  keyWords_every: KeyWordWhereInput
-  keyWords_some: KeyWordWhereInput
-  keyWords_none: KeyWordWhereInput
+  Keywords_every: KeywordWhereInput
+  Keywords_some: KeywordWhereInput
+  Keywords_none: KeywordWhereInput
   AND: [IndustryEventWhereInput!]
   OR: [IndustryEventWhereInput!]
   NOT: [IndustryEventWhereInput!]
@@ -1491,12 +1491,12 @@ input IndustryEventWhereUniqueInput {
 
 type IndustryInfluence {
   id: ID!
-  keywords(where: KeyWordWhereInput, orderBy: KeyWordOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [KeyWord!]
+  keyword: Keyword
+  keywordDirection: Direction!
   kind: FactorKind!
-  name: String!
   desc: String!
   industry: Industry!
-  dierction: Direction!
+  direction: Direction!
 }
 
 type IndustryInfluenceConnection {
@@ -1507,12 +1507,12 @@ type IndustryInfluenceConnection {
 
 input IndustryInfluenceCreateInput {
   id: ID
-  keywords: KeyWordCreateManyInput
+  keyword: KeywordCreateOneInput
+  keywordDirection: Direction!
   kind: FactorKind!
-  name: String!
   desc: String!
   industry: IndustryCreateOneWithoutInfluencesInput!
-  dierction: Direction!
+  direction: Direction!
 }
 
 input IndustryInfluenceCreateManyWithoutIndustryInput {
@@ -1522,11 +1522,11 @@ input IndustryInfluenceCreateManyWithoutIndustryInput {
 
 input IndustryInfluenceCreateWithoutIndustryInput {
   id: ID
-  keywords: KeyWordCreateManyInput
+  keyword: KeywordCreateOneInput
+  keywordDirection: Direction!
   kind: FactorKind!
-  name: String!
   desc: String!
-  dierction: Direction!
+  direction: Direction!
 }
 
 type IndustryInfluenceEdge {
@@ -1537,22 +1537,22 @@ type IndustryInfluenceEdge {
 enum IndustryInfluenceOrderByInput {
   id_ASC
   id_DESC
+  keywordDirection_ASC
+  keywordDirection_DESC
   kind_ASC
   kind_DESC
-  name_ASC
-  name_DESC
   desc_ASC
   desc_DESC
-  dierction_ASC
-  dierction_DESC
+  direction_ASC
+  direction_DESC
 }
 
 type IndustryInfluencePreviousValues {
   id: ID!
+  keywordDirection: Direction!
   kind: FactorKind!
-  name: String!
   desc: String!
-  dierction: Direction!
+  direction: Direction!
 }
 
 input IndustryInfluenceScalarWhereInput {
@@ -1570,24 +1570,14 @@ input IndustryInfluenceScalarWhereInput {
   id_not_starts_with: ID
   id_ends_with: ID
   id_not_ends_with: ID
+  keywordDirection: Direction
+  keywordDirection_not: Direction
+  keywordDirection_in: [Direction!]
+  keywordDirection_not_in: [Direction!]
   kind: FactorKind
   kind_not: FactorKind
   kind_in: [FactorKind!]
   kind_not_in: [FactorKind!]
-  name: String
-  name_not: String
-  name_in: [String!]
-  name_not_in: [String!]
-  name_lt: String
-  name_lte: String
-  name_gt: String
-  name_gte: String
-  name_contains: String
-  name_not_contains: String
-  name_starts_with: String
-  name_not_starts_with: String
-  name_ends_with: String
-  name_not_ends_with: String
   desc: String
   desc_not: String
   desc_in: [String!]
@@ -1602,10 +1592,10 @@ input IndustryInfluenceScalarWhereInput {
   desc_not_starts_with: String
   desc_ends_with: String
   desc_not_ends_with: String
-  dierction: Direction
-  dierction_not: Direction
-  dierction_in: [Direction!]
-  dierction_not_in: [Direction!]
+  direction: Direction
+  direction_not: Direction
+  direction_in: [Direction!]
+  direction_not_in: [Direction!]
   AND: [IndustryInfluenceScalarWhereInput!]
   OR: [IndustryInfluenceScalarWhereInput!]
   NOT: [IndustryInfluenceScalarWhereInput!]
@@ -1630,26 +1620,26 @@ input IndustryInfluenceSubscriptionWhereInput {
 }
 
 input IndustryInfluenceUpdateInput {
-  keywords: KeyWordUpdateManyInput
+  keyword: KeywordUpdateOneInput
+  keywordDirection: Direction
   kind: FactorKind
-  name: String
   desc: String
   industry: IndustryUpdateOneRequiredWithoutInfluencesInput
-  dierction: Direction
+  direction: Direction
 }
 
 input IndustryInfluenceUpdateManyDataInput {
+  keywordDirection: Direction
   kind: FactorKind
-  name: String
   desc: String
-  dierction: Direction
+  direction: Direction
 }
 
 input IndustryInfluenceUpdateManyMutationInput {
+  keywordDirection: Direction
   kind: FactorKind
-  name: String
   desc: String
-  dierction: Direction
+  direction: Direction
 }
 
 input IndustryInfluenceUpdateManyWithoutIndustryInput {
@@ -1670,11 +1660,11 @@ input IndustryInfluenceUpdateManyWithWhereNestedInput {
 }
 
 input IndustryInfluenceUpdateWithoutIndustryDataInput {
-  keywords: KeyWordUpdateManyInput
+  keyword: KeywordUpdateOneInput
+  keywordDirection: Direction
   kind: FactorKind
-  name: String
   desc: String
-  dierction: Direction
+  direction: Direction
 }
 
 input IndustryInfluenceUpdateWithWhereUniqueWithoutIndustryInput {
@@ -1703,27 +1693,15 @@ input IndustryInfluenceWhereInput {
   id_not_starts_with: ID
   id_ends_with: ID
   id_not_ends_with: ID
-  keywords_every: KeyWordWhereInput
-  keywords_some: KeyWordWhereInput
-  keywords_none: KeyWordWhereInput
+  keyword: KeywordWhereInput
+  keywordDirection: Direction
+  keywordDirection_not: Direction
+  keywordDirection_in: [Direction!]
+  keywordDirection_not_in: [Direction!]
   kind: FactorKind
   kind_not: FactorKind
   kind_in: [FactorKind!]
   kind_not_in: [FactorKind!]
-  name: String
-  name_not: String
-  name_in: [String!]
-  name_not_in: [String!]
-  name_lt: String
-  name_lte: String
-  name_gt: String
-  name_gte: String
-  name_contains: String
-  name_not_contains: String
-  name_starts_with: String
-  name_not_starts_with: String
-  name_ends_with: String
-  name_not_ends_with: String
   desc: String
   desc_not: String
   desc_in: [String!]
@@ -1739,10 +1717,10 @@ input IndustryInfluenceWhereInput {
   desc_ends_with: String
   desc_not_ends_with: String
   industry: IndustryWhereInput
-  dierction: Direction
-  dierction_not: Direction
-  dierction_in: [Direction!]
-  dierction_not_in: [Direction!]
+  direction: Direction
+  direction_not: Direction
+  direction_in: [Direction!]
+  direction_not_in: [Direction!]
   AND: [IndustryInfluenceWhereInput!]
   OR: [IndustryInfluenceWhereInput!]
   NOT: [IndustryInfluenceWhereInput!]
@@ -2081,45 +2059,50 @@ input IndustryWhereUniqueInput {
   name: String
 }
 
-type KeyWord {
+type Keyword {
   id: ID!
   name: String!
 }
 
-type KeyWordConnection {
+type KeywordConnection {
   pageInfo: PageInfo!
-  edges: [KeyWordEdge]!
-  aggregate: AggregateKeyWord!
+  edges: [KeywordEdge]!
+  aggregate: AggregateKeyword!
 }
 
-input KeyWordCreateInput {
+input KeywordCreateInput {
   id: ID
   name: String!
 }
 
-input KeyWordCreateManyInput {
-  create: [KeyWordCreateInput!]
-  connect: [KeyWordWhereUniqueInput!]
+input KeywordCreateManyInput {
+  create: [KeywordCreateInput!]
+  connect: [KeywordWhereUniqueInput!]
 }
 
-type KeyWordEdge {
-  node: KeyWord!
+input KeywordCreateOneInput {
+  create: KeywordCreateInput
+  connect: KeywordWhereUniqueInput
+}
+
+type KeywordEdge {
+  node: Keyword!
   cursor: String!
 }
 
-enum KeyWordOrderByInput {
+enum KeywordOrderByInput {
   id_ASC
   id_DESC
   name_ASC
   name_DESC
 }
 
-type KeyWordPreviousValues {
+type KeywordPreviousValues {
   id: ID!
   name: String!
 }
 
-input KeyWordScalarWhereInput {
+input KeywordScalarWhereInput {
   id: ID
   id_not: ID
   id_in: [ID!]
@@ -2148,74 +2131,88 @@ input KeyWordScalarWhereInput {
   name_not_starts_with: String
   name_ends_with: String
   name_not_ends_with: String
-  AND: [KeyWordScalarWhereInput!]
-  OR: [KeyWordScalarWhereInput!]
-  NOT: [KeyWordScalarWhereInput!]
+  AND: [KeywordScalarWhereInput!]
+  OR: [KeywordScalarWhereInput!]
+  NOT: [KeywordScalarWhereInput!]
 }
 
-type KeyWordSubscriptionPayload {
+type KeywordSubscriptionPayload {
   mutation: MutationType!
-  node: KeyWord
+  node: Keyword
   updatedFields: [String!]
-  previousValues: KeyWordPreviousValues
+  previousValues: KeywordPreviousValues
 }
 
-input KeyWordSubscriptionWhereInput {
+input KeywordSubscriptionWhereInput {
   mutation_in: [MutationType!]
   updatedFields_contains: String
   updatedFields_contains_every: [String!]
   updatedFields_contains_some: [String!]
-  node: KeyWordWhereInput
-  AND: [KeyWordSubscriptionWhereInput!]
-  OR: [KeyWordSubscriptionWhereInput!]
-  NOT: [KeyWordSubscriptionWhereInput!]
+  node: KeywordWhereInput
+  AND: [KeywordSubscriptionWhereInput!]
+  OR: [KeywordSubscriptionWhereInput!]
+  NOT: [KeywordSubscriptionWhereInput!]
 }
 
-input KeyWordUpdateDataInput {
+input KeywordUpdateDataInput {
   name: String
 }
 
-input KeyWordUpdateInput {
+input KeywordUpdateInput {
   name: String
 }
 
-input KeyWordUpdateManyDataInput {
+input KeywordUpdateManyDataInput {
   name: String
 }
 
-input KeyWordUpdateManyInput {
-  create: [KeyWordCreateInput!]
-  update: [KeyWordUpdateWithWhereUniqueNestedInput!]
-  upsert: [KeyWordUpsertWithWhereUniqueNestedInput!]
-  delete: [KeyWordWhereUniqueInput!]
-  connect: [KeyWordWhereUniqueInput!]
-  set: [KeyWordWhereUniqueInput!]
-  disconnect: [KeyWordWhereUniqueInput!]
-  deleteMany: [KeyWordScalarWhereInput!]
-  updateMany: [KeyWordUpdateManyWithWhereNestedInput!]
+input KeywordUpdateManyInput {
+  create: [KeywordCreateInput!]
+  update: [KeywordUpdateWithWhereUniqueNestedInput!]
+  upsert: [KeywordUpsertWithWhereUniqueNestedInput!]
+  delete: [KeywordWhereUniqueInput!]
+  connect: [KeywordWhereUniqueInput!]
+  set: [KeywordWhereUniqueInput!]
+  disconnect: [KeywordWhereUniqueInput!]
+  deleteMany: [KeywordScalarWhereInput!]
+  updateMany: [KeywordUpdateManyWithWhereNestedInput!]
 }
 
-input KeyWordUpdateManyMutationInput {
+input KeywordUpdateManyMutationInput {
   name: String
 }
 
-input KeyWordUpdateManyWithWhereNestedInput {
-  where: KeyWordScalarWhereInput!
-  data: KeyWordUpdateManyDataInput!
+input KeywordUpdateManyWithWhereNestedInput {
+  where: KeywordScalarWhereInput!
+  data: KeywordUpdateManyDataInput!
 }
 
-input KeyWordUpdateWithWhereUniqueNestedInput {
-  where: KeyWordWhereUniqueInput!
-  data: KeyWordUpdateDataInput!
+input KeywordUpdateOneInput {
+  create: KeywordCreateInput
+  update: KeywordUpdateDataInput
+  upsert: KeywordUpsertNestedInput
+  delete: Boolean
+  disconnect: Boolean
+  connect: KeywordWhereUniqueInput
 }
 
-input KeyWordUpsertWithWhereUniqueNestedInput {
-  where: KeyWordWhereUniqueInput!
-  update: KeyWordUpdateDataInput!
-  create: KeyWordCreateInput!
+input KeywordUpdateWithWhereUniqueNestedInput {
+  where: KeywordWhereUniqueInput!
+  data: KeywordUpdateDataInput!
 }
 
-input KeyWordWhereInput {
+input KeywordUpsertNestedInput {
+  update: KeywordUpdateDataInput!
+  create: KeywordCreateInput!
+}
+
+input KeywordUpsertWithWhereUniqueNestedInput {
+  where: KeywordWhereUniqueInput!
+  update: KeywordUpdateDataInput!
+  create: KeywordCreateInput!
+}
+
+input KeywordWhereInput {
   id: ID
   id_not: ID
   id_in: [ID!]
@@ -2244,13 +2241,14 @@ input KeyWordWhereInput {
   name_not_starts_with: String
   name_ends_with: String
   name_not_ends_with: String
-  AND: [KeyWordWhereInput!]
-  OR: [KeyWordWhereInput!]
-  NOT: [KeyWordWhereInput!]
+  AND: [KeywordWhereInput!]
+  OR: [KeywordWhereInput!]
+  NOT: [KeywordWhereInput!]
 }
 
-input KeyWordWhereUniqueInput {
+input KeywordWhereUniqueInput {
   id: ID
+  name: String
 }
 
 scalar Long
@@ -2286,12 +2284,12 @@ type Mutation {
   upsertIndustryInfluence(where: IndustryInfluenceWhereUniqueInput!, create: IndustryInfluenceCreateInput!, update: IndustryInfluenceUpdateInput!): IndustryInfluence!
   deleteIndustryInfluence(where: IndustryInfluenceWhereUniqueInput!): IndustryInfluence
   deleteManyIndustryInfluences(where: IndustryInfluenceWhereInput): BatchPayload!
-  createKeyWord(data: KeyWordCreateInput!): KeyWord!
-  updateKeyWord(data: KeyWordUpdateInput!, where: KeyWordWhereUniqueInput!): KeyWord
-  updateManyKeyWords(data: KeyWordUpdateManyMutationInput!, where: KeyWordWhereInput): BatchPayload!
-  upsertKeyWord(where: KeyWordWhereUniqueInput!, create: KeyWordCreateInput!, update: KeyWordUpdateInput!): KeyWord!
-  deleteKeyWord(where: KeyWordWhereUniqueInput!): KeyWord
-  deleteManyKeyWords(where: KeyWordWhereInput): BatchPayload!
+  createKeyword(data: KeywordCreateInput!): Keyword!
+  updateKeyword(data: KeywordUpdateInput!, where: KeywordWhereUniqueInput!): Keyword
+  updateManyKeywords(data: KeywordUpdateManyMutationInput!, where: KeywordWhereInput): BatchPayload!
+  upsertKeyword(where: KeywordWhereUniqueInput!, create: KeywordCreateInput!, update: KeywordUpdateInput!): Keyword!
+  deleteKeyword(where: KeywordWhereUniqueInput!): Keyword
+  deleteManyKeywords(where: KeywordWhereInput): BatchPayload!
   createProduct(data: ProductCreateInput!): Product!
   updateProduct(data: ProductUpdateInput!, where: ProductWhereUniqueInput!): Product
   updateManyProducts(data: ProductUpdateManyMutationInput!, where: ProductWhereInput): BatchPayload!
@@ -2616,9 +2614,9 @@ type Query {
   industryInfluence(where: IndustryInfluenceWhereUniqueInput!): IndustryInfluence
   industryInfluences(where: IndustryInfluenceWhereInput, orderBy: IndustryInfluenceOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [IndustryInfluence]!
   industryInfluencesConnection(where: IndustryInfluenceWhereInput, orderBy: IndustryInfluenceOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): IndustryInfluenceConnection!
-  keyWord(where: KeyWordWhereUniqueInput!): KeyWord
-  keyWords(where: KeyWordWhereInput, orderBy: KeyWordOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [KeyWord]!
-  keyWordsConnection(where: KeyWordWhereInput, orderBy: KeyWordOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): KeyWordConnection!
+  keyword(where: KeywordWhereUniqueInput!): Keyword
+  keywords(where: KeywordWhereInput, orderBy: KeywordOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Keyword]!
+  keywordsConnection(where: KeywordWhereInput, orderBy: KeywordOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): KeywordConnection!
   product(where: ProductWhereUniqueInput!): Product
   products(where: ProductWhereInput, orderBy: ProductOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Product]!
   productsConnection(where: ProductWhereInput, orderBy: ProductOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): ProductConnection!
@@ -2814,7 +2812,7 @@ type Subscription {
   industry(where: IndustrySubscriptionWhereInput): IndustrySubscriptionPayload
   industryEvent(where: IndustryEventSubscriptionWhereInput): IndustryEventSubscriptionPayload
   industryInfluence(where: IndustryInfluenceSubscriptionWhereInput): IndustryInfluenceSubscriptionPayload
-  keyWord(where: KeyWordSubscriptionWhereInput): KeyWordSubscriptionPayload
+  keyword(where: KeywordSubscriptionWhereInput): KeywordSubscriptionPayload
   product(where: ProductSubscriptionWhereInput): ProductSubscriptionPayload
   research(where: ResearchSubscriptionWhereInput): ResearchSubscriptionPayload
   user(where: UserSubscriptionWhereInput): UserSubscriptionPayload

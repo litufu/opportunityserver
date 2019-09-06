@@ -21,7 +21,7 @@ export interface Exists {
   industry: (where?: IndustryWhereInput) => Promise<boolean>;
   industryEvent: (where?: IndustryEventWhereInput) => Promise<boolean>;
   industryInfluence: (where?: IndustryInfluenceWhereInput) => Promise<boolean>;
-  keyWord: (where?: KeyWordWhereInput) => Promise<boolean>;
+  keyword: (where?: KeywordWhereInput) => Promise<boolean>;
   product: (where?: ProductWhereInput) => Promise<boolean>;
   research: (where?: ResearchWhereInput) => Promise<boolean>;
   user: (where?: UserWhereInput) => Promise<boolean>;
@@ -147,25 +147,25 @@ export interface Prisma {
     first?: Int;
     last?: Int;
   }) => IndustryInfluenceConnectionPromise;
-  keyWord: (where: KeyWordWhereUniqueInput) => KeyWordNullablePromise;
-  keyWords: (args?: {
-    where?: KeyWordWhereInput;
-    orderBy?: KeyWordOrderByInput;
+  keyword: (where: KeywordWhereUniqueInput) => KeywordNullablePromise;
+  keywords: (args?: {
+    where?: KeywordWhereInput;
+    orderBy?: KeywordOrderByInput;
     skip?: Int;
     after?: String;
     before?: String;
     first?: Int;
     last?: Int;
-  }) => FragmentableArray<KeyWord>;
-  keyWordsConnection: (args?: {
-    where?: KeyWordWhereInput;
-    orderBy?: KeyWordOrderByInput;
+  }) => FragmentableArray<Keyword>;
+  keywordsConnection: (args?: {
+    where?: KeywordWhereInput;
+    orderBy?: KeywordOrderByInput;
     skip?: Int;
     after?: String;
     before?: String;
     first?: Int;
     last?: Int;
-  }) => KeyWordConnectionPromise;
+  }) => KeywordConnectionPromise;
   product: (where: ProductWhereUniqueInput) => ProductNullablePromise;
   products: (args?: {
     where?: ProductWhereInput;
@@ -323,22 +323,22 @@ export interface Prisma {
   deleteManyIndustryInfluences: (
     where?: IndustryInfluenceWhereInput
   ) => BatchPayloadPromise;
-  createKeyWord: (data: KeyWordCreateInput) => KeyWordPromise;
-  updateKeyWord: (args: {
-    data: KeyWordUpdateInput;
-    where: KeyWordWhereUniqueInput;
-  }) => KeyWordPromise;
-  updateManyKeyWords: (args: {
-    data: KeyWordUpdateManyMutationInput;
-    where?: KeyWordWhereInput;
+  createKeyword: (data: KeywordCreateInput) => KeywordPromise;
+  updateKeyword: (args: {
+    data: KeywordUpdateInput;
+    where: KeywordWhereUniqueInput;
+  }) => KeywordPromise;
+  updateManyKeywords: (args: {
+    data: KeywordUpdateManyMutationInput;
+    where?: KeywordWhereInput;
   }) => BatchPayloadPromise;
-  upsertKeyWord: (args: {
-    where: KeyWordWhereUniqueInput;
-    create: KeyWordCreateInput;
-    update: KeyWordUpdateInput;
-  }) => KeyWordPromise;
-  deleteKeyWord: (where: KeyWordWhereUniqueInput) => KeyWordPromise;
-  deleteManyKeyWords: (where?: KeyWordWhereInput) => BatchPayloadPromise;
+  upsertKeyword: (args: {
+    where: KeywordWhereUniqueInput;
+    create: KeywordCreateInput;
+    update: KeywordUpdateInput;
+  }) => KeywordPromise;
+  deleteKeyword: (where: KeywordWhereUniqueInput) => KeywordPromise;
+  deleteManyKeywords: (where?: KeywordWhereInput) => BatchPayloadPromise;
   createProduct: (data: ProductCreateInput) => ProductPromise;
   updateProduct: (args: {
     data: ProductUpdateInput;
@@ -411,9 +411,9 @@ export interface Subscription {
   industryInfluence: (
     where?: IndustryInfluenceSubscriptionWhereInput
   ) => IndustryInfluenceSubscriptionPayloadSubscription;
-  keyWord: (
-    where?: KeyWordSubscriptionWhereInput
-  ) => KeyWordSubscriptionPayloadSubscription;
+  keyword: (
+    where?: KeywordSubscriptionWhereInput
+  ) => KeywordSubscriptionPayloadSubscription;
   product: (
     where?: ProductSubscriptionWhereInput
   ) => ProductSubscriptionPayloadSubscription;
@@ -433,11 +433,13 @@ export interface ClientConstructor<T> {
  * Types
  */
 
-export type KeyWordOrderByInput =
+export type ProductOrderByInput =
   | "id_ASC"
   | "id_DESC"
   | "name_ASC"
-  | "name_DESC";
+  | "name_DESC"
+  | "introduce_ASC"
+  | "introduce_DESC";
 
 export type IndustryOrderByInput =
   | "id_ASC"
@@ -529,16 +531,26 @@ export type CompanyOrderByInput =
 export type IndustryInfluenceOrderByInput =
   | "id_ASC"
   | "id_DESC"
+  | "keywordDirection_ASC"
+  | "keywordDirection_DESC"
   | "kind_ASC"
   | "kind_DESC"
-  | "name_ASC"
-  | "name_DESC"
   | "desc_ASC"
   | "desc_DESC"
-  | "dierction_ASC"
-  | "dierction_DESC";
+  | "direction_ASC"
+  | "direction_DESC";
 
 export type Direction = "GOOD" | "BAD";
+
+export type KeywordOrderByInput =
+  | "id_ASC"
+  | "id_DESC"
+  | "name_ASC"
+  | "name_DESC";
+
+export type Role = "ADMIN" | "CUSTOMER";
+
+export type MutationType = "CREATED" | "UPDATED" | "DELETED";
 
 export type CompanyEventOrderByInput =
   | "id_ASC"
@@ -560,21 +572,9 @@ export type CompanyEventOrderByInput =
   | "dierction_ASC"
   | "dierction_DESC";
 
-export type Role = "ADMIN" | "CUSTOMER";
-
-export type MutationType = "CREATED" | "UPDATED" | "DELETED";
-
-export type ProductOrderByInput =
-  | "id_ASC"
-  | "id_DESC"
-  | "name_ASC"
-  | "name_DESC"
-  | "introduce_ASC"
-  | "introduce_DESC";
-
-export interface KeyWordUpdateWithWhereUniqueNestedInput {
-  where: KeyWordWhereUniqueInput;
-  data: KeyWordUpdateDataInput;
+export interface KeywordUpsertNestedInput {
+  update: KeywordUpdateDataInput;
+  create: KeywordCreateInput;
 }
 
 export type CompanyWhereUniqueInput = AtLeastOne<{
@@ -583,10 +583,19 @@ export type CompanyWhereUniqueInput = AtLeastOne<{
   name?: Maybe<String>;
 }>;
 
-export interface CompanyCreateWithoutTradesInput {
-  id?: Maybe<ID_Input>;
-  symbol: String;
-  name: String;
+export interface CompanyEventCreateManyWithoutCompanyInput {
+  create?: Maybe<
+    | CompanyEventCreateWithoutCompanyInput[]
+    | CompanyEventCreateWithoutCompanyInput
+  >;
+  connect?: Maybe<
+    CompanyEventWhereUniqueInput[] | CompanyEventWhereUniqueInput
+  >;
+}
+
+export interface CompanyUpdateWithoutEventsDataInput {
+  symbol?: Maybe<String>;
+  name?: Maybe<String>;
   area?: Maybe<String>;
   industry?: Maybe<String>;
   fullname?: Maybe<String>;
@@ -600,35 +609,7 @@ export interface CompanyCreateWithoutTradesInput {
   isHS?: Maybe<String>;
   scope?: Maybe<String>;
   desc?: Maybe<String>;
-  events?: Maybe<CompanyEventCreateManyWithoutCompanyInput>;
-}
-
-export interface CompanyEventCreateInput {
-  id?: Maybe<ID_Input>;
-  title: String;
-  content: String;
-  reportTime: DateTimeInput;
-  happen: TimeKind;
-  happenTime?: Maybe<DateTimeInput>;
-  influence: String;
-  kind: FactorKind;
-  dierction: Direction;
-  company: CompanyCreateOneWithoutEventsInput;
-}
-
-export interface CompanyEventCreateManyWithoutCompanyInput {
-  create?: Maybe<
-    | CompanyEventCreateWithoutCompanyInput[]
-    | CompanyEventCreateWithoutCompanyInput
-  >;
-  connect?: Maybe<
-    CompanyEventWhereUniqueInput[] | CompanyEventWhereUniqueInput
-  >;
-}
-
-export interface IndustryInfluenceUpdateManyWithWhereNestedInput {
-  where: IndustryInfluenceScalarWhereInput;
-  data: IndustryInfluenceUpdateManyDataInput;
+  trades?: Maybe<IndustryUpdateManyWithoutCompaniesInput>;
 }
 
 export interface CompanyEventCreateWithoutCompanyInput {
@@ -643,6 +624,36 @@ export interface CompanyEventCreateWithoutCompanyInput {
   dierction: Direction;
 }
 
+export interface IndustryUpdateManyWithoutSellesInput {
+  create?: Maybe<
+    IndustryCreateWithoutSellesInput[] | IndustryCreateWithoutSellesInput
+  >;
+  delete?: Maybe<IndustryWhereUniqueInput[] | IndustryWhereUniqueInput>;
+  connect?: Maybe<IndustryWhereUniqueInput[] | IndustryWhereUniqueInput>;
+  set?: Maybe<IndustryWhereUniqueInput[] | IndustryWhereUniqueInput>;
+  disconnect?: Maybe<IndustryWhereUniqueInput[] | IndustryWhereUniqueInput>;
+  update?: Maybe<
+    | IndustryUpdateWithWhereUniqueWithoutSellesInput[]
+    | IndustryUpdateWithWhereUniqueWithoutSellesInput
+  >;
+  upsert?: Maybe<
+    | IndustryUpsertWithWhereUniqueWithoutSellesInput[]
+    | IndustryUpsertWithWhereUniqueWithoutSellesInput
+  >;
+  deleteMany?: Maybe<IndustryScalarWhereInput[] | IndustryScalarWhereInput>;
+  updateMany?: Maybe<
+    | IndustryUpdateManyWithWhereNestedInput[]
+    | IndustryUpdateManyWithWhereNestedInput
+  >;
+}
+
+export interface ProductCreateManyWithoutOutputsInput {
+  create?: Maybe<
+    ProductCreateWithoutOutputsInput[] | ProductCreateWithoutOutputsInput
+  >;
+  connect?: Maybe<ProductWhereUniqueInput[] | ProductWhereUniqueInput>;
+}
+
 export interface UserSubscriptionWhereInput {
   mutation_in?: Maybe<MutationType[] | MutationType>;
   updatedFields_contains?: Maybe<String>;
@@ -654,11 +665,11 @@ export interface UserSubscriptionWhereInput {
   NOT?: Maybe<UserSubscriptionWhereInput[] | UserSubscriptionWhereInput>;
 }
 
-export interface ProductCreateManyWithoutOutputsInput {
-  create?: Maybe<
-    ProductCreateWithoutOutputsInput[] | ProductCreateWithoutOutputsInput
-  >;
-  connect?: Maybe<ProductWhereUniqueInput[] | ProductWhereUniqueInput>;
+export interface ProductCreateWithoutOutputsInput {
+  id?: Maybe<ID_Input>;
+  name: String;
+  introduce: String;
+  inputs?: Maybe<IndustryCreateManyWithoutPurchasesInput>;
 }
 
 export interface IndustryInfluenceWhereInput {
@@ -676,27 +687,15 @@ export interface IndustryInfluenceWhereInput {
   id_not_starts_with?: Maybe<ID_Input>;
   id_ends_with?: Maybe<ID_Input>;
   id_not_ends_with?: Maybe<ID_Input>;
-  keywords_every?: Maybe<KeyWordWhereInput>;
-  keywords_some?: Maybe<KeyWordWhereInput>;
-  keywords_none?: Maybe<KeyWordWhereInput>;
+  keyword?: Maybe<KeywordWhereInput>;
+  keywordDirection?: Maybe<Direction>;
+  keywordDirection_not?: Maybe<Direction>;
+  keywordDirection_in?: Maybe<Direction[] | Direction>;
+  keywordDirection_not_in?: Maybe<Direction[] | Direction>;
   kind?: Maybe<FactorKind>;
   kind_not?: Maybe<FactorKind>;
   kind_in?: Maybe<FactorKind[] | FactorKind>;
   kind_not_in?: Maybe<FactorKind[] | FactorKind>;
-  name?: Maybe<String>;
-  name_not?: Maybe<String>;
-  name_in?: Maybe<String[] | String>;
-  name_not_in?: Maybe<String[] | String>;
-  name_lt?: Maybe<String>;
-  name_lte?: Maybe<String>;
-  name_gt?: Maybe<String>;
-  name_gte?: Maybe<String>;
-  name_contains?: Maybe<String>;
-  name_not_contains?: Maybe<String>;
-  name_starts_with?: Maybe<String>;
-  name_not_starts_with?: Maybe<String>;
-  name_ends_with?: Maybe<String>;
-  name_not_ends_with?: Maybe<String>;
   desc?: Maybe<String>;
   desc_not?: Maybe<String>;
   desc_in?: Maybe<String[] | String>;
@@ -712,20 +711,20 @@ export interface IndustryInfluenceWhereInput {
   desc_ends_with?: Maybe<String>;
   desc_not_ends_with?: Maybe<String>;
   industry?: Maybe<IndustryWhereInput>;
-  dierction?: Maybe<Direction>;
-  dierction_not?: Maybe<Direction>;
-  dierction_in?: Maybe<Direction[] | Direction>;
-  dierction_not_in?: Maybe<Direction[] | Direction>;
+  direction?: Maybe<Direction>;
+  direction_not?: Maybe<Direction>;
+  direction_in?: Maybe<Direction[] | Direction>;
+  direction_not_in?: Maybe<Direction[] | Direction>;
   AND?: Maybe<IndustryInfluenceWhereInput[] | IndustryInfluenceWhereInput>;
   OR?: Maybe<IndustryInfluenceWhereInput[] | IndustryInfluenceWhereInput>;
   NOT?: Maybe<IndustryInfluenceWhereInput[] | IndustryInfluenceWhereInput>;
 }
 
-export interface ProductCreateWithoutOutputsInput {
-  id?: Maybe<ID_Input>;
-  name: String;
-  introduce: String;
-  inputs?: Maybe<IndustryCreateManyWithoutPurchasesInput>;
+export interface IndustryCreateManyWithoutPurchasesInput {
+  create?: Maybe<
+    IndustryCreateWithoutPurchasesInput[] | IndustryCreateWithoutPurchasesInput
+  >;
+  connect?: Maybe<IndustryWhereUniqueInput[] | IndustryWhereUniqueInput>;
 }
 
 export interface ProductSubscriptionWhereInput {
@@ -739,14 +738,196 @@ export interface ProductSubscriptionWhereInput {
   NOT?: Maybe<ProductSubscriptionWhereInput[] | ProductSubscriptionWhereInput>;
 }
 
-export interface IndustryCreateManyWithoutPurchasesInput {
-  create?: Maybe<
-    IndustryCreateWithoutPurchasesInput[] | IndustryCreateWithoutPurchasesInput
-  >;
-  connect?: Maybe<IndustryWhereUniqueInput[] | IndustryWhereUniqueInput>;
+export interface IndustryCreateWithoutPurchasesInput {
+  id?: Maybe<ID_Input>;
+  code?: Maybe<String>;
+  name: String;
+  desc: String;
+  researches?: Maybe<ResearchCreateManyInput>;
+  companies?: Maybe<CompanyCreateManyWithoutTradesInput>;
+  influences?: Maybe<IndustryInfluenceCreateManyWithoutIndustryInput>;
+  selles?: Maybe<ProductCreateManyWithoutOutputsInput>;
 }
 
-export interface CompanyEventWhereInput {
+export interface IndustryInfluenceSubscriptionWhereInput {
+  mutation_in?: Maybe<MutationType[] | MutationType>;
+  updatedFields_contains?: Maybe<String>;
+  updatedFields_contains_every?: Maybe<String[] | String>;
+  updatedFields_contains_some?: Maybe<String[] | String>;
+  node?: Maybe<IndustryInfluenceWhereInput>;
+  AND?: Maybe<
+    | IndustryInfluenceSubscriptionWhereInput[]
+    | IndustryInfluenceSubscriptionWhereInput
+  >;
+  OR?: Maybe<
+    | IndustryInfluenceSubscriptionWhereInput[]
+    | IndustryInfluenceSubscriptionWhereInput
+  >;
+  NOT?: Maybe<
+    | IndustryInfluenceSubscriptionWhereInput[]
+    | IndustryInfluenceSubscriptionWhereInput
+  >;
+}
+
+export interface CompanyUpdateInput {
+  symbol?: Maybe<String>;
+  name?: Maybe<String>;
+  area?: Maybe<String>;
+  industry?: Maybe<String>;
+  fullname?: Maybe<String>;
+  enname?: Maybe<String>;
+  market?: Maybe<String>;
+  exchange?: Maybe<String>;
+  currType?: Maybe<String>;
+  listStatus?: Maybe<String>;
+  listDate?: Maybe<String>;
+  delistDate?: Maybe<String>;
+  isHS?: Maybe<String>;
+  scope?: Maybe<String>;
+  desc?: Maybe<String>;
+  trades?: Maybe<IndustryUpdateManyWithoutCompaniesInput>;
+  events?: Maybe<CompanyEventUpdateManyWithoutCompanyInput>;
+}
+
+export interface IndustryEventSubscriptionWhereInput {
+  mutation_in?: Maybe<MutationType[] | MutationType>;
+  updatedFields_contains?: Maybe<String>;
+  updatedFields_contains_every?: Maybe<String[] | String>;
+  updatedFields_contains_some?: Maybe<String[] | String>;
+  node?: Maybe<IndustryEventWhereInput>;
+  AND?: Maybe<
+    IndustryEventSubscriptionWhereInput[] | IndustryEventSubscriptionWhereInput
+  >;
+  OR?: Maybe<
+    IndustryEventSubscriptionWhereInput[] | IndustryEventSubscriptionWhereInput
+  >;
+  NOT?: Maybe<
+    IndustryEventSubscriptionWhereInput[] | IndustryEventSubscriptionWhereInput
+  >;
+}
+
+export interface IndustryUpdateManyWithoutCompaniesInput {
+  create?: Maybe<
+    IndustryCreateWithoutCompaniesInput[] | IndustryCreateWithoutCompaniesInput
+  >;
+  delete?: Maybe<IndustryWhereUniqueInput[] | IndustryWhereUniqueInput>;
+  connect?: Maybe<IndustryWhereUniqueInput[] | IndustryWhereUniqueInput>;
+  set?: Maybe<IndustryWhereUniqueInput[] | IndustryWhereUniqueInput>;
+  disconnect?: Maybe<IndustryWhereUniqueInput[] | IndustryWhereUniqueInput>;
+  update?: Maybe<
+    | IndustryUpdateWithWhereUniqueWithoutCompaniesInput[]
+    | IndustryUpdateWithWhereUniqueWithoutCompaniesInput
+  >;
+  upsert?: Maybe<
+    | IndustryUpsertWithWhereUniqueWithoutCompaniesInput[]
+    | IndustryUpsertWithWhereUniqueWithoutCompaniesInput
+  >;
+  deleteMany?: Maybe<IndustryScalarWhereInput[] | IndustryScalarWhereInput>;
+  updateMany?: Maybe<
+    | IndustryUpdateManyWithWhereNestedInput[]
+    | IndustryUpdateManyWithWhereNestedInput
+  >;
+}
+
+export interface CompanyEventSubscriptionWhereInput {
+  mutation_in?: Maybe<MutationType[] | MutationType>;
+  updatedFields_contains?: Maybe<String>;
+  updatedFields_contains_every?: Maybe<String[] | String>;
+  updatedFields_contains_some?: Maybe<String[] | String>;
+  node?: Maybe<CompanyEventWhereInput>;
+  AND?: Maybe<
+    CompanyEventSubscriptionWhereInput[] | CompanyEventSubscriptionWhereInput
+  >;
+  OR?: Maybe<
+    CompanyEventSubscriptionWhereInput[] | CompanyEventSubscriptionWhereInput
+  >;
+  NOT?: Maybe<
+    CompanyEventSubscriptionWhereInput[] | CompanyEventSubscriptionWhereInput
+  >;
+}
+
+export interface IndustryUpdateWithWhereUniqueWithoutCompaniesInput {
+  where: IndustryWhereUniqueInput;
+  data: IndustryUpdateWithoutCompaniesDataInput;
+}
+
+export interface UserUpdateManyMutationInput {
+  username?: Maybe<String>;
+  password?: Maybe<String>;
+  role?: Maybe<Role>;
+}
+
+export interface IndustryUpdateWithoutCompaniesDataInput {
+  code?: Maybe<String>;
+  name?: Maybe<String>;
+  desc?: Maybe<String>;
+  researches?: Maybe<ResearchUpdateManyInput>;
+  influences?: Maybe<IndustryInfluenceUpdateManyWithoutIndustryInput>;
+  purchases?: Maybe<ProductUpdateManyWithoutInputsInput>;
+  selles?: Maybe<ProductUpdateManyWithoutOutputsInput>;
+}
+
+export type CompanyEventWhereUniqueInput = AtLeastOne<{
+  id: Maybe<ID_Input>;
+}>;
+
+export interface ResearchUpdateManyInput {
+  create?: Maybe<ResearchCreateInput[] | ResearchCreateInput>;
+  update?: Maybe<
+    | ResearchUpdateWithWhereUniqueNestedInput[]
+    | ResearchUpdateWithWhereUniqueNestedInput
+  >;
+  upsert?: Maybe<
+    | ResearchUpsertWithWhereUniqueNestedInput[]
+    | ResearchUpsertWithWhereUniqueNestedInput
+  >;
+  delete?: Maybe<ResearchWhereUniqueInput[] | ResearchWhereUniqueInput>;
+  connect?: Maybe<ResearchWhereUniqueInput[] | ResearchWhereUniqueInput>;
+  set?: Maybe<ResearchWhereUniqueInput[] | ResearchWhereUniqueInput>;
+  disconnect?: Maybe<ResearchWhereUniqueInput[] | ResearchWhereUniqueInput>;
+  deleteMany?: Maybe<ResearchScalarWhereInput[] | ResearchScalarWhereInput>;
+  updateMany?: Maybe<
+    | ResearchUpdateManyWithWhereNestedInput[]
+    | ResearchUpdateManyWithWhereNestedInput
+  >;
+}
+
+export interface ResearchUpdateManyMutationInput {
+  desc?: Maybe<String>;
+}
+
+export interface ResearchUpdateWithWhereUniqueNestedInput {
+  where: ResearchWhereUniqueInput;
+  data: ResearchUpdateDataInput;
+}
+
+export type IndustryWhereUniqueInput = AtLeastOne<{
+  id: Maybe<ID_Input>;
+  name?: Maybe<String>;
+}>;
+
+export interface ResearchUpdateDataInput {
+  desc?: Maybe<String>;
+}
+
+export interface ProductUpdateInput {
+  name?: Maybe<String>;
+  introduce?: Maybe<String>;
+  inputs?: Maybe<IndustryUpdateManyWithoutPurchasesInput>;
+  outputs?: Maybe<IndustryUpdateManyWithoutSellesInput>;
+}
+
+export interface ResearchUpsertWithWhereUniqueNestedInput {
+  where: ResearchWhereUniqueInput;
+  update: ResearchUpdateDataInput;
+  create: ResearchCreateInput;
+}
+
+export type IndustryEventWhereUniqueInput = AtLeastOne<{
+  id: Maybe<ID_Input>;
+}>;
+
+export interface ResearchScalarWhereInput {
   id?: Maybe<ID_Input>;
   id_not?: Maybe<ID_Input>;
   id_in?: Maybe<ID_Input[] | ID_Input>;
@@ -761,91 +942,23 @@ export interface CompanyEventWhereInput {
   id_not_starts_with?: Maybe<ID_Input>;
   id_ends_with?: Maybe<ID_Input>;
   id_not_ends_with?: Maybe<ID_Input>;
-  title?: Maybe<String>;
-  title_not?: Maybe<String>;
-  title_in?: Maybe<String[] | String>;
-  title_not_in?: Maybe<String[] | String>;
-  title_lt?: Maybe<String>;
-  title_lte?: Maybe<String>;
-  title_gt?: Maybe<String>;
-  title_gte?: Maybe<String>;
-  title_contains?: Maybe<String>;
-  title_not_contains?: Maybe<String>;
-  title_starts_with?: Maybe<String>;
-  title_not_starts_with?: Maybe<String>;
-  title_ends_with?: Maybe<String>;
-  title_not_ends_with?: Maybe<String>;
-  content?: Maybe<String>;
-  content_not?: Maybe<String>;
-  content_in?: Maybe<String[] | String>;
-  content_not_in?: Maybe<String[] | String>;
-  content_lt?: Maybe<String>;
-  content_lte?: Maybe<String>;
-  content_gt?: Maybe<String>;
-  content_gte?: Maybe<String>;
-  content_contains?: Maybe<String>;
-  content_not_contains?: Maybe<String>;
-  content_starts_with?: Maybe<String>;
-  content_not_starts_with?: Maybe<String>;
-  content_ends_with?: Maybe<String>;
-  content_not_ends_with?: Maybe<String>;
-  reportTime?: Maybe<DateTimeInput>;
-  reportTime_not?: Maybe<DateTimeInput>;
-  reportTime_in?: Maybe<DateTimeInput[] | DateTimeInput>;
-  reportTime_not_in?: Maybe<DateTimeInput[] | DateTimeInput>;
-  reportTime_lt?: Maybe<DateTimeInput>;
-  reportTime_lte?: Maybe<DateTimeInput>;
-  reportTime_gt?: Maybe<DateTimeInput>;
-  reportTime_gte?: Maybe<DateTimeInput>;
-  happen?: Maybe<TimeKind>;
-  happen_not?: Maybe<TimeKind>;
-  happen_in?: Maybe<TimeKind[] | TimeKind>;
-  happen_not_in?: Maybe<TimeKind[] | TimeKind>;
-  happenTime?: Maybe<DateTimeInput>;
-  happenTime_not?: Maybe<DateTimeInput>;
-  happenTime_in?: Maybe<DateTimeInput[] | DateTimeInput>;
-  happenTime_not_in?: Maybe<DateTimeInput[] | DateTimeInput>;
-  happenTime_lt?: Maybe<DateTimeInput>;
-  happenTime_lte?: Maybe<DateTimeInput>;
-  happenTime_gt?: Maybe<DateTimeInput>;
-  happenTime_gte?: Maybe<DateTimeInput>;
-  influence?: Maybe<String>;
-  influence_not?: Maybe<String>;
-  influence_in?: Maybe<String[] | String>;
-  influence_not_in?: Maybe<String[] | String>;
-  influence_lt?: Maybe<String>;
-  influence_lte?: Maybe<String>;
-  influence_gt?: Maybe<String>;
-  influence_gte?: Maybe<String>;
-  influence_contains?: Maybe<String>;
-  influence_not_contains?: Maybe<String>;
-  influence_starts_with?: Maybe<String>;
-  influence_not_starts_with?: Maybe<String>;
-  influence_ends_with?: Maybe<String>;
-  influence_not_ends_with?: Maybe<String>;
-  kind?: Maybe<FactorKind>;
-  kind_not?: Maybe<FactorKind>;
-  kind_in?: Maybe<FactorKind[] | FactorKind>;
-  kind_not_in?: Maybe<FactorKind[] | FactorKind>;
-  dierction?: Maybe<Direction>;
-  dierction_not?: Maybe<Direction>;
-  dierction_in?: Maybe<Direction[] | Direction>;
-  dierction_not_in?: Maybe<Direction[] | Direction>;
-  company?: Maybe<CompanyWhereInput>;
-  AND?: Maybe<CompanyEventWhereInput[] | CompanyEventWhereInput>;
-  OR?: Maybe<CompanyEventWhereInput[] | CompanyEventWhereInput>;
-  NOT?: Maybe<CompanyEventWhereInput[] | CompanyEventWhereInput>;
-}
-
-export interface IndustryCreateWithoutPurchasesInput {
-  id?: Maybe<ID_Input>;
-  code?: Maybe<String>;
-  name: String;
-  desc: String;
-  researches?: Maybe<ResearchCreateManyInput>;
-  companies?: Maybe<CompanyCreateManyWithoutTradesInput>;
-  influences?: Maybe<IndustryInfluenceCreateManyWithoutIndustryInput>;
-  selles?: Maybe<ProductCreateManyWithoutOutputsInput>;
+  desc?: Maybe<String>;
+  desc_not?: Maybe<String>;
+  desc_in?: Maybe<String[] | String>;
+  desc_not_in?: Maybe<String[] | String>;
+  desc_lt?: Maybe<String>;
+  desc_lte?: Maybe<String>;
+  desc_gt?: Maybe<String>;
+  desc_gte?: Maybe<String>;
+  desc_contains?: Maybe<String>;
+  desc_not_contains?: Maybe<String>;
+  desc_starts_with?: Maybe<String>;
+  desc_not_starts_with?: Maybe<String>;
+  desc_ends_with?: Maybe<String>;
+  desc_not_ends_with?: Maybe<String>;
+  AND?: Maybe<ResearchScalarWhereInput[] | ResearchScalarWhereInput>;
+  OR?: Maybe<ResearchScalarWhereInput[] | ResearchScalarWhereInput>;
+  NOT?: Maybe<ResearchScalarWhereInput[] | ResearchScalarWhereInput>;
 }
 
 export interface CompanyWhereInput {
@@ -1084,192 +1197,9 @@ export interface CompanyWhereInput {
   NOT?: Maybe<CompanyWhereInput[] | CompanyWhereInput>;
 }
 
-export interface CompanyUpdateInput {
-  symbol?: Maybe<String>;
-  name?: Maybe<String>;
-  area?: Maybe<String>;
-  industry?: Maybe<String>;
-  fullname?: Maybe<String>;
-  enname?: Maybe<String>;
-  market?: Maybe<String>;
-  exchange?: Maybe<String>;
-  currType?: Maybe<String>;
-  listStatus?: Maybe<String>;
-  listDate?: Maybe<String>;
-  delistDate?: Maybe<String>;
-  isHS?: Maybe<String>;
-  scope?: Maybe<String>;
-  desc?: Maybe<String>;
-  trades?: Maybe<IndustryUpdateManyWithoutCompaniesInput>;
-  events?: Maybe<CompanyEventUpdateManyWithoutCompanyInput>;
-}
-
-export interface IndustrySubscriptionWhereInput {
-  mutation_in?: Maybe<MutationType[] | MutationType>;
-  updatedFields_contains?: Maybe<String>;
-  updatedFields_contains_every?: Maybe<String[] | String>;
-  updatedFields_contains_some?: Maybe<String[] | String>;
-  node?: Maybe<IndustryWhereInput>;
-  AND?: Maybe<
-    IndustrySubscriptionWhereInput[] | IndustrySubscriptionWhereInput
-  >;
-  OR?: Maybe<IndustrySubscriptionWhereInput[] | IndustrySubscriptionWhereInput>;
-  NOT?: Maybe<
-    IndustrySubscriptionWhereInput[] | IndustrySubscriptionWhereInput
-  >;
-}
-
-export interface IndustryUpdateManyWithoutCompaniesInput {
-  create?: Maybe<
-    IndustryCreateWithoutCompaniesInput[] | IndustryCreateWithoutCompaniesInput
-  >;
-  delete?: Maybe<IndustryWhereUniqueInput[] | IndustryWhereUniqueInput>;
-  connect?: Maybe<IndustryWhereUniqueInput[] | IndustryWhereUniqueInput>;
-  set?: Maybe<IndustryWhereUniqueInput[] | IndustryWhereUniqueInput>;
-  disconnect?: Maybe<IndustryWhereUniqueInput[] | IndustryWhereUniqueInput>;
-  update?: Maybe<
-    | IndustryUpdateWithWhereUniqueWithoutCompaniesInput[]
-    | IndustryUpdateWithWhereUniqueWithoutCompaniesInput
-  >;
-  upsert?: Maybe<
-    | IndustryUpsertWithWhereUniqueWithoutCompaniesInput[]
-    | IndustryUpsertWithWhereUniqueWithoutCompaniesInput
-  >;
-  deleteMany?: Maybe<IndustryScalarWhereInput[] | IndustryScalarWhereInput>;
-  updateMany?: Maybe<
-    | IndustryUpdateManyWithWhereNestedInput[]
-    | IndustryUpdateManyWithWhereNestedInput
-  >;
-}
-
-export interface CompanySubscriptionWhereInput {
-  mutation_in?: Maybe<MutationType[] | MutationType>;
-  updatedFields_contains?: Maybe<String>;
-  updatedFields_contains_every?: Maybe<String[] | String>;
-  updatedFields_contains_some?: Maybe<String[] | String>;
-  node?: Maybe<CompanyWhereInput>;
-  AND?: Maybe<CompanySubscriptionWhereInput[] | CompanySubscriptionWhereInput>;
-  OR?: Maybe<CompanySubscriptionWhereInput[] | CompanySubscriptionWhereInput>;
-  NOT?: Maybe<CompanySubscriptionWhereInput[] | CompanySubscriptionWhereInput>;
-}
-
-export interface IndustryUpdateWithWhereUniqueWithoutCompaniesInput {
-  where: IndustryWhereUniqueInput;
-  data: IndustryUpdateWithoutCompaniesDataInput;
-}
-
-export interface UserUpdateInput {
-  username?: Maybe<String>;
-  password?: Maybe<String>;
-  role?: Maybe<Role>;
-}
-
-export interface IndustryUpdateWithoutCompaniesDataInput {
-  code?: Maybe<String>;
-  name?: Maybe<String>;
-  desc?: Maybe<String>;
-  researches?: Maybe<ResearchUpdateManyInput>;
-  influences?: Maybe<IndustryInfluenceUpdateManyWithoutIndustryInput>;
-  purchases?: Maybe<ProductUpdateManyWithoutInputsInput>;
-  selles?: Maybe<ProductUpdateManyWithoutOutputsInput>;
-}
-
-export interface UserCreateInput {
-  id?: Maybe<ID_Input>;
-  username: String;
-  password: String;
-  role?: Maybe<Role>;
-}
-
-export interface ResearchUpdateManyInput {
-  create?: Maybe<ResearchCreateInput[] | ResearchCreateInput>;
-  update?: Maybe<
-    | ResearchUpdateWithWhereUniqueNestedInput[]
-    | ResearchUpdateWithWhereUniqueNestedInput
-  >;
-  upsert?: Maybe<
-    | ResearchUpsertWithWhereUniqueNestedInput[]
-    | ResearchUpsertWithWhereUniqueNestedInput
-  >;
-  delete?: Maybe<ResearchWhereUniqueInput[] | ResearchWhereUniqueInput>;
-  connect?: Maybe<ResearchWhereUniqueInput[] | ResearchWhereUniqueInput>;
-  set?: Maybe<ResearchWhereUniqueInput[] | ResearchWhereUniqueInput>;
-  disconnect?: Maybe<ResearchWhereUniqueInput[] | ResearchWhereUniqueInput>;
-  deleteMany?: Maybe<ResearchScalarWhereInput[] | ResearchScalarWhereInput>;
-  updateMany?: Maybe<
-    | ResearchUpdateManyWithWhereNestedInput[]
-    | ResearchUpdateManyWithWhereNestedInput
-  >;
-}
-
-export interface ResearchUpdateInput {
-  desc?: Maybe<String>;
-}
-
-export interface ResearchUpdateWithWhereUniqueNestedInput {
-  where: ResearchWhereUniqueInput;
-  data: ResearchUpdateDataInput;
-}
-
-export interface ProductUpdateManyMutationInput {
-  name?: Maybe<String>;
-  introduce?: Maybe<String>;
-}
-
-export interface ResearchUpdateDataInput {
-  desc?: Maybe<String>;
-}
-
-export interface ProductCreateInput {
-  id?: Maybe<ID_Input>;
-  name: String;
-  introduce: String;
-  inputs?: Maybe<IndustryCreateManyWithoutPurchasesInput>;
-  outputs?: Maybe<IndustryCreateManyWithoutSellesInput>;
-}
-
-export interface ResearchUpsertWithWhereUniqueNestedInput {
-  where: ResearchWhereUniqueInput;
-  update: ResearchUpdateDataInput;
-  create: ResearchCreateInput;
-}
-
-export interface KeyWordUpdateManyMutationInput {
-  name?: Maybe<String>;
-}
-
-export interface ResearchScalarWhereInput {
-  id?: Maybe<ID_Input>;
-  id_not?: Maybe<ID_Input>;
-  id_in?: Maybe<ID_Input[] | ID_Input>;
-  id_not_in?: Maybe<ID_Input[] | ID_Input>;
-  id_lt?: Maybe<ID_Input>;
-  id_lte?: Maybe<ID_Input>;
-  id_gt?: Maybe<ID_Input>;
-  id_gte?: Maybe<ID_Input>;
-  id_contains?: Maybe<ID_Input>;
-  id_not_contains?: Maybe<ID_Input>;
-  id_starts_with?: Maybe<ID_Input>;
-  id_not_starts_with?: Maybe<ID_Input>;
-  id_ends_with?: Maybe<ID_Input>;
-  id_not_ends_with?: Maybe<ID_Input>;
-  desc?: Maybe<String>;
-  desc_not?: Maybe<String>;
-  desc_in?: Maybe<String[] | String>;
-  desc_not_in?: Maybe<String[] | String>;
-  desc_lt?: Maybe<String>;
-  desc_lte?: Maybe<String>;
-  desc_gt?: Maybe<String>;
-  desc_gte?: Maybe<String>;
-  desc_contains?: Maybe<String>;
-  desc_not_contains?: Maybe<String>;
-  desc_starts_with?: Maybe<String>;
-  desc_not_starts_with?: Maybe<String>;
-  desc_ends_with?: Maybe<String>;
-  desc_not_ends_with?: Maybe<String>;
-  AND?: Maybe<ResearchScalarWhereInput[] | ResearchScalarWhereInput>;
-  OR?: Maybe<ResearchScalarWhereInput[] | ResearchScalarWhereInput>;
-  NOT?: Maybe<ResearchScalarWhereInput[] | ResearchScalarWhereInput>;
+export interface ResearchUpdateManyWithWhereNestedInput {
+  where: ResearchScalarWhereInput;
+  data: ResearchUpdateManyDataInput;
 }
 
 export interface ResearchWhereInput {
@@ -1306,25 +1236,16 @@ export interface ResearchWhereInput {
   NOT?: Maybe<ResearchWhereInput[] | ResearchWhereInput>;
 }
 
-export interface ResearchUpdateManyWithWhereNestedInput {
-  where: ResearchScalarWhereInput;
-  data: ResearchUpdateManyDataInput;
-}
-
-export interface IndustryInfluenceUpdateManyMutationInput {
-  kind?: Maybe<FactorKind>;
-  name?: Maybe<String>;
-  desc?: Maybe<String>;
-  dierction?: Maybe<Direction>;
-}
-
 export interface ResearchUpdateManyDataInput {
   desc?: Maybe<String>;
 }
 
-export type IndustryInfluenceWhereUniqueInput = AtLeastOne<{
-  id: Maybe<ID_Input>;
-}>;
+export interface IndustryInfluenceUpdateManyMutationInput {
+  keywordDirection?: Maybe<Direction>;
+  kind?: Maybe<FactorKind>;
+  desc?: Maybe<String>;
+  direction?: Maybe<Direction>;
+}
 
 export interface IndustryInfluenceUpdateManyWithoutIndustryInput {
   create?: Maybe<
@@ -1360,6 +1281,15 @@ export interface IndustryInfluenceUpdateManyWithoutIndustryInput {
   >;
 }
 
+export type IndustryInfluenceWhereUniqueInput = AtLeastOne<{
+  id: Maybe<ID_Input>;
+}>;
+
+export interface IndustryInfluenceUpdateWithWhereUniqueWithoutIndustryInput {
+  where: IndustryInfluenceWhereUniqueInput;
+  data: IndustryInfluenceUpdateWithoutIndustryDataInput;
+}
+
 export interface IndustryUpdateOneRequiredWithoutInfluencesInput {
   create?: Maybe<IndustryCreateWithoutInfluencesInput>;
   update?: Maybe<IndustryUpdateWithoutInfluencesDataInput>;
@@ -1367,21 +1297,26 @@ export interface IndustryUpdateOneRequiredWithoutInfluencesInput {
   connect?: Maybe<IndustryWhereUniqueInput>;
 }
 
-export interface IndustryInfluenceUpdateWithWhereUniqueWithoutIndustryInput {
-  where: IndustryInfluenceWhereUniqueInput;
-  data: IndustryInfluenceUpdateWithoutIndustryDataInput;
+export interface IndustryInfluenceUpdateWithoutIndustryDataInput {
+  keyword?: Maybe<KeywordUpdateOneInput>;
+  keywordDirection?: Maybe<Direction>;
+  kind?: Maybe<FactorKind>;
+  desc?: Maybe<String>;
+  direction?: Maybe<Direction>;
 }
 
-export type KeyWordWhereUniqueInput = AtLeastOne<{
+export type KeywordWhereUniqueInput = AtLeastOne<{
   id: Maybe<ID_Input>;
+  name?: Maybe<String>;
 }>;
 
-export interface IndustryInfluenceUpdateWithoutIndustryDataInput {
-  keywords?: Maybe<KeyWordUpdateManyInput>;
-  kind?: Maybe<FactorKind>;
-  name?: Maybe<String>;
-  desc?: Maybe<String>;
-  dierction?: Maybe<Direction>;
+export interface KeywordUpdateOneInput {
+  create?: Maybe<KeywordCreateInput>;
+  update?: Maybe<KeywordUpdateDataInput>;
+  upsert?: Maybe<KeywordUpsertNestedInput>;
+  delete?: Maybe<Boolean>;
+  disconnect?: Maybe<Boolean>;
+  connect?: Maybe<KeywordWhereUniqueInput>;
 }
 
 export interface IndustryCreateOneWithoutInfluencesInput {
@@ -1389,75 +1324,14 @@ export interface IndustryCreateOneWithoutInfluencesInput {
   connect?: Maybe<IndustryWhereUniqueInput>;
 }
 
-export interface KeyWordUpdateManyInput {
-  create?: Maybe<KeyWordCreateInput[] | KeyWordCreateInput>;
-  update?: Maybe<
-    | KeyWordUpdateWithWhereUniqueNestedInput[]
-    | KeyWordUpdateWithWhereUniqueNestedInput
-  >;
-  upsert?: Maybe<
-    | KeyWordUpsertWithWhereUniqueNestedInput[]
-    | KeyWordUpsertWithWhereUniqueNestedInput
-  >;
-  delete?: Maybe<KeyWordWhereUniqueInput[] | KeyWordWhereUniqueInput>;
-  connect?: Maybe<KeyWordWhereUniqueInput[] | KeyWordWhereUniqueInput>;
-  set?: Maybe<KeyWordWhereUniqueInput[] | KeyWordWhereUniqueInput>;
-  disconnect?: Maybe<KeyWordWhereUniqueInput[] | KeyWordWhereUniqueInput>;
-  deleteMany?: Maybe<KeyWordScalarWhereInput[] | KeyWordScalarWhereInput>;
-  updateMany?: Maybe<
-    | KeyWordUpdateManyWithWhereNestedInput[]
-    | KeyWordUpdateManyWithWhereNestedInput
-  >;
+export interface KeywordUpdateDataInput {
+  name?: Maybe<String>;
 }
 
 export type ProductWhereUniqueInput = AtLeastOne<{
   id: Maybe<ID_Input>;
   name?: Maybe<String>;
 }>;
-
-export interface CompanyCreateWithoutEventsInput {
-  id?: Maybe<ID_Input>;
-  symbol: String;
-  name: String;
-  area?: Maybe<String>;
-  industry?: Maybe<String>;
-  fullname?: Maybe<String>;
-  enname?: Maybe<String>;
-  market?: Maybe<String>;
-  exchange?: Maybe<String>;
-  currType?: Maybe<String>;
-  listStatus?: Maybe<String>;
-  listDate?: Maybe<String>;
-  delistDate?: Maybe<String>;
-  isHS?: Maybe<String>;
-  scope?: Maybe<String>;
-  desc?: Maybe<String>;
-  trades?: Maybe<IndustryCreateManyWithoutCompaniesInput>;
-}
-
-export interface IndustryEventUpdateInput {
-  title?: Maybe<String>;
-  src?: Maybe<String>;
-  reportTime?: Maybe<DateTimeInput>;
-  happen?: Maybe<TimeKind>;
-  happenTime?: Maybe<DateTimeInput>;
-  content?: Maybe<String>;
-  keyWords?: Maybe<KeyWordUpdateManyInput>;
-}
-
-export interface KeyWordUpdateDataInput {
-  name?: Maybe<String>;
-}
-
-export type ResearchWhereUniqueInput = AtLeastOne<{
-  id: Maybe<ID_Input>;
-}>;
-
-export interface KeyWordUpsertWithWhereUniqueNestedInput {
-  where: KeyWordWhereUniqueInput;
-  update: KeyWordUpdateDataInput;
-  create: KeyWordCreateInput;
-}
 
 export interface IndustryUpdateInput {
   code?: Maybe<String>;
@@ -1470,7 +1344,21 @@ export interface IndustryUpdateInput {
   selles?: Maybe<ProductUpdateManyWithoutOutputsInput>;
 }
 
-export interface KeyWordScalarWhereInput {
+export interface KeywordUpdateManyDataInput {
+  name?: Maybe<String>;
+}
+
+export interface IndustryInfluenceUpsertWithWhereUniqueWithoutIndustryInput {
+  where: IndustryInfluenceWhereUniqueInput;
+  update: IndustryInfluenceUpdateWithoutIndustryDataInput;
+  create: IndustryInfluenceCreateWithoutIndustryInput;
+}
+
+export type ResearchWhereUniqueInput = AtLeastOne<{
+  id: Maybe<ID_Input>;
+}>;
+
+export interface IndustryInfluenceScalarWhereInput {
   id?: Maybe<ID_Input>;
   id_not?: Maybe<ID_Input>;
   id_in?: Maybe<ID_Input[] | ID_Input>;
@@ -1485,23 +1373,52 @@ export interface KeyWordScalarWhereInput {
   id_not_starts_with?: Maybe<ID_Input>;
   id_ends_with?: Maybe<ID_Input>;
   id_not_ends_with?: Maybe<ID_Input>;
-  name?: Maybe<String>;
-  name_not?: Maybe<String>;
-  name_in?: Maybe<String[] | String>;
-  name_not_in?: Maybe<String[] | String>;
-  name_lt?: Maybe<String>;
-  name_lte?: Maybe<String>;
-  name_gt?: Maybe<String>;
-  name_gte?: Maybe<String>;
-  name_contains?: Maybe<String>;
-  name_not_contains?: Maybe<String>;
-  name_starts_with?: Maybe<String>;
-  name_not_starts_with?: Maybe<String>;
-  name_ends_with?: Maybe<String>;
-  name_not_ends_with?: Maybe<String>;
-  AND?: Maybe<KeyWordScalarWhereInput[] | KeyWordScalarWhereInput>;
-  OR?: Maybe<KeyWordScalarWhereInput[] | KeyWordScalarWhereInput>;
-  NOT?: Maybe<KeyWordScalarWhereInput[] | KeyWordScalarWhereInput>;
+  keywordDirection?: Maybe<Direction>;
+  keywordDirection_not?: Maybe<Direction>;
+  keywordDirection_in?: Maybe<Direction[] | Direction>;
+  keywordDirection_not_in?: Maybe<Direction[] | Direction>;
+  kind?: Maybe<FactorKind>;
+  kind_not?: Maybe<FactorKind>;
+  kind_in?: Maybe<FactorKind[] | FactorKind>;
+  kind_not_in?: Maybe<FactorKind[] | FactorKind>;
+  desc?: Maybe<String>;
+  desc_not?: Maybe<String>;
+  desc_in?: Maybe<String[] | String>;
+  desc_not_in?: Maybe<String[] | String>;
+  desc_lt?: Maybe<String>;
+  desc_lte?: Maybe<String>;
+  desc_gt?: Maybe<String>;
+  desc_gte?: Maybe<String>;
+  desc_contains?: Maybe<String>;
+  desc_not_contains?: Maybe<String>;
+  desc_starts_with?: Maybe<String>;
+  desc_not_starts_with?: Maybe<String>;
+  desc_ends_with?: Maybe<String>;
+  desc_not_ends_with?: Maybe<String>;
+  direction?: Maybe<Direction>;
+  direction_not?: Maybe<Direction>;
+  direction_in?: Maybe<Direction[] | Direction>;
+  direction_not_in?: Maybe<Direction[] | Direction>;
+  AND?: Maybe<
+    IndustryInfluenceScalarWhereInput[] | IndustryInfluenceScalarWhereInput
+  >;
+  OR?: Maybe<
+    IndustryInfluenceScalarWhereInput[] | IndustryInfluenceScalarWhereInput
+  >;
+  NOT?: Maybe<
+    IndustryInfluenceScalarWhereInput[] | IndustryInfluenceScalarWhereInput
+  >;
+}
+
+export interface KeywordUpsertWithWhereUniqueNestedInput {
+  where: KeywordWhereUniqueInput;
+  update: KeywordUpdateDataInput;
+  create: KeywordCreateInput;
+}
+
+export interface IndustryInfluenceUpdateManyWithWhereNestedInput {
+  where: IndustryInfluenceScalarWhereInput;
+  data: IndustryInfluenceUpdateManyDataInput;
 }
 
 export type UserWhereUniqueInput = AtLeastOne<{
@@ -1509,9 +1426,11 @@ export type UserWhereUniqueInput = AtLeastOne<{
   username?: Maybe<String>;
 }>;
 
-export interface KeyWordUpdateManyWithWhereNestedInput {
-  where: KeyWordScalarWhereInput;
-  data: KeyWordUpdateManyDataInput;
+export interface IndustryInfluenceUpdateManyDataInput {
+  keywordDirection?: Maybe<Direction>;
+  kind?: Maybe<FactorKind>;
+  desc?: Maybe<String>;
+  direction?: Maybe<Direction>;
 }
 
 export interface IndustryWhereInput {
@@ -1591,124 +1510,6 @@ export interface IndustryWhereInput {
   NOT?: Maybe<IndustryWhereInput[] | IndustryWhereInput>;
 }
 
-export interface KeyWordUpdateManyDataInput {
-  name?: Maybe<String>;
-}
-
-export interface CompanyUpsertWithoutEventsInput {
-  update: CompanyUpdateWithoutEventsDataInput;
-  create: CompanyCreateWithoutEventsInput;
-}
-
-export interface IndustryInfluenceUpsertWithWhereUniqueWithoutIndustryInput {
-  where: IndustryInfluenceWhereUniqueInput;
-  update: IndustryInfluenceUpdateWithoutIndustryDataInput;
-  create: IndustryInfluenceCreateWithoutIndustryInput;
-}
-
-export interface CompanyUpdateOneRequiredWithoutEventsInput {
-  create?: Maybe<CompanyCreateWithoutEventsInput>;
-  update?: Maybe<CompanyUpdateWithoutEventsDataInput>;
-  upsert?: Maybe<CompanyUpsertWithoutEventsInput>;
-  connect?: Maybe<CompanyWhereUniqueInput>;
-}
-
-export interface IndustryInfluenceScalarWhereInput {
-  id?: Maybe<ID_Input>;
-  id_not?: Maybe<ID_Input>;
-  id_in?: Maybe<ID_Input[] | ID_Input>;
-  id_not_in?: Maybe<ID_Input[] | ID_Input>;
-  id_lt?: Maybe<ID_Input>;
-  id_lte?: Maybe<ID_Input>;
-  id_gt?: Maybe<ID_Input>;
-  id_gte?: Maybe<ID_Input>;
-  id_contains?: Maybe<ID_Input>;
-  id_not_contains?: Maybe<ID_Input>;
-  id_starts_with?: Maybe<ID_Input>;
-  id_not_starts_with?: Maybe<ID_Input>;
-  id_ends_with?: Maybe<ID_Input>;
-  id_not_ends_with?: Maybe<ID_Input>;
-  kind?: Maybe<FactorKind>;
-  kind_not?: Maybe<FactorKind>;
-  kind_in?: Maybe<FactorKind[] | FactorKind>;
-  kind_not_in?: Maybe<FactorKind[] | FactorKind>;
-  name?: Maybe<String>;
-  name_not?: Maybe<String>;
-  name_in?: Maybe<String[] | String>;
-  name_not_in?: Maybe<String[] | String>;
-  name_lt?: Maybe<String>;
-  name_lte?: Maybe<String>;
-  name_gt?: Maybe<String>;
-  name_gte?: Maybe<String>;
-  name_contains?: Maybe<String>;
-  name_not_contains?: Maybe<String>;
-  name_starts_with?: Maybe<String>;
-  name_not_starts_with?: Maybe<String>;
-  name_ends_with?: Maybe<String>;
-  name_not_ends_with?: Maybe<String>;
-  desc?: Maybe<String>;
-  desc_not?: Maybe<String>;
-  desc_in?: Maybe<String[] | String>;
-  desc_not_in?: Maybe<String[] | String>;
-  desc_lt?: Maybe<String>;
-  desc_lte?: Maybe<String>;
-  desc_gt?: Maybe<String>;
-  desc_gte?: Maybe<String>;
-  desc_contains?: Maybe<String>;
-  desc_not_contains?: Maybe<String>;
-  desc_starts_with?: Maybe<String>;
-  desc_not_starts_with?: Maybe<String>;
-  desc_ends_with?: Maybe<String>;
-  desc_not_ends_with?: Maybe<String>;
-  dierction?: Maybe<Direction>;
-  dierction_not?: Maybe<Direction>;
-  dierction_in?: Maybe<Direction[] | Direction>;
-  dierction_not_in?: Maybe<Direction[] | Direction>;
-  AND?: Maybe<
-    IndustryInfluenceScalarWhereInput[] | IndustryInfluenceScalarWhereInput
-  >;
-  OR?: Maybe<
-    IndustryInfluenceScalarWhereInput[] | IndustryInfluenceScalarWhereInput
-  >;
-  NOT?: Maybe<
-    IndustryInfluenceScalarWhereInput[] | IndustryInfluenceScalarWhereInput
-  >;
-}
-
-export interface IndustryCreateManyWithoutCompaniesInput {
-  create?: Maybe<
-    IndustryCreateWithoutCompaniesInput[] | IndustryCreateWithoutCompaniesInput
-  >;
-  connect?: Maybe<IndustryWhereUniqueInput[] | IndustryWhereUniqueInput>;
-}
-
-export interface CompanyCreateOneWithoutEventsInput {
-  create?: Maybe<CompanyCreateWithoutEventsInput>;
-  connect?: Maybe<CompanyWhereUniqueInput>;
-}
-
-export interface ResearchCreateManyInput {
-  create?: Maybe<ResearchCreateInput[] | ResearchCreateInput>;
-  connect?: Maybe<ResearchWhereUniqueInput[] | ResearchWhereUniqueInput>;
-}
-
-export interface IndustryInfluenceUpdateManyDataInput {
-  kind?: Maybe<FactorKind>;
-  name?: Maybe<String>;
-  desc?: Maybe<String>;
-  dierction?: Maybe<Direction>;
-}
-
-export interface IndustryInfluenceCreateManyWithoutIndustryInput {
-  create?: Maybe<
-    | IndustryInfluenceCreateWithoutIndustryInput[]
-    | IndustryInfluenceCreateWithoutIndustryInput
-  >;
-  connect?: Maybe<
-    IndustryInfluenceWhereUniqueInput[] | IndustryInfluenceWhereUniqueInput
-  >;
-}
-
 export interface ProductUpdateManyWithoutInputsInput {
   create?: Maybe<
     ProductCreateWithoutInputsInput[] | ProductCreateWithoutInputsInput
@@ -1732,9 +1533,14 @@ export interface ProductUpdateManyWithoutInputsInput {
   >;
 }
 
-export interface KeyWordCreateManyInput {
-  create?: Maybe<KeyWordCreateInput[] | KeyWordCreateInput>;
-  connect?: Maybe<KeyWordWhereUniqueInput[] | KeyWordWhereUniqueInput>;
+export interface IndustryEventUpdateInput {
+  title?: Maybe<String>;
+  src?: Maybe<String>;
+  reportTime?: Maybe<DateTimeInput>;
+  happen?: Maybe<TimeKind>;
+  happenTime?: Maybe<DateTimeInput>;
+  content?: Maybe<String>;
+  Keywords?: Maybe<KeywordUpdateManyInput>;
 }
 
 export interface ProductUpdateWithWhereUniqueWithoutInputsInput {
@@ -1742,11 +1548,15 @@ export interface ProductUpdateWithWhereUniqueWithoutInputsInput {
   data: ProductUpdateWithoutInputsDataInput;
 }
 
-export interface ProductCreateManyWithoutInputsInput {
-  create?: Maybe<
-    ProductCreateWithoutInputsInput[] | ProductCreateWithoutInputsInput
-  >;
-  connect?: Maybe<ProductWhereUniqueInput[] | ProductWhereUniqueInput>;
+export interface IndustryEventCreateInput {
+  id?: Maybe<ID_Input>;
+  title: String;
+  src: String;
+  reportTime: DateTimeInput;
+  happen: TimeKind;
+  happenTime: DateTimeInput;
+  content: String;
+  Keywords?: Maybe<KeywordCreateManyInput>;
 }
 
 export interface ProductUpdateWithoutInputsDataInput {
@@ -1755,41 +1565,28 @@ export interface ProductUpdateWithoutInputsDataInput {
   outputs?: Maybe<IndustryUpdateManyWithoutSellesInput>;
 }
 
-export interface IndustryCreateManyWithoutSellesInput {
+export interface IndustryCreateManyWithoutCompaniesInput {
   create?: Maybe<
-    IndustryCreateWithoutSellesInput[] | IndustryCreateWithoutSellesInput
+    IndustryCreateWithoutCompaniesInput[] | IndustryCreateWithoutCompaniesInput
   >;
   connect?: Maybe<IndustryWhereUniqueInput[] | IndustryWhereUniqueInput>;
 }
 
-export interface IndustryUpdateManyWithoutSellesInput {
-  create?: Maybe<
-    IndustryCreateWithoutSellesInput[] | IndustryCreateWithoutSellesInput
-  >;
-  delete?: Maybe<IndustryWhereUniqueInput[] | IndustryWhereUniqueInput>;
-  connect?: Maybe<IndustryWhereUniqueInput[] | IndustryWhereUniqueInput>;
-  set?: Maybe<IndustryWhereUniqueInput[] | IndustryWhereUniqueInput>;
-  disconnect?: Maybe<IndustryWhereUniqueInput[] | IndustryWhereUniqueInput>;
-  update?: Maybe<
-    | IndustryUpdateWithWhereUniqueWithoutSellesInput[]
-    | IndustryUpdateWithWhereUniqueWithoutSellesInput
-  >;
-  upsert?: Maybe<
-    | IndustryUpsertWithWhereUniqueWithoutSellesInput[]
-    | IndustryUpsertWithWhereUniqueWithoutSellesInput
-  >;
-  deleteMany?: Maybe<IndustryScalarWhereInput[] | IndustryScalarWhereInput>;
-  updateMany?: Maybe<
-    | IndustryUpdateManyWithWhereNestedInput[]
-    | IndustryUpdateManyWithWhereNestedInput
-  >;
+export interface IndustryCreateInput {
+  id?: Maybe<ID_Input>;
+  code?: Maybe<String>;
+  name: String;
+  desc: String;
+  researches?: Maybe<ResearchCreateManyInput>;
+  companies?: Maybe<CompanyCreateManyWithoutTradesInput>;
+  influences?: Maybe<IndustryInfluenceCreateManyWithoutIndustryInput>;
+  purchases?: Maybe<ProductCreateManyWithoutInputsInput>;
+  selles?: Maybe<ProductCreateManyWithoutOutputsInput>;
 }
 
-export interface CompanyCreateManyWithoutTradesInput {
-  create?: Maybe<
-    CompanyCreateWithoutTradesInput[] | CompanyCreateWithoutTradesInput
-  >;
-  connect?: Maybe<CompanyWhereUniqueInput[] | CompanyWhereUniqueInput>;
+export interface ResearchCreateManyInput {
+  create?: Maybe<ResearchCreateInput[] | ResearchCreateInput>;
+  connect?: Maybe<ResearchWhereUniqueInput[] | ResearchWhereUniqueInput>;
 }
 
 export interface IndustryUpdateWithWhereUniqueWithoutSellesInput {
@@ -1797,38 +1594,14 @@ export interface IndustryUpdateWithWhereUniqueWithoutSellesInput {
   data: IndustryUpdateWithoutSellesDataInput;
 }
 
-export interface KeyWordWhereInput {
-  id?: Maybe<ID_Input>;
-  id_not?: Maybe<ID_Input>;
-  id_in?: Maybe<ID_Input[] | ID_Input>;
-  id_not_in?: Maybe<ID_Input[] | ID_Input>;
-  id_lt?: Maybe<ID_Input>;
-  id_lte?: Maybe<ID_Input>;
-  id_gt?: Maybe<ID_Input>;
-  id_gte?: Maybe<ID_Input>;
-  id_contains?: Maybe<ID_Input>;
-  id_not_contains?: Maybe<ID_Input>;
-  id_starts_with?: Maybe<ID_Input>;
-  id_not_starts_with?: Maybe<ID_Input>;
-  id_ends_with?: Maybe<ID_Input>;
-  id_not_ends_with?: Maybe<ID_Input>;
-  name?: Maybe<String>;
-  name_not?: Maybe<String>;
-  name_in?: Maybe<String[] | String>;
-  name_not_in?: Maybe<String[] | String>;
-  name_lt?: Maybe<String>;
-  name_lte?: Maybe<String>;
-  name_gt?: Maybe<String>;
-  name_gte?: Maybe<String>;
-  name_contains?: Maybe<String>;
-  name_not_contains?: Maybe<String>;
-  name_starts_with?: Maybe<String>;
-  name_not_starts_with?: Maybe<String>;
-  name_ends_with?: Maybe<String>;
-  name_not_ends_with?: Maybe<String>;
-  AND?: Maybe<KeyWordWhereInput[] | KeyWordWhereInput>;
-  OR?: Maybe<KeyWordWhereInput[] | KeyWordWhereInput>;
-  NOT?: Maybe<KeyWordWhereInput[] | KeyWordWhereInput>;
+export interface IndustryInfluenceCreateManyWithoutIndustryInput {
+  create?: Maybe<
+    | IndustryInfluenceCreateWithoutIndustryInput[]
+    | IndustryInfluenceCreateWithoutIndustryInput
+  >;
+  connect?: Maybe<
+    IndustryInfluenceWhereUniqueInput[] | IndustryInfluenceWhereUniqueInput
+  >;
 }
 
 export interface IndustryUpdateWithoutSellesDataInput {
@@ -1841,15 +1614,9 @@ export interface IndustryUpdateWithoutSellesDataInput {
   purchases?: Maybe<ProductUpdateManyWithoutInputsInput>;
 }
 
-export interface KeyWordSubscriptionWhereInput {
-  mutation_in?: Maybe<MutationType[] | MutationType>;
-  updatedFields_contains?: Maybe<String>;
-  updatedFields_contains_every?: Maybe<String[] | String>;
-  updatedFields_contains_some?: Maybe<String[] | String>;
-  node?: Maybe<KeyWordWhereInput>;
-  AND?: Maybe<KeyWordSubscriptionWhereInput[] | KeyWordSubscriptionWhereInput>;
-  OR?: Maybe<KeyWordSubscriptionWhereInput[] | KeyWordSubscriptionWhereInput>;
-  NOT?: Maybe<KeyWordSubscriptionWhereInput[] | KeyWordSubscriptionWhereInput>;
+export interface KeywordCreateOneInput {
+  create?: Maybe<KeywordCreateInput>;
+  connect?: Maybe<KeywordWhereUniqueInput>;
 }
 
 export interface CompanyUpdateManyWithoutTradesInput {
@@ -1875,21 +1642,11 @@ export interface CompanyUpdateManyWithoutTradesInput {
   >;
 }
 
-export interface IndustryEventSubscriptionWhereInput {
-  mutation_in?: Maybe<MutationType[] | MutationType>;
-  updatedFields_contains?: Maybe<String>;
-  updatedFields_contains_every?: Maybe<String[] | String>;
-  updatedFields_contains_some?: Maybe<String[] | String>;
-  node?: Maybe<IndustryEventWhereInput>;
-  AND?: Maybe<
-    IndustryEventSubscriptionWhereInput[] | IndustryEventSubscriptionWhereInput
+export interface ProductCreateManyWithoutInputsInput {
+  create?: Maybe<
+    ProductCreateWithoutInputsInput[] | ProductCreateWithoutInputsInput
   >;
-  OR?: Maybe<
-    IndustryEventSubscriptionWhereInput[] | IndustryEventSubscriptionWhereInput
-  >;
-  NOT?: Maybe<
-    IndustryEventSubscriptionWhereInput[] | IndustryEventSubscriptionWhereInput
-  >;
+  connect?: Maybe<ProductWhereUniqueInput[] | ProductWhereUniqueInput>;
 }
 
 export interface CompanyUpdateWithWhereUniqueWithoutTradesInput {
@@ -1897,10 +1654,11 @@ export interface CompanyUpdateWithWhereUniqueWithoutTradesInput {
   data: CompanyUpdateWithoutTradesDataInput;
 }
 
-export interface UserUpdateManyMutationInput {
-  username?: Maybe<String>;
-  password?: Maybe<String>;
-  role?: Maybe<Role>;
+export interface IndustryCreateManyWithoutSellesInput {
+  create?: Maybe<
+    IndustryCreateWithoutSellesInput[] | IndustryCreateWithoutSellesInput
+  >;
+  connect?: Maybe<IndustryWhereUniqueInput[] | IndustryWhereUniqueInput>;
 }
 
 export interface CompanyUpdateWithoutTradesDataInput {
@@ -1922,8 +1680,11 @@ export interface CompanyUpdateWithoutTradesDataInput {
   events?: Maybe<CompanyEventUpdateManyWithoutCompanyInput>;
 }
 
-export interface ResearchUpdateManyMutationInput {
-  desc?: Maybe<String>;
+export interface CompanyCreateManyWithoutTradesInput {
+  create?: Maybe<
+    CompanyCreateWithoutTradesInput[] | CompanyCreateWithoutTradesInput
+  >;
+  connect?: Maybe<CompanyWhereUniqueInput[] | CompanyWhereUniqueInput>;
 }
 
 export interface CompanyEventUpdateManyWithoutCompanyInput {
@@ -1956,11 +1717,58 @@ export interface CompanyEventUpdateManyWithoutCompanyInput {
   >;
 }
 
-export interface ProductUpdateInput {
+export interface ProductWhereInput {
+  id?: Maybe<ID_Input>;
+  id_not?: Maybe<ID_Input>;
+  id_in?: Maybe<ID_Input[] | ID_Input>;
+  id_not_in?: Maybe<ID_Input[] | ID_Input>;
+  id_lt?: Maybe<ID_Input>;
+  id_lte?: Maybe<ID_Input>;
+  id_gt?: Maybe<ID_Input>;
+  id_gte?: Maybe<ID_Input>;
+  id_contains?: Maybe<ID_Input>;
+  id_not_contains?: Maybe<ID_Input>;
+  id_starts_with?: Maybe<ID_Input>;
+  id_not_starts_with?: Maybe<ID_Input>;
+  id_ends_with?: Maybe<ID_Input>;
+  id_not_ends_with?: Maybe<ID_Input>;
   name?: Maybe<String>;
+  name_not?: Maybe<String>;
+  name_in?: Maybe<String[] | String>;
+  name_not_in?: Maybe<String[] | String>;
+  name_lt?: Maybe<String>;
+  name_lte?: Maybe<String>;
+  name_gt?: Maybe<String>;
+  name_gte?: Maybe<String>;
+  name_contains?: Maybe<String>;
+  name_not_contains?: Maybe<String>;
+  name_starts_with?: Maybe<String>;
+  name_not_starts_with?: Maybe<String>;
+  name_ends_with?: Maybe<String>;
+  name_not_ends_with?: Maybe<String>;
   introduce?: Maybe<String>;
-  inputs?: Maybe<IndustryUpdateManyWithoutPurchasesInput>;
-  outputs?: Maybe<IndustryUpdateManyWithoutSellesInput>;
+  introduce_not?: Maybe<String>;
+  introduce_in?: Maybe<String[] | String>;
+  introduce_not_in?: Maybe<String[] | String>;
+  introduce_lt?: Maybe<String>;
+  introduce_lte?: Maybe<String>;
+  introduce_gt?: Maybe<String>;
+  introduce_gte?: Maybe<String>;
+  introduce_contains?: Maybe<String>;
+  introduce_not_contains?: Maybe<String>;
+  introduce_starts_with?: Maybe<String>;
+  introduce_not_starts_with?: Maybe<String>;
+  introduce_ends_with?: Maybe<String>;
+  introduce_not_ends_with?: Maybe<String>;
+  inputs_every?: Maybe<IndustryWhereInput>;
+  inputs_some?: Maybe<IndustryWhereInput>;
+  inputs_none?: Maybe<IndustryWhereInput>;
+  outputs_every?: Maybe<IndustryWhereInput>;
+  outputs_some?: Maybe<IndustryWhereInput>;
+  outputs_none?: Maybe<IndustryWhereInput>;
+  AND?: Maybe<ProductWhereInput[] | ProductWhereInput>;
+  OR?: Maybe<ProductWhereInput[] | ProductWhereInput>;
+  NOT?: Maybe<ProductWhereInput[] | ProductWhereInput>;
 }
 
 export interface CompanyEventUpdateWithWhereUniqueWithoutCompanyInput {
@@ -1968,7 +1776,33 @@ export interface CompanyEventUpdateWithWhereUniqueWithoutCompanyInput {
   data: CompanyEventUpdateWithoutCompanyDataInput;
 }
 
-export interface IndustryEventWhereInput {
+export interface ResearchSubscriptionWhereInput {
+  mutation_in?: Maybe<MutationType[] | MutationType>;
+  updatedFields_contains?: Maybe<String>;
+  updatedFields_contains_every?: Maybe<String[] | String>;
+  updatedFields_contains_some?: Maybe<String[] | String>;
+  node?: Maybe<ResearchWhereInput>;
+  AND?: Maybe<
+    ResearchSubscriptionWhereInput[] | ResearchSubscriptionWhereInput
+  >;
+  OR?: Maybe<ResearchSubscriptionWhereInput[] | ResearchSubscriptionWhereInput>;
+  NOT?: Maybe<
+    ResearchSubscriptionWhereInput[] | ResearchSubscriptionWhereInput
+  >;
+}
+
+export interface CompanyEventUpdateWithoutCompanyDataInput {
+  title?: Maybe<String>;
+  content?: Maybe<String>;
+  reportTime?: Maybe<DateTimeInput>;
+  happen?: Maybe<TimeKind>;
+  happenTime?: Maybe<DateTimeInput>;
+  influence?: Maybe<String>;
+  kind?: Maybe<FactorKind>;
+  dierction?: Maybe<Direction>;
+}
+
+export interface CompanyEventWhereInput {
   id?: Maybe<ID_Input>;
   id_not?: Maybe<ID_Input>;
   id_in?: Maybe<ID_Input[] | ID_Input>;
@@ -1997,20 +1831,20 @@ export interface IndustryEventWhereInput {
   title_not_starts_with?: Maybe<String>;
   title_ends_with?: Maybe<String>;
   title_not_ends_with?: Maybe<String>;
-  src?: Maybe<String>;
-  src_not?: Maybe<String>;
-  src_in?: Maybe<String[] | String>;
-  src_not_in?: Maybe<String[] | String>;
-  src_lt?: Maybe<String>;
-  src_lte?: Maybe<String>;
-  src_gt?: Maybe<String>;
-  src_gte?: Maybe<String>;
-  src_contains?: Maybe<String>;
-  src_not_contains?: Maybe<String>;
-  src_starts_with?: Maybe<String>;
-  src_not_starts_with?: Maybe<String>;
-  src_ends_with?: Maybe<String>;
-  src_not_ends_with?: Maybe<String>;
+  content?: Maybe<String>;
+  content_not?: Maybe<String>;
+  content_in?: Maybe<String[] | String>;
+  content_not_in?: Maybe<String[] | String>;
+  content_lt?: Maybe<String>;
+  content_lte?: Maybe<String>;
+  content_gt?: Maybe<String>;
+  content_gte?: Maybe<String>;
+  content_contains?: Maybe<String>;
+  content_not_contains?: Maybe<String>;
+  content_starts_with?: Maybe<String>;
+  content_not_starts_with?: Maybe<String>;
+  content_ends_with?: Maybe<String>;
+  content_not_ends_with?: Maybe<String>;
   reportTime?: Maybe<DateTimeInput>;
   reportTime_not?: Maybe<DateTimeInput>;
   reportTime_in?: Maybe<DateTimeInput[] | DateTimeInput>;
@@ -2031,42 +1865,32 @@ export interface IndustryEventWhereInput {
   happenTime_lte?: Maybe<DateTimeInput>;
   happenTime_gt?: Maybe<DateTimeInput>;
   happenTime_gte?: Maybe<DateTimeInput>;
-  content?: Maybe<String>;
-  content_not?: Maybe<String>;
-  content_in?: Maybe<String[] | String>;
-  content_not_in?: Maybe<String[] | String>;
-  content_lt?: Maybe<String>;
-  content_lte?: Maybe<String>;
-  content_gt?: Maybe<String>;
-  content_gte?: Maybe<String>;
-  content_contains?: Maybe<String>;
-  content_not_contains?: Maybe<String>;
-  content_starts_with?: Maybe<String>;
-  content_not_starts_with?: Maybe<String>;
-  content_ends_with?: Maybe<String>;
-  content_not_ends_with?: Maybe<String>;
-  keyWords_every?: Maybe<KeyWordWhereInput>;
-  keyWords_some?: Maybe<KeyWordWhereInput>;
-  keyWords_none?: Maybe<KeyWordWhereInput>;
-  AND?: Maybe<IndustryEventWhereInput[] | IndustryEventWhereInput>;
-  OR?: Maybe<IndustryEventWhereInput[] | IndustryEventWhereInput>;
-  NOT?: Maybe<IndustryEventWhereInput[] | IndustryEventWhereInput>;
-}
-
-export interface CompanyEventUpdateWithoutCompanyDataInput {
-  title?: Maybe<String>;
-  content?: Maybe<String>;
-  reportTime?: Maybe<DateTimeInput>;
-  happen?: Maybe<TimeKind>;
-  happenTime?: Maybe<DateTimeInput>;
   influence?: Maybe<String>;
+  influence_not?: Maybe<String>;
+  influence_in?: Maybe<String[] | String>;
+  influence_not_in?: Maybe<String[] | String>;
+  influence_lt?: Maybe<String>;
+  influence_lte?: Maybe<String>;
+  influence_gt?: Maybe<String>;
+  influence_gte?: Maybe<String>;
+  influence_contains?: Maybe<String>;
+  influence_not_contains?: Maybe<String>;
+  influence_starts_with?: Maybe<String>;
+  influence_not_starts_with?: Maybe<String>;
+  influence_ends_with?: Maybe<String>;
+  influence_not_ends_with?: Maybe<String>;
   kind?: Maybe<FactorKind>;
+  kind_not?: Maybe<FactorKind>;
+  kind_in?: Maybe<FactorKind[] | FactorKind>;
+  kind_not_in?: Maybe<FactorKind[] | FactorKind>;
   dierction?: Maybe<Direction>;
-}
-
-export interface IndustryUpsertWithoutInfluencesInput {
-  update: IndustryUpdateWithoutInfluencesDataInput;
-  create: IndustryCreateWithoutInfluencesInput;
+  dierction_not?: Maybe<Direction>;
+  dierction_in?: Maybe<Direction[] | Direction>;
+  dierction_not_in?: Maybe<Direction[] | Direction>;
+  company?: Maybe<CompanyWhereInput>;
+  AND?: Maybe<CompanyEventWhereInput[] | CompanyEventWhereInput>;
+  OR?: Maybe<CompanyEventWhereInput[] | CompanyEventWhereInput>;
+  NOT?: Maybe<CompanyEventWhereInput[] | CompanyEventWhereInput>;
 }
 
 export interface CompanyEventUpsertWithWhereUniqueWithoutCompanyInput {
@@ -2075,13 +1899,15 @@ export interface CompanyEventUpsertWithWhereUniqueWithoutCompanyInput {
   create: CompanyEventCreateWithoutCompanyInput;
 }
 
-export interface IndustryInfluenceUpdateInput {
-  keywords?: Maybe<KeyWordUpdateManyInput>;
-  kind?: Maybe<FactorKind>;
-  name?: Maybe<String>;
-  desc?: Maybe<String>;
-  industry?: Maybe<IndustryUpdateOneRequiredWithoutInfluencesInput>;
-  dierction?: Maybe<Direction>;
+export interface CompanySubscriptionWhereInput {
+  mutation_in?: Maybe<MutationType[] | MutationType>;
+  updatedFields_contains?: Maybe<String>;
+  updatedFields_contains_every?: Maybe<String[] | String>;
+  updatedFields_contains_some?: Maybe<String[] | String>;
+  node?: Maybe<CompanyWhereInput>;
+  AND?: Maybe<CompanySubscriptionWhereInput[] | CompanySubscriptionWhereInput>;
+  OR?: Maybe<CompanySubscriptionWhereInput[] | CompanySubscriptionWhereInput>;
+  NOT?: Maybe<CompanySubscriptionWhereInput[] | CompanySubscriptionWhereInput>;
 }
 
 export interface CompanyEventScalarWhereInput {
@@ -2174,14 +2000,11 @@ export interface CompanyEventScalarWhereInput {
   NOT?: Maybe<CompanyEventScalarWhereInput[] | CompanyEventScalarWhereInput>;
 }
 
-export interface IndustryInfluenceCreateInput {
+export interface UserCreateInput {
   id?: Maybe<ID_Input>;
-  keywords?: Maybe<KeyWordCreateManyInput>;
-  kind: FactorKind;
-  name: String;
-  desc: String;
-  industry: IndustryCreateOneWithoutInfluencesInput;
-  dierction: Direction;
+  username: String;
+  password: String;
+  role?: Maybe<Role>;
 }
 
 export interface CompanyEventUpdateManyWithWhereNestedInput {
@@ -2189,15 +2012,9 @@ export interface CompanyEventUpdateManyWithWhereNestedInput {
   data: CompanyEventUpdateManyDataInput;
 }
 
-export interface IndustryEventCreateInput {
-  id?: Maybe<ID_Input>;
-  title: String;
-  src: String;
-  reportTime: DateTimeInput;
-  happen: TimeKind;
-  happenTime: DateTimeInput;
-  content: String;
-  keyWords?: Maybe<KeyWordCreateManyInput>;
+export interface ProductUpdateManyMutationInput {
+  name?: Maybe<String>;
+  introduce?: Maybe<String>;
 }
 
 export interface CompanyEventUpdateManyDataInput {
@@ -2211,16 +2028,8 @@ export interface CompanyEventUpdateManyDataInput {
   dierction?: Maybe<Direction>;
 }
 
-export interface IndustryCreateInput {
-  id?: Maybe<ID_Input>;
-  code?: Maybe<String>;
-  name: String;
-  desc: String;
-  researches?: Maybe<ResearchCreateManyInput>;
-  companies?: Maybe<CompanyCreateManyWithoutTradesInput>;
-  influences?: Maybe<IndustryInfluenceCreateManyWithoutIndustryInput>;
-  purchases?: Maybe<ProductCreateManyWithoutInputsInput>;
-  selles?: Maybe<ProductCreateManyWithoutOutputsInput>;
+export interface KeywordUpdateManyMutationInput {
+  name?: Maybe<String>;
 }
 
 export interface CompanyUpsertWithWhereUniqueWithoutTradesInput {
@@ -2229,56 +2038,8 @@ export interface CompanyUpsertWithWhereUniqueWithoutTradesInput {
   create: CompanyCreateWithoutTradesInput;
 }
 
-export interface UserWhereInput {
-  id?: Maybe<ID_Input>;
-  id_not?: Maybe<ID_Input>;
-  id_in?: Maybe<ID_Input[] | ID_Input>;
-  id_not_in?: Maybe<ID_Input[] | ID_Input>;
-  id_lt?: Maybe<ID_Input>;
-  id_lte?: Maybe<ID_Input>;
-  id_gt?: Maybe<ID_Input>;
-  id_gte?: Maybe<ID_Input>;
-  id_contains?: Maybe<ID_Input>;
-  id_not_contains?: Maybe<ID_Input>;
-  id_starts_with?: Maybe<ID_Input>;
-  id_not_starts_with?: Maybe<ID_Input>;
-  id_ends_with?: Maybe<ID_Input>;
-  id_not_ends_with?: Maybe<ID_Input>;
-  username?: Maybe<String>;
-  username_not?: Maybe<String>;
-  username_in?: Maybe<String[] | String>;
-  username_not_in?: Maybe<String[] | String>;
-  username_lt?: Maybe<String>;
-  username_lte?: Maybe<String>;
-  username_gt?: Maybe<String>;
-  username_gte?: Maybe<String>;
-  username_contains?: Maybe<String>;
-  username_not_contains?: Maybe<String>;
-  username_starts_with?: Maybe<String>;
-  username_not_starts_with?: Maybe<String>;
-  username_ends_with?: Maybe<String>;
-  username_not_ends_with?: Maybe<String>;
-  password?: Maybe<String>;
-  password_not?: Maybe<String>;
-  password_in?: Maybe<String[] | String>;
-  password_not_in?: Maybe<String[] | String>;
-  password_lt?: Maybe<String>;
-  password_lte?: Maybe<String>;
-  password_gt?: Maybe<String>;
-  password_gte?: Maybe<String>;
-  password_contains?: Maybe<String>;
-  password_not_contains?: Maybe<String>;
-  password_starts_with?: Maybe<String>;
-  password_not_starts_with?: Maybe<String>;
-  password_ends_with?: Maybe<String>;
-  password_not_ends_with?: Maybe<String>;
-  role?: Maybe<Role>;
-  role_not?: Maybe<Role>;
-  role_in?: Maybe<Role[] | Role>;
-  role_not_in?: Maybe<Role[] | Role>;
-  AND?: Maybe<UserWhereInput[] | UserWhereInput>;
-  OR?: Maybe<UserWhereInput[] | UserWhereInput>;
-  NOT?: Maybe<UserWhereInput[] | UserWhereInput>;
+export interface KeywordUpdateInput {
+  name?: Maybe<String>;
 }
 
 export interface CompanyScalarWhereInput {
@@ -2511,16 +2272,14 @@ export interface CompanyScalarWhereInput {
   NOT?: Maybe<CompanyScalarWhereInput[] | CompanyScalarWhereInput>;
 }
 
-export interface CompanyEventUpdateInput {
-  title?: Maybe<String>;
-  content?: Maybe<String>;
-  reportTime?: Maybe<DateTimeInput>;
-  happen?: Maybe<TimeKind>;
-  happenTime?: Maybe<DateTimeInput>;
-  influence?: Maybe<String>;
-  kind?: Maybe<FactorKind>;
-  dierction?: Maybe<Direction>;
-  company?: Maybe<CompanyUpdateOneRequiredWithoutEventsInput>;
+export interface IndustryUpdateWithoutInfluencesDataInput {
+  code?: Maybe<String>;
+  name?: Maybe<String>;
+  desc?: Maybe<String>;
+  researches?: Maybe<ResearchUpdateManyInput>;
+  companies?: Maybe<CompanyUpdateManyWithoutTradesInput>;
+  purchases?: Maybe<ProductUpdateManyWithoutInputsInput>;
+  selles?: Maybe<ProductUpdateManyWithoutOutputsInput>;
 }
 
 export interface CompanyUpdateManyWithWhereNestedInput {
@@ -2528,13 +2287,13 @@ export interface CompanyUpdateManyWithWhereNestedInput {
   data: CompanyUpdateManyDataInput;
 }
 
-export interface IndustryCreateWithoutCompaniesInput {
+export interface IndustryCreateWithoutInfluencesInput {
   id?: Maybe<ID_Input>;
   code?: Maybe<String>;
   name: String;
   desc: String;
   researches?: Maybe<ResearchCreateManyInput>;
-  influences?: Maybe<IndustryInfluenceCreateManyWithoutIndustryInput>;
+  companies?: Maybe<CompanyCreateManyWithoutTradesInput>;
   purchases?: Maybe<ProductCreateManyWithoutInputsInput>;
   selles?: Maybe<ProductCreateManyWithoutOutputsInput>;
 }
@@ -2557,13 +2316,13 @@ export interface CompanyUpdateManyDataInput {
   desc?: Maybe<String>;
 }
 
-export interface IndustryInfluenceCreateWithoutIndustryInput {
-  id?: Maybe<ID_Input>;
-  keywords?: Maybe<KeyWordCreateManyInput>;
-  kind: FactorKind;
-  name: String;
-  desc: String;
-  dierction: Direction;
+export interface IndustryEventUpdateManyMutationInput {
+  title?: Maybe<String>;
+  src?: Maybe<String>;
+  reportTime?: Maybe<DateTimeInput>;
+  happen?: Maybe<TimeKind>;
+  happenTime?: Maybe<DateTimeInput>;
+  content?: Maybe<String>;
 }
 
 export interface IndustryUpsertWithWhereUniqueWithoutSellesInput {
@@ -2572,11 +2331,38 @@ export interface IndustryUpsertWithWhereUniqueWithoutSellesInput {
   create: IndustryCreateWithoutSellesInput;
 }
 
-export interface ProductCreateWithoutInputsInput {
+export interface KeywordScalarWhereInput {
   id?: Maybe<ID_Input>;
-  name: String;
-  introduce: String;
-  outputs?: Maybe<IndustryCreateManyWithoutSellesInput>;
+  id_not?: Maybe<ID_Input>;
+  id_in?: Maybe<ID_Input[] | ID_Input>;
+  id_not_in?: Maybe<ID_Input[] | ID_Input>;
+  id_lt?: Maybe<ID_Input>;
+  id_lte?: Maybe<ID_Input>;
+  id_gt?: Maybe<ID_Input>;
+  id_gte?: Maybe<ID_Input>;
+  id_contains?: Maybe<ID_Input>;
+  id_not_contains?: Maybe<ID_Input>;
+  id_starts_with?: Maybe<ID_Input>;
+  id_not_starts_with?: Maybe<ID_Input>;
+  id_ends_with?: Maybe<ID_Input>;
+  id_not_ends_with?: Maybe<ID_Input>;
+  name?: Maybe<String>;
+  name_not?: Maybe<String>;
+  name_in?: Maybe<String[] | String>;
+  name_not_in?: Maybe<String[] | String>;
+  name_lt?: Maybe<String>;
+  name_lte?: Maybe<String>;
+  name_gt?: Maybe<String>;
+  name_gte?: Maybe<String>;
+  name_contains?: Maybe<String>;
+  name_not_contains?: Maybe<String>;
+  name_starts_with?: Maybe<String>;
+  name_not_starts_with?: Maybe<String>;
+  name_ends_with?: Maybe<String>;
+  name_not_ends_with?: Maybe<String>;
+  AND?: Maybe<KeywordScalarWhereInput[] | KeywordScalarWhereInput>;
+  OR?: Maybe<KeywordScalarWhereInput[] | KeywordScalarWhereInput>;
+  NOT?: Maybe<KeywordScalarWhereInput[] | KeywordScalarWhereInput>;
 }
 
 export interface IndustryScalarWhereInput {
@@ -2641,58 +2427,25 @@ export interface IndustryScalarWhereInput {
   NOT?: Maybe<IndustryScalarWhereInput[] | IndustryScalarWhereInput>;
 }
 
-export interface ProductWhereInput {
-  id?: Maybe<ID_Input>;
-  id_not?: Maybe<ID_Input>;
-  id_in?: Maybe<ID_Input[] | ID_Input>;
-  id_not_in?: Maybe<ID_Input[] | ID_Input>;
-  id_lt?: Maybe<ID_Input>;
-  id_lte?: Maybe<ID_Input>;
-  id_gt?: Maybe<ID_Input>;
-  id_gte?: Maybe<ID_Input>;
-  id_contains?: Maybe<ID_Input>;
-  id_not_contains?: Maybe<ID_Input>;
-  id_starts_with?: Maybe<ID_Input>;
-  id_not_starts_with?: Maybe<ID_Input>;
-  id_ends_with?: Maybe<ID_Input>;
-  id_not_ends_with?: Maybe<ID_Input>;
-  name?: Maybe<String>;
-  name_not?: Maybe<String>;
-  name_in?: Maybe<String[] | String>;
-  name_not_in?: Maybe<String[] | String>;
-  name_lt?: Maybe<String>;
-  name_lte?: Maybe<String>;
-  name_gt?: Maybe<String>;
-  name_gte?: Maybe<String>;
-  name_contains?: Maybe<String>;
-  name_not_contains?: Maybe<String>;
-  name_starts_with?: Maybe<String>;
-  name_not_starts_with?: Maybe<String>;
-  name_ends_with?: Maybe<String>;
-  name_not_ends_with?: Maybe<String>;
-  introduce?: Maybe<String>;
-  introduce_not?: Maybe<String>;
-  introduce_in?: Maybe<String[] | String>;
-  introduce_not_in?: Maybe<String[] | String>;
-  introduce_lt?: Maybe<String>;
-  introduce_lte?: Maybe<String>;
-  introduce_gt?: Maybe<String>;
-  introduce_gte?: Maybe<String>;
-  introduce_contains?: Maybe<String>;
-  introduce_not_contains?: Maybe<String>;
-  introduce_starts_with?: Maybe<String>;
-  introduce_not_starts_with?: Maybe<String>;
-  introduce_ends_with?: Maybe<String>;
-  introduce_not_ends_with?: Maybe<String>;
-  inputs_every?: Maybe<IndustryWhereInput>;
-  inputs_some?: Maybe<IndustryWhereInput>;
-  inputs_none?: Maybe<IndustryWhereInput>;
-  outputs_every?: Maybe<IndustryWhereInput>;
-  outputs_some?: Maybe<IndustryWhereInput>;
-  outputs_none?: Maybe<IndustryWhereInput>;
-  AND?: Maybe<ProductWhereInput[] | ProductWhereInput>;
-  OR?: Maybe<ProductWhereInput[] | ProductWhereInput>;
-  NOT?: Maybe<ProductWhereInput[] | ProductWhereInput>;
+export interface KeywordUpdateManyInput {
+  create?: Maybe<KeywordCreateInput[] | KeywordCreateInput>;
+  update?: Maybe<
+    | KeywordUpdateWithWhereUniqueNestedInput[]
+    | KeywordUpdateWithWhereUniqueNestedInput
+  >;
+  upsert?: Maybe<
+    | KeywordUpsertWithWhereUniqueNestedInput[]
+    | KeywordUpsertWithWhereUniqueNestedInput
+  >;
+  delete?: Maybe<KeywordWhereUniqueInput[] | KeywordWhereUniqueInput>;
+  connect?: Maybe<KeywordWhereUniqueInput[] | KeywordWhereUniqueInput>;
+  set?: Maybe<KeywordWhereUniqueInput[] | KeywordWhereUniqueInput>;
+  disconnect?: Maybe<KeywordWhereUniqueInput[] | KeywordWhereUniqueInput>;
+  deleteMany?: Maybe<KeywordScalarWhereInput[] | KeywordScalarWhereInput>;
+  updateMany?: Maybe<
+    | KeywordUpdateManyWithWhereNestedInput[]
+    | KeywordUpdateManyWithWhereNestedInput
+  >;
 }
 
 export interface IndustryUpdateManyWithWhereNestedInput {
@@ -2700,24 +2453,9 @@ export interface IndustryUpdateManyWithWhereNestedInput {
   data: IndustryUpdateManyDataInput;
 }
 
-export interface IndustryInfluenceSubscriptionWhereInput {
-  mutation_in?: Maybe<MutationType[] | MutationType>;
-  updatedFields_contains?: Maybe<String>;
-  updatedFields_contains_every?: Maybe<String[] | String>;
-  updatedFields_contains_some?: Maybe<String[] | String>;
-  node?: Maybe<IndustryInfluenceWhereInput>;
-  AND?: Maybe<
-    | IndustryInfluenceSubscriptionWhereInput[]
-    | IndustryInfluenceSubscriptionWhereInput
-  >;
-  OR?: Maybe<
-    | IndustryInfluenceSubscriptionWhereInput[]
-    | IndustryInfluenceSubscriptionWhereInput
-  >;
-  NOT?: Maybe<
-    | IndustryInfluenceSubscriptionWhereInput[]
-    | IndustryInfluenceSubscriptionWhereInput
-  >;
+export interface KeywordCreateManyInput {
+  create?: Maybe<KeywordCreateInput[] | KeywordCreateInput>;
+  connect?: Maybe<KeywordWhereUniqueInput[] | KeywordWhereUniqueInput>;
 }
 
 export interface IndustryUpdateManyDataInput {
@@ -2726,9 +2464,26 @@ export interface IndustryUpdateManyDataInput {
   desc?: Maybe<String>;
 }
 
-export type CompanyEventWhereUniqueInput = AtLeastOne<{
-  id: Maybe<ID_Input>;
-}>;
+export interface CompanyCreateInput {
+  id?: Maybe<ID_Input>;
+  symbol: String;
+  name: String;
+  area?: Maybe<String>;
+  industry?: Maybe<String>;
+  fullname?: Maybe<String>;
+  enname?: Maybe<String>;
+  market?: Maybe<String>;
+  exchange?: Maybe<String>;
+  currType?: Maybe<String>;
+  listStatus?: Maybe<String>;
+  listDate?: Maybe<String>;
+  delistDate?: Maybe<String>;
+  isHS?: Maybe<String>;
+  scope?: Maybe<String>;
+  desc?: Maybe<String>;
+  trades?: Maybe<IndustryCreateManyWithoutCompaniesInput>;
+  events?: Maybe<CompanyEventCreateManyWithoutCompanyInput>;
+}
 
 export interface ProductUpsertWithWhereUniqueWithoutInputsInput {
   where: ProductWhereUniqueInput;
@@ -2736,9 +2491,10 @@ export interface ProductUpsertWithWhereUniqueWithoutInputsInput {
   create: ProductCreateWithoutInputsInput;
 }
 
-export type IndustryEventWhereUniqueInput = AtLeastOne<{
-  id: Maybe<ID_Input>;
-}>;
+export interface ResearchCreateInput {
+  id?: Maybe<ID_Input>;
+  desc: String;
+}
 
 export interface ProductScalarWhereInput {
   id?: Maybe<ID_Input>;
@@ -2788,14 +2544,9 @@ export interface ProductScalarWhereInput {
   NOT?: Maybe<ProductScalarWhereInput[] | ProductScalarWhereInput>;
 }
 
-export interface IndustryUpdateWithoutInfluencesDataInput {
-  code?: Maybe<String>;
-  name?: Maybe<String>;
-  desc?: Maybe<String>;
-  researches?: Maybe<ResearchUpdateManyInput>;
-  companies?: Maybe<CompanyUpdateManyWithoutTradesInput>;
-  purchases?: Maybe<ProductUpdateManyWithoutInputsInput>;
-  selles?: Maybe<ProductUpdateManyWithoutOutputsInput>;
+export interface KeywordCreateInput {
+  id?: Maybe<ID_Input>;
+  name: String;
 }
 
 export interface ProductUpdateManyWithWhereNestedInput {
@@ -2803,13 +2554,15 @@ export interface ProductUpdateManyWithWhereNestedInput {
   data: ProductUpdateManyDataInput;
 }
 
-export interface IndustryEventUpdateManyMutationInput {
-  title?: Maybe<String>;
-  src?: Maybe<String>;
-  reportTime?: Maybe<DateTimeInput>;
-  happen?: Maybe<TimeKind>;
-  happenTime?: Maybe<DateTimeInput>;
-  content?: Maybe<String>;
+export interface IndustryCreateWithoutSellesInput {
+  id?: Maybe<ID_Input>;
+  code?: Maybe<String>;
+  name: String;
+  desc: String;
+  researches?: Maybe<ResearchCreateManyInput>;
+  companies?: Maybe<CompanyCreateManyWithoutTradesInput>;
+  influences?: Maybe<IndustryInfluenceCreateManyWithoutIndustryInput>;
+  purchases?: Maybe<ProductCreateManyWithoutInputsInput>;
 }
 
 export interface ProductUpdateManyDataInput {
@@ -2817,15 +2570,38 @@ export interface ProductUpdateManyDataInput {
   introduce?: Maybe<String>;
 }
 
-export interface CompanyEventUpdateManyMutationInput {
-  title?: Maybe<String>;
-  content?: Maybe<String>;
-  reportTime?: Maybe<DateTimeInput>;
-  happen?: Maybe<TimeKind>;
-  happenTime?: Maybe<DateTimeInput>;
-  influence?: Maybe<String>;
-  kind?: Maybe<FactorKind>;
-  dierction?: Maybe<Direction>;
+export interface KeywordWhereInput {
+  id?: Maybe<ID_Input>;
+  id_not?: Maybe<ID_Input>;
+  id_in?: Maybe<ID_Input[] | ID_Input>;
+  id_not_in?: Maybe<ID_Input[] | ID_Input>;
+  id_lt?: Maybe<ID_Input>;
+  id_lte?: Maybe<ID_Input>;
+  id_gt?: Maybe<ID_Input>;
+  id_gte?: Maybe<ID_Input>;
+  id_contains?: Maybe<ID_Input>;
+  id_not_contains?: Maybe<ID_Input>;
+  id_starts_with?: Maybe<ID_Input>;
+  id_not_starts_with?: Maybe<ID_Input>;
+  id_ends_with?: Maybe<ID_Input>;
+  id_not_ends_with?: Maybe<ID_Input>;
+  name?: Maybe<String>;
+  name_not?: Maybe<String>;
+  name_in?: Maybe<String[] | String>;
+  name_not_in?: Maybe<String[] | String>;
+  name_lt?: Maybe<String>;
+  name_lte?: Maybe<String>;
+  name_gt?: Maybe<String>;
+  name_gte?: Maybe<String>;
+  name_contains?: Maybe<String>;
+  name_not_contains?: Maybe<String>;
+  name_starts_with?: Maybe<String>;
+  name_not_starts_with?: Maybe<String>;
+  name_ends_with?: Maybe<String>;
+  name_not_ends_with?: Maybe<String>;
+  AND?: Maybe<KeywordWhereInput[] | KeywordWhereInput>;
+  OR?: Maybe<KeywordWhereInput[] | KeywordWhereInput>;
+  NOT?: Maybe<KeywordWhereInput[] | KeywordWhereInput>;
 }
 
 export interface ProductUpdateManyWithoutOutputsInput {
@@ -2851,25 +2627,19 @@ export interface ProductUpdateManyWithoutOutputsInput {
   >;
 }
 
-export interface CompanyCreateInput {
-  id?: Maybe<ID_Input>;
-  symbol: String;
-  name: String;
-  area?: Maybe<String>;
-  industry?: Maybe<String>;
-  fullname?: Maybe<String>;
-  enname?: Maybe<String>;
-  market?: Maybe<String>;
-  exchange?: Maybe<String>;
-  currType?: Maybe<String>;
-  listStatus?: Maybe<String>;
-  listDate?: Maybe<String>;
-  delistDate?: Maybe<String>;
-  isHS?: Maybe<String>;
-  scope?: Maybe<String>;
-  desc?: Maybe<String>;
-  trades?: Maybe<IndustryCreateManyWithoutCompaniesInput>;
-  events?: Maybe<CompanyEventCreateManyWithoutCompanyInput>;
+export interface IndustrySubscriptionWhereInput {
+  mutation_in?: Maybe<MutationType[] | MutationType>;
+  updatedFields_contains?: Maybe<String>;
+  updatedFields_contains_every?: Maybe<String[] | String>;
+  updatedFields_contains_some?: Maybe<String[] | String>;
+  node?: Maybe<IndustryWhereInput>;
+  AND?: Maybe<
+    IndustrySubscriptionWhereInput[] | IndustrySubscriptionWhereInput
+  >;
+  OR?: Maybe<IndustrySubscriptionWhereInput[] | IndustrySubscriptionWhereInput>;
+  NOT?: Maybe<
+    IndustrySubscriptionWhereInput[] | IndustrySubscriptionWhereInput
+  >;
 }
 
 export interface ProductUpdateWithWhereUniqueWithoutOutputsInput {
@@ -2877,9 +2647,8 @@ export interface ProductUpdateWithWhereUniqueWithoutOutputsInput {
   data: ProductUpdateWithoutOutputsDataInput;
 }
 
-export interface KeyWordCreateInput {
-  id?: Maybe<ID_Input>;
-  name: String;
+export interface ResearchUpdateInput {
+  desc?: Maybe<String>;
 }
 
 export interface ProductUpdateWithoutOutputsDataInput {
@@ -2888,19 +2657,89 @@ export interface ProductUpdateWithoutOutputsDataInput {
   inputs?: Maybe<IndustryUpdateManyWithoutPurchasesInput>;
 }
 
-export interface ResearchSubscriptionWhereInput {
-  mutation_in?: Maybe<MutationType[] | MutationType>;
-  updatedFields_contains?: Maybe<String>;
-  updatedFields_contains_every?: Maybe<String[] | String>;
-  updatedFields_contains_some?: Maybe<String[] | String>;
-  node?: Maybe<ResearchWhereInput>;
-  AND?: Maybe<
-    ResearchSubscriptionWhereInput[] | ResearchSubscriptionWhereInput
-  >;
-  OR?: Maybe<ResearchSubscriptionWhereInput[] | ResearchSubscriptionWhereInput>;
-  NOT?: Maybe<
-    ResearchSubscriptionWhereInput[] | ResearchSubscriptionWhereInput
-  >;
+export interface IndustryEventWhereInput {
+  id?: Maybe<ID_Input>;
+  id_not?: Maybe<ID_Input>;
+  id_in?: Maybe<ID_Input[] | ID_Input>;
+  id_not_in?: Maybe<ID_Input[] | ID_Input>;
+  id_lt?: Maybe<ID_Input>;
+  id_lte?: Maybe<ID_Input>;
+  id_gt?: Maybe<ID_Input>;
+  id_gte?: Maybe<ID_Input>;
+  id_contains?: Maybe<ID_Input>;
+  id_not_contains?: Maybe<ID_Input>;
+  id_starts_with?: Maybe<ID_Input>;
+  id_not_starts_with?: Maybe<ID_Input>;
+  id_ends_with?: Maybe<ID_Input>;
+  id_not_ends_with?: Maybe<ID_Input>;
+  title?: Maybe<String>;
+  title_not?: Maybe<String>;
+  title_in?: Maybe<String[] | String>;
+  title_not_in?: Maybe<String[] | String>;
+  title_lt?: Maybe<String>;
+  title_lte?: Maybe<String>;
+  title_gt?: Maybe<String>;
+  title_gte?: Maybe<String>;
+  title_contains?: Maybe<String>;
+  title_not_contains?: Maybe<String>;
+  title_starts_with?: Maybe<String>;
+  title_not_starts_with?: Maybe<String>;
+  title_ends_with?: Maybe<String>;
+  title_not_ends_with?: Maybe<String>;
+  src?: Maybe<String>;
+  src_not?: Maybe<String>;
+  src_in?: Maybe<String[] | String>;
+  src_not_in?: Maybe<String[] | String>;
+  src_lt?: Maybe<String>;
+  src_lte?: Maybe<String>;
+  src_gt?: Maybe<String>;
+  src_gte?: Maybe<String>;
+  src_contains?: Maybe<String>;
+  src_not_contains?: Maybe<String>;
+  src_starts_with?: Maybe<String>;
+  src_not_starts_with?: Maybe<String>;
+  src_ends_with?: Maybe<String>;
+  src_not_ends_with?: Maybe<String>;
+  reportTime?: Maybe<DateTimeInput>;
+  reportTime_not?: Maybe<DateTimeInput>;
+  reportTime_in?: Maybe<DateTimeInput[] | DateTimeInput>;
+  reportTime_not_in?: Maybe<DateTimeInput[] | DateTimeInput>;
+  reportTime_lt?: Maybe<DateTimeInput>;
+  reportTime_lte?: Maybe<DateTimeInput>;
+  reportTime_gt?: Maybe<DateTimeInput>;
+  reportTime_gte?: Maybe<DateTimeInput>;
+  happen?: Maybe<TimeKind>;
+  happen_not?: Maybe<TimeKind>;
+  happen_in?: Maybe<TimeKind[] | TimeKind>;
+  happen_not_in?: Maybe<TimeKind[] | TimeKind>;
+  happenTime?: Maybe<DateTimeInput>;
+  happenTime_not?: Maybe<DateTimeInput>;
+  happenTime_in?: Maybe<DateTimeInput[] | DateTimeInput>;
+  happenTime_not_in?: Maybe<DateTimeInput[] | DateTimeInput>;
+  happenTime_lt?: Maybe<DateTimeInput>;
+  happenTime_lte?: Maybe<DateTimeInput>;
+  happenTime_gt?: Maybe<DateTimeInput>;
+  happenTime_gte?: Maybe<DateTimeInput>;
+  content?: Maybe<String>;
+  content_not?: Maybe<String>;
+  content_in?: Maybe<String[] | String>;
+  content_not_in?: Maybe<String[] | String>;
+  content_lt?: Maybe<String>;
+  content_lte?: Maybe<String>;
+  content_gt?: Maybe<String>;
+  content_gte?: Maybe<String>;
+  content_contains?: Maybe<String>;
+  content_not_contains?: Maybe<String>;
+  content_starts_with?: Maybe<String>;
+  content_not_starts_with?: Maybe<String>;
+  content_ends_with?: Maybe<String>;
+  content_not_ends_with?: Maybe<String>;
+  Keywords_every?: Maybe<KeywordWhereInput>;
+  Keywords_some?: Maybe<KeywordWhereInput>;
+  Keywords_none?: Maybe<KeywordWhereInput>;
+  AND?: Maybe<IndustryEventWhereInput[] | IndustryEventWhereInput>;
+  OR?: Maybe<IndustryEventWhereInput[] | IndustryEventWhereInput>;
+  NOT?: Maybe<IndustryEventWhereInput[] | IndustryEventWhereInput>;
 }
 
 export interface IndustryUpdateManyWithoutPurchasesInput {
@@ -2926,25 +2765,23 @@ export interface IndustryUpdateManyWithoutPurchasesInput {
   >;
 }
 
-export type IndustryWhereUniqueInput = AtLeastOne<{
-  id: Maybe<ID_Input>;
-  name?: Maybe<String>;
-}>;
+export interface IndustryInfluenceUpdateInput {
+  keyword?: Maybe<KeywordUpdateOneInput>;
+  keywordDirection?: Maybe<Direction>;
+  kind?: Maybe<FactorKind>;
+  desc?: Maybe<String>;
+  industry?: Maybe<IndustryUpdateOneRequiredWithoutInfluencesInput>;
+  direction?: Maybe<Direction>;
+}
 
 export interface IndustryUpdateWithWhereUniqueWithoutPurchasesInput {
   where: IndustryWhereUniqueInput;
   data: IndustryUpdateWithoutPurchasesDataInput;
 }
 
-export interface IndustryCreateWithoutInfluencesInput {
-  id?: Maybe<ID_Input>;
-  code?: Maybe<String>;
-  name: String;
-  desc: String;
-  researches?: Maybe<ResearchCreateManyInput>;
-  companies?: Maybe<CompanyCreateManyWithoutTradesInput>;
-  purchases?: Maybe<ProductCreateManyWithoutInputsInput>;
-  selles?: Maybe<ProductCreateManyWithoutOutputsInput>;
+export interface KeywordUpdateManyWithWhereNestedInput {
+  where: KeywordScalarWhereInput;
+  data: KeywordUpdateManyDataInput;
 }
 
 export interface IndustryUpdateWithoutPurchasesDataInput {
@@ -2957,23 +2794,103 @@ export interface IndustryUpdateWithoutPurchasesDataInput {
   selles?: Maybe<ProductUpdateManyWithoutOutputsInput>;
 }
 
-export interface CompanyUpdateWithoutEventsDataInput {
-  symbol?: Maybe<String>;
-  name?: Maybe<String>;
-  area?: Maybe<String>;
-  industry?: Maybe<String>;
-  fullname?: Maybe<String>;
-  enname?: Maybe<String>;
-  market?: Maybe<String>;
-  exchange?: Maybe<String>;
-  currType?: Maybe<String>;
-  listStatus?: Maybe<String>;
-  listDate?: Maybe<String>;
-  delistDate?: Maybe<String>;
-  isHS?: Maybe<String>;
-  scope?: Maybe<String>;
-  desc?: Maybe<String>;
-  trades?: Maybe<IndustryUpdateManyWithoutCompaniesInput>;
+export interface UserWhereInput {
+  id?: Maybe<ID_Input>;
+  id_not?: Maybe<ID_Input>;
+  id_in?: Maybe<ID_Input[] | ID_Input>;
+  id_not_in?: Maybe<ID_Input[] | ID_Input>;
+  id_lt?: Maybe<ID_Input>;
+  id_lte?: Maybe<ID_Input>;
+  id_gt?: Maybe<ID_Input>;
+  id_gte?: Maybe<ID_Input>;
+  id_contains?: Maybe<ID_Input>;
+  id_not_contains?: Maybe<ID_Input>;
+  id_starts_with?: Maybe<ID_Input>;
+  id_not_starts_with?: Maybe<ID_Input>;
+  id_ends_with?: Maybe<ID_Input>;
+  id_not_ends_with?: Maybe<ID_Input>;
+  username?: Maybe<String>;
+  username_not?: Maybe<String>;
+  username_in?: Maybe<String[] | String>;
+  username_not_in?: Maybe<String[] | String>;
+  username_lt?: Maybe<String>;
+  username_lte?: Maybe<String>;
+  username_gt?: Maybe<String>;
+  username_gte?: Maybe<String>;
+  username_contains?: Maybe<String>;
+  username_not_contains?: Maybe<String>;
+  username_starts_with?: Maybe<String>;
+  username_not_starts_with?: Maybe<String>;
+  username_ends_with?: Maybe<String>;
+  username_not_ends_with?: Maybe<String>;
+  password?: Maybe<String>;
+  password_not?: Maybe<String>;
+  password_in?: Maybe<String[] | String>;
+  password_not_in?: Maybe<String[] | String>;
+  password_lt?: Maybe<String>;
+  password_lte?: Maybe<String>;
+  password_gt?: Maybe<String>;
+  password_gte?: Maybe<String>;
+  password_contains?: Maybe<String>;
+  password_not_contains?: Maybe<String>;
+  password_starts_with?: Maybe<String>;
+  password_not_starts_with?: Maybe<String>;
+  password_ends_with?: Maybe<String>;
+  password_not_ends_with?: Maybe<String>;
+  role?: Maybe<Role>;
+  role_not?: Maybe<Role>;
+  role_in?: Maybe<Role[] | Role>;
+  role_not_in?: Maybe<Role[] | Role>;
+  AND?: Maybe<UserWhereInput[] | UserWhereInput>;
+  OR?: Maybe<UserWhereInput[] | UserWhereInput>;
+  NOT?: Maybe<UserWhereInput[] | UserWhereInput>;
+}
+
+export interface IndustryUpsertWithWhereUniqueWithoutPurchasesInput {
+  where: IndustryWhereUniqueInput;
+  update: IndustryUpdateWithoutPurchasesDataInput;
+  create: IndustryCreateWithoutPurchasesInput;
+}
+
+export interface IndustryCreateWithoutCompaniesInput {
+  id?: Maybe<ID_Input>;
+  code?: Maybe<String>;
+  name: String;
+  desc: String;
+  researches?: Maybe<ResearchCreateManyInput>;
+  influences?: Maybe<IndustryInfluenceCreateManyWithoutIndustryInput>;
+  purchases?: Maybe<ProductCreateManyWithoutInputsInput>;
+  selles?: Maybe<ProductCreateManyWithoutOutputsInput>;
+}
+
+export interface ProductUpsertWithWhereUniqueWithoutOutputsInput {
+  where: ProductWhereUniqueInput;
+  update: ProductUpdateWithoutOutputsDataInput;
+  create: ProductCreateWithoutOutputsInput;
+}
+
+export interface ProductCreateWithoutInputsInput {
+  id?: Maybe<ID_Input>;
+  name: String;
+  introduce: String;
+  outputs?: Maybe<IndustryCreateManyWithoutSellesInput>;
+}
+
+export interface IndustryUpsertWithWhereUniqueWithoutCompaniesInput {
+  where: IndustryWhereUniqueInput;
+  update: IndustryUpdateWithoutCompaniesDataInput;
+  create: IndustryCreateWithoutCompaniesInput;
+}
+
+export interface KeywordSubscriptionWhereInput {
+  mutation_in?: Maybe<MutationType[] | MutationType>;
+  updatedFields_contains?: Maybe<String>;
+  updatedFields_contains_every?: Maybe<String[] | String>;
+  updatedFields_contains_some?: Maybe<String[] | String>;
+  node?: Maybe<KeywordWhereInput>;
+  AND?: Maybe<KeywordSubscriptionWhereInput[] | KeywordSubscriptionWhereInput>;
+  OR?: Maybe<KeywordSubscriptionWhereInput[] | KeywordSubscriptionWhereInput>;
+  NOT?: Maybe<KeywordSubscriptionWhereInput[] | KeywordSubscriptionWhereInput>;
 }
 
 export interface CompanyUpdateManyMutationInput {
@@ -2994,27 +2911,38 @@ export interface CompanyUpdateManyMutationInput {
   desc?: Maybe<String>;
 }
 
-export interface IndustryUpsertWithWhereUniqueWithoutCompaniesInput {
-  where: IndustryWhereUniqueInput;
-  update: IndustryUpdateWithoutCompaniesDataInput;
-  create: IndustryCreateWithoutCompaniesInput;
-}
-
-export interface ProductUpsertWithWhereUniqueWithoutOutputsInput {
-  where: ProductWhereUniqueInput;
-  update: ProductUpdateWithoutOutputsDataInput;
-  create: ProductCreateWithoutOutputsInput;
-}
-
-export interface IndustryUpsertWithWhereUniqueWithoutPurchasesInput {
-  where: IndustryWhereUniqueInput;
-  update: IndustryUpdateWithoutPurchasesDataInput;
-  create: IndustryCreateWithoutPurchasesInput;
-}
-
-export interface ResearchCreateInput {
+export interface ProductCreateInput {
   id?: Maybe<ID_Input>;
+  name: String;
+  introduce: String;
+  inputs?: Maybe<IndustryCreateManyWithoutPurchasesInput>;
+  outputs?: Maybe<IndustryCreateManyWithoutSellesInput>;
+}
+
+export interface CompanyEventUpdateManyMutationInput {
+  title?: Maybe<String>;
+  content?: Maybe<String>;
+  reportTime?: Maybe<DateTimeInput>;
+  happen?: Maybe<TimeKind>;
+  happenTime?: Maybe<DateTimeInput>;
+  influence?: Maybe<String>;
+  kind?: Maybe<FactorKind>;
+  dierction?: Maybe<Direction>;
+}
+
+export interface IndustryInfluenceCreateInput {
+  id?: Maybe<ID_Input>;
+  keyword?: Maybe<KeywordCreateOneInput>;
+  keywordDirection: Direction;
+  kind: FactorKind;
   desc: String;
+  industry: IndustryCreateOneWithoutInfluencesInput;
+  direction: Direction;
+}
+
+export interface CompanyUpsertWithoutEventsInput {
+  update: CompanyUpdateWithoutEventsDataInput;
+  create: CompanyCreateWithoutEventsInput;
 }
 
 export interface IndustryUpdateManyMutationInput {
@@ -3023,36 +2951,106 @@ export interface IndustryUpdateManyMutationInput {
   desc?: Maybe<String>;
 }
 
-export interface KeyWordUpdateInput {
-  name?: Maybe<String>;
-}
-
-export interface CompanyEventSubscriptionWhereInput {
-  mutation_in?: Maybe<MutationType[] | MutationType>;
-  updatedFields_contains?: Maybe<String>;
-  updatedFields_contains_every?: Maybe<String[] | String>;
-  updatedFields_contains_some?: Maybe<String[] | String>;
-  node?: Maybe<CompanyEventWhereInput>;
-  AND?: Maybe<
-    CompanyEventSubscriptionWhereInput[] | CompanyEventSubscriptionWhereInput
-  >;
-  OR?: Maybe<
-    CompanyEventSubscriptionWhereInput[] | CompanyEventSubscriptionWhereInput
-  >;
-  NOT?: Maybe<
-    CompanyEventSubscriptionWhereInput[] | CompanyEventSubscriptionWhereInput
-  >;
-}
-
-export interface IndustryCreateWithoutSellesInput {
+export interface CompanyEventCreateInput {
   id?: Maybe<ID_Input>;
-  code?: Maybe<String>;
+  title: String;
+  content: String;
+  reportTime: DateTimeInput;
+  happen: TimeKind;
+  happenTime?: Maybe<DateTimeInput>;
+  influence: String;
+  kind: FactorKind;
+  dierction: Direction;
+  company: CompanyCreateOneWithoutEventsInput;
+}
+
+export interface CompanyCreateWithoutTradesInput {
+  id?: Maybe<ID_Input>;
+  symbol: String;
   name: String;
+  area?: Maybe<String>;
+  industry?: Maybe<String>;
+  fullname?: Maybe<String>;
+  enname?: Maybe<String>;
+  market?: Maybe<String>;
+  exchange?: Maybe<String>;
+  currType?: Maybe<String>;
+  listStatus?: Maybe<String>;
+  listDate?: Maybe<String>;
+  delistDate?: Maybe<String>;
+  isHS?: Maybe<String>;
+  scope?: Maybe<String>;
+  desc?: Maybe<String>;
+  events?: Maybe<CompanyEventCreateManyWithoutCompanyInput>;
+}
+
+export interface CompanyUpdateOneRequiredWithoutEventsInput {
+  create?: Maybe<CompanyCreateWithoutEventsInput>;
+  update?: Maybe<CompanyUpdateWithoutEventsDataInput>;
+  upsert?: Maybe<CompanyUpsertWithoutEventsInput>;
+  connect?: Maybe<CompanyWhereUniqueInput>;
+}
+
+export interface CompanyEventUpdateInput {
+  title?: Maybe<String>;
+  content?: Maybe<String>;
+  reportTime?: Maybe<DateTimeInput>;
+  happen?: Maybe<TimeKind>;
+  happenTime?: Maybe<DateTimeInput>;
+  influence?: Maybe<String>;
+  kind?: Maybe<FactorKind>;
+  dierction?: Maybe<Direction>;
+  company?: Maybe<CompanyUpdateOneRequiredWithoutEventsInput>;
+}
+
+export interface CompanyCreateWithoutEventsInput {
+  id?: Maybe<ID_Input>;
+  symbol: String;
+  name: String;
+  area?: Maybe<String>;
+  industry?: Maybe<String>;
+  fullname?: Maybe<String>;
+  enname?: Maybe<String>;
+  market?: Maybe<String>;
+  exchange?: Maybe<String>;
+  currType?: Maybe<String>;
+  listStatus?: Maybe<String>;
+  listDate?: Maybe<String>;
+  delistDate?: Maybe<String>;
+  isHS?: Maybe<String>;
+  scope?: Maybe<String>;
+  desc?: Maybe<String>;
+  trades?: Maybe<IndustryCreateManyWithoutCompaniesInput>;
+}
+
+export interface CompanyCreateOneWithoutEventsInput {
+  create?: Maybe<CompanyCreateWithoutEventsInput>;
+  connect?: Maybe<CompanyWhereUniqueInput>;
+}
+
+export interface UserUpdateInput {
+  username?: Maybe<String>;
+  password?: Maybe<String>;
+  role?: Maybe<Role>;
+}
+
+export interface IndustryInfluenceCreateWithoutIndustryInput {
+  id?: Maybe<ID_Input>;
+  keyword?: Maybe<KeywordCreateOneInput>;
+  keywordDirection: Direction;
+  kind: FactorKind;
   desc: String;
-  researches?: Maybe<ResearchCreateManyInput>;
-  companies?: Maybe<CompanyCreateManyWithoutTradesInput>;
-  influences?: Maybe<IndustryInfluenceCreateManyWithoutIndustryInput>;
-  purchases?: Maybe<ProductCreateManyWithoutInputsInput>;
+  direction: Direction;
+}
+
+export interface KeywordUpdateWithWhereUniqueNestedInput {
+  where: KeywordWhereUniqueInput;
+  data: KeywordUpdateDataInput;
+}
+
+export interface IndustryUpsertWithoutInfluencesInput {
+  update: IndustryUpdateWithoutInfluencesDataInput;
+  create: IndustryCreateWithoutInfluencesInput;
 }
 
 export interface NodeNode {
@@ -3102,70 +3100,46 @@ export interface AggregateCompanyEventSubscription
 
 export interface IndustryInfluence {
   id: ID_Output;
+  keywordDirection: Direction;
   kind: FactorKind;
-  name: String;
   desc: String;
-  dierction: Direction;
+  direction: Direction;
 }
 
 export interface IndustryInfluencePromise
   extends Promise<IndustryInfluence>,
     Fragmentable {
   id: () => Promise<ID_Output>;
-  keywords: <T = FragmentableArray<KeyWord>>(args?: {
-    where?: KeyWordWhereInput;
-    orderBy?: KeyWordOrderByInput;
-    skip?: Int;
-    after?: String;
-    before?: String;
-    first?: Int;
-    last?: Int;
-  }) => T;
+  keyword: <T = KeywordPromise>() => T;
+  keywordDirection: () => Promise<Direction>;
   kind: () => Promise<FactorKind>;
-  name: () => Promise<String>;
   desc: () => Promise<String>;
   industry: <T = IndustryPromise>() => T;
-  dierction: () => Promise<Direction>;
+  direction: () => Promise<Direction>;
 }
 
 export interface IndustryInfluenceSubscription
   extends Promise<AsyncIterator<IndustryInfluence>>,
     Fragmentable {
   id: () => Promise<AsyncIterator<ID_Output>>;
-  keywords: <T = Promise<AsyncIterator<KeyWordSubscription>>>(args?: {
-    where?: KeyWordWhereInput;
-    orderBy?: KeyWordOrderByInput;
-    skip?: Int;
-    after?: String;
-    before?: String;
-    first?: Int;
-    last?: Int;
-  }) => T;
+  keyword: <T = KeywordSubscription>() => T;
+  keywordDirection: () => Promise<AsyncIterator<Direction>>;
   kind: () => Promise<AsyncIterator<FactorKind>>;
-  name: () => Promise<AsyncIterator<String>>;
   desc: () => Promise<AsyncIterator<String>>;
   industry: <T = IndustrySubscription>() => T;
-  dierction: () => Promise<AsyncIterator<Direction>>;
+  direction: () => Promise<AsyncIterator<Direction>>;
 }
 
 export interface IndustryInfluenceNullablePromise
   extends Promise<IndustryInfluence | null>,
     Fragmentable {
   id: () => Promise<ID_Output>;
-  keywords: <T = FragmentableArray<KeyWord>>(args?: {
-    where?: KeyWordWhereInput;
-    orderBy?: KeyWordOrderByInput;
-    skip?: Int;
-    after?: String;
-    before?: String;
-    first?: Int;
-    last?: Int;
-  }) => T;
+  keyword: <T = KeywordPromise>() => T;
+  keywordDirection: () => Promise<Direction>;
   kind: () => Promise<FactorKind>;
-  name: () => Promise<String>;
   desc: () => Promise<String>;
   industry: <T = IndustryPromise>() => T;
-  dierction: () => Promise<Direction>;
+  direction: () => Promise<Direction>;
 }
 
 export interface CompanyEventEdge {
@@ -3616,18 +3590,18 @@ export interface CompanyPreviousValuesSubscription
   desc: () => Promise<AsyncIterator<String>>;
 }
 
-export interface AggregateKeyWord {
+export interface AggregateKeyword {
   count: Int;
 }
 
-export interface AggregateKeyWordPromise
-  extends Promise<AggregateKeyWord>,
+export interface AggregateKeywordPromise
+  extends Promise<AggregateKeyword>,
     Fragmentable {
   count: () => Promise<Int>;
 }
 
-export interface AggregateKeyWordSubscription
-  extends Promise<AsyncIterator<AggregateKeyWord>>,
+export interface AggregateKeywordSubscription
+  extends Promise<AsyncIterator<AggregateKeyword>>,
     Fragmentable {
   count: () => Promise<AsyncIterator<Int>>;
 }
@@ -3655,25 +3629,25 @@ export interface PageInfoSubscription
   endCursor: () => Promise<AsyncIterator<String>>;
 }
 
-export interface KeyWordConnection {
+export interface KeywordConnection {
   pageInfo: PageInfo;
-  edges: KeyWordEdge[];
+  edges: KeywordEdge[];
 }
 
-export interface KeyWordConnectionPromise
-  extends Promise<KeyWordConnection>,
+export interface KeywordConnectionPromise
+  extends Promise<KeywordConnection>,
     Fragmentable {
   pageInfo: <T = PageInfoPromise>() => T;
-  edges: <T = FragmentableArray<KeyWordEdge>>() => T;
-  aggregate: <T = AggregateKeyWordPromise>() => T;
+  edges: <T = FragmentableArray<KeywordEdge>>() => T;
+  aggregate: <T = AggregateKeywordPromise>() => T;
 }
 
-export interface KeyWordConnectionSubscription
-  extends Promise<AsyncIterator<KeyWordConnection>>,
+export interface KeywordConnectionSubscription
+  extends Promise<AsyncIterator<KeywordConnection>>,
     Fragmentable {
   pageInfo: <T = PageInfoSubscription>() => T;
-  edges: <T = Promise<AsyncIterator<KeyWordEdgeSubscription>>>() => T;
-  aggregate: <T = AggregateKeyWordSubscription>() => T;
+  edges: <T = Promise<AsyncIterator<KeywordEdgeSubscription>>>() => T;
+  aggregate: <T = AggregateKeywordSubscription>() => T;
 }
 
 export interface CompanyEventSubscriptionPayload {
@@ -4167,20 +4141,20 @@ export interface ProductNullablePromise
   }) => T;
 }
 
-export interface KeyWordEdge {
-  node: KeyWord;
+export interface KeywordEdge {
+  node: Keyword;
   cursor: String;
 }
 
-export interface KeyWordEdgePromise extends Promise<KeyWordEdge>, Fragmentable {
-  node: <T = KeyWordPromise>() => T;
+export interface KeywordEdgePromise extends Promise<KeywordEdge>, Fragmentable {
+  node: <T = KeywordPromise>() => T;
   cursor: () => Promise<String>;
 }
 
-export interface KeyWordEdgeSubscription
-  extends Promise<AsyncIterator<KeyWordEdge>>,
+export interface KeywordEdgeSubscription
+  extends Promise<AsyncIterator<KeywordEdge>>,
     Fragmentable {
-  node: <T = KeyWordSubscription>() => T;
+  node: <T = KeywordSubscription>() => T;
   cursor: () => Promise<AsyncIterator<String>>;
 }
 
@@ -4232,30 +4206,30 @@ export interface IndustryInfluenceConnectionSubscription
 
 export interface IndustryInfluencePreviousValues {
   id: ID_Output;
+  keywordDirection: Direction;
   kind: FactorKind;
-  name: String;
   desc: String;
-  dierction: Direction;
+  direction: Direction;
 }
 
 export interface IndustryInfluencePreviousValuesPromise
   extends Promise<IndustryInfluencePreviousValues>,
     Fragmentable {
   id: () => Promise<ID_Output>;
+  keywordDirection: () => Promise<Direction>;
   kind: () => Promise<FactorKind>;
-  name: () => Promise<String>;
   desc: () => Promise<String>;
-  dierction: () => Promise<Direction>;
+  direction: () => Promise<Direction>;
 }
 
 export interface IndustryInfluencePreviousValuesSubscription
   extends Promise<AsyncIterator<IndustryInfluencePreviousValues>>,
     Fragmentable {
   id: () => Promise<AsyncIterator<ID_Output>>;
+  keywordDirection: () => Promise<AsyncIterator<Direction>>;
   kind: () => Promise<AsyncIterator<FactorKind>>;
-  name: () => Promise<AsyncIterator<String>>;
   desc: () => Promise<AsyncIterator<String>>;
-  dierction: () => Promise<AsyncIterator<Direction>>;
+  direction: () => Promise<AsyncIterator<Direction>>;
 }
 
 export interface IndustryEvent {
@@ -4278,9 +4252,9 @@ export interface IndustryEventPromise
   happen: () => Promise<TimeKind>;
   happenTime: () => Promise<DateTimeOutput>;
   content: () => Promise<String>;
-  keyWords: <T = FragmentableArray<KeyWord>>(args?: {
-    where?: KeyWordWhereInput;
-    orderBy?: KeyWordOrderByInput;
+  Keywords: <T = FragmentableArray<Keyword>>(args?: {
+    where?: KeywordWhereInput;
+    orderBy?: KeywordOrderByInput;
     skip?: Int;
     after?: String;
     before?: String;
@@ -4299,9 +4273,9 @@ export interface IndustryEventSubscription
   happen: () => Promise<AsyncIterator<TimeKind>>;
   happenTime: () => Promise<AsyncIterator<DateTimeOutput>>;
   content: () => Promise<AsyncIterator<String>>;
-  keyWords: <T = Promise<AsyncIterator<KeyWordSubscription>>>(args?: {
-    where?: KeyWordWhereInput;
-    orderBy?: KeyWordOrderByInput;
+  Keywords: <T = Promise<AsyncIterator<KeywordSubscription>>>(args?: {
+    where?: KeywordWhereInput;
+    orderBy?: KeywordOrderByInput;
     skip?: Int;
     after?: String;
     before?: String;
@@ -4320,9 +4294,9 @@ export interface IndustryEventNullablePromise
   happen: () => Promise<TimeKind>;
   happenTime: () => Promise<DateTimeOutput>;
   content: () => Promise<String>;
-  keyWords: <T = FragmentableArray<KeyWord>>(args?: {
-    where?: KeyWordWhereInput;
-    orderBy?: KeyWordOrderByInput;
+  Keywords: <T = FragmentableArray<Keyword>>(args?: {
+    where?: KeywordWhereInput;
+    orderBy?: KeywordOrderByInput;
     skip?: Int;
     after?: String;
     before?: String;
@@ -4331,28 +4305,29 @@ export interface IndustryEventNullablePromise
   }) => T;
 }
 
-export interface KeyWord {
-  id: ID_Output;
-  name: String;
+export interface ResearchSubscriptionPayload {
+  mutation: MutationType;
+  node: Research;
+  updatedFields: String[];
+  previousValues: ResearchPreviousValues;
 }
 
-export interface KeyWordPromise extends Promise<KeyWord>, Fragmentable {
-  id: () => Promise<ID_Output>;
-  name: () => Promise<String>;
-}
-
-export interface KeyWordSubscription
-  extends Promise<AsyncIterator<KeyWord>>,
+export interface ResearchSubscriptionPayloadPromise
+  extends Promise<ResearchSubscriptionPayload>,
     Fragmentable {
-  id: () => Promise<AsyncIterator<ID_Output>>;
-  name: () => Promise<AsyncIterator<String>>;
+  mutation: () => Promise<MutationType>;
+  node: <T = ResearchPromise>() => T;
+  updatedFields: () => Promise<String[]>;
+  previousValues: <T = ResearchPreviousValuesPromise>() => T;
 }
 
-export interface KeyWordNullablePromise
-  extends Promise<KeyWord | null>,
+export interface ResearchSubscriptionPayloadSubscription
+  extends Promise<AsyncIterator<ResearchSubscriptionPayload>>,
     Fragmentable {
-  id: () => Promise<ID_Output>;
-  name: () => Promise<String>;
+  mutation: () => Promise<AsyncIterator<MutationType>>;
+  node: <T = ResearchSubscription>() => T;
+  updatedFields: () => Promise<AsyncIterator<String[]>>;
+  previousValues: <T = ResearchPreviousValuesSubscription>() => T;
 }
 
 export interface Industry {
@@ -4524,29 +4499,29 @@ export interface IndustryNullablePromise
   }) => T;
 }
 
-export interface KeyWordSubscriptionPayload {
+export interface KeywordSubscriptionPayload {
   mutation: MutationType;
-  node: KeyWord;
+  node: Keyword;
   updatedFields: String[];
-  previousValues: KeyWordPreviousValues;
+  previousValues: KeywordPreviousValues;
 }
 
-export interface KeyWordSubscriptionPayloadPromise
-  extends Promise<KeyWordSubscriptionPayload>,
+export interface KeywordSubscriptionPayloadPromise
+  extends Promise<KeywordSubscriptionPayload>,
     Fragmentable {
   mutation: () => Promise<MutationType>;
-  node: <T = KeyWordPromise>() => T;
+  node: <T = KeywordPromise>() => T;
   updatedFields: () => Promise<String[]>;
-  previousValues: <T = KeyWordPreviousValuesPromise>() => T;
+  previousValues: <T = KeywordPreviousValuesPromise>() => T;
 }
 
-export interface KeyWordSubscriptionPayloadSubscription
-  extends Promise<AsyncIterator<KeyWordSubscriptionPayload>>,
+export interface KeywordSubscriptionPayloadSubscription
+  extends Promise<AsyncIterator<KeywordSubscriptionPayload>>,
     Fragmentable {
   mutation: () => Promise<AsyncIterator<MutationType>>;
-  node: <T = KeyWordSubscription>() => T;
+  node: <T = KeywordSubscription>() => T;
   updatedFields: () => Promise<AsyncIterator<String[]>>;
-  previousValues: <T = KeyWordPreviousValuesSubscription>() => T;
+  previousValues: <T = KeywordPreviousValuesSubscription>() => T;
 }
 
 export interface ResearchEdge {
@@ -4631,45 +4606,44 @@ export interface ProductSubscriptionPayloadSubscription
   previousValues: <T = ProductPreviousValuesSubscription>() => T;
 }
 
-export interface ResearchSubscriptionPayload {
-  mutation: MutationType;
-  node: Research;
-  updatedFields: String[];
-  previousValues: ResearchPreviousValues;
-}
-
-export interface ResearchSubscriptionPayloadPromise
-  extends Promise<ResearchSubscriptionPayload>,
-    Fragmentable {
-  mutation: () => Promise<MutationType>;
-  node: <T = ResearchPromise>() => T;
-  updatedFields: () => Promise<String[]>;
-  previousValues: <T = ResearchPreviousValuesPromise>() => T;
-}
-
-export interface ResearchSubscriptionPayloadSubscription
-  extends Promise<AsyncIterator<ResearchSubscriptionPayload>>,
-    Fragmentable {
-  mutation: () => Promise<AsyncIterator<MutationType>>;
-  node: <T = ResearchSubscription>() => T;
-  updatedFields: () => Promise<AsyncIterator<String[]>>;
-  previousValues: <T = ResearchPreviousValuesSubscription>() => T;
-}
-
-export interface KeyWordPreviousValues {
+export interface Keyword {
   id: ID_Output;
   name: String;
 }
 
-export interface KeyWordPreviousValuesPromise
-  extends Promise<KeyWordPreviousValues>,
+export interface KeywordPromise extends Promise<Keyword>, Fragmentable {
+  id: () => Promise<ID_Output>;
+  name: () => Promise<String>;
+}
+
+export interface KeywordSubscription
+  extends Promise<AsyncIterator<Keyword>>,
+    Fragmentable {
+  id: () => Promise<AsyncIterator<ID_Output>>;
+  name: () => Promise<AsyncIterator<String>>;
+}
+
+export interface KeywordNullablePromise
+  extends Promise<Keyword | null>,
     Fragmentable {
   id: () => Promise<ID_Output>;
   name: () => Promise<String>;
 }
 
-export interface KeyWordPreviousValuesSubscription
-  extends Promise<AsyncIterator<KeyWordPreviousValues>>,
+export interface KeywordPreviousValues {
+  id: ID_Output;
+  name: String;
+}
+
+export interface KeywordPreviousValuesPromise
+  extends Promise<KeywordPreviousValues>,
+    Fragmentable {
+  id: () => Promise<ID_Output>;
+  name: () => Promise<String>;
+}
+
+export interface KeywordPreviousValuesSubscription
+  extends Promise<AsyncIterator<KeywordPreviousValues>>,
     Fragmentable {
   id: () => Promise<AsyncIterator<ID_Output>>;
   name: () => Promise<AsyncIterator<String>>;
@@ -4806,7 +4780,7 @@ export const models: Model[] = [
     embedded: false
   },
   {
-    name: "KeyWord",
+    name: "Keyword",
     embedded: false
   },
   {

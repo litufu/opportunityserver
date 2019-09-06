@@ -8,6 +8,7 @@ const typeDefs = gql`
     companiesByCodeOrName(inputvalue:String!):[Company]
     products(inputvalue:String!):[Product]
     industries(inputvalue:String!):[Industry]
+    keywords(inputvalue:String!):[Keyword]
   }
 
   type Mutation {
@@ -19,6 +20,8 @@ const typeDefs = gql`
     productLinkIndustry(industryName:String!,productName:String!,deal:String!):Industry
     companyLinkIndustry(companyNames:[String!]!,industryName:String!):Industry
     industryResearch(industryName:String!,research:String!):Industry!
+    addKeyword(keyword:String!):Keyword!
+    addIndustryInfluence(industryName:String!,keyword:String!,keywordDirection:Direction!,kind:FactorKind!,desc:String!,direction:Direction!):IndustryInfluence!
   }
 
   type AuthPayload {
@@ -48,7 +51,7 @@ enum SrcKind {
   OUTER
 }
 
-type KeyWord{
+type Keyword{
   id: ID!
   name:String!
 }
@@ -61,7 +64,7 @@ type IndustryEvent{
   happen:TimeKind!
   happenTime:DateTime!
   content:String!
-  keyWords:[KeyWord!]!
+  Keywords:[Keyword!]!
 }
 
 type CompanyEvent{
@@ -73,7 +76,7 @@ type CompanyEvent{
   happenTime:DateTime!
   influence:String!
   kind:FactorKind!
-  dierction:Direction!
+  direction:Direction!
   company:Company!
 }
 
@@ -96,12 +99,12 @@ enum FactorKind{
 
 type IndustryInfluence{
   id: ID!
-  keywords:[KeyWord!]!
+  keyword:Keyword
+  keywordDirection:Direction!
   kind:FactorKind!
-  name:String!
   desc:String!
   industry:Industry!
-  dierction:Direction!
+  direction:Direction!
 }
 
 type Product{

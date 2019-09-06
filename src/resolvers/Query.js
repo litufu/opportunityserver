@@ -31,6 +31,12 @@ const Query = {
       first:10
      })
   },
+  keywords:(parent, {inputvalue}, ctx) => {
+    return ctx.prisma.keywords({ 
+      where:{name_contains:inputvalue},
+      first:10
+     })
+  },
 }
 
 module.exports = {

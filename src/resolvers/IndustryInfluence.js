@@ -1,6 +1,6 @@
 const IndustryInfluence = {
-    keywords: ({ id }, args, context) => {
-        return context.prisma.industryInfluence({ id }).keywords()
+    keyword: ({ id }, args, context) => {
+        return context.prisma.industryInfluence({ id }).keyword()
     },
     industry: ({ id }, args, context) => {
         return context.prisma.industryInfluence({ id }).industry()
