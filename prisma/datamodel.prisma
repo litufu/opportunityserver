@@ -19,7 +19,6 @@ type User {
 type Keyword{
   id: ID! @id
   name:String! @unique
-  
 }
 
 type IndustryEvent{
@@ -96,6 +95,22 @@ type Industry{
   selles:[Product!]! @relation(name: "Output")
 }
 
+type Comment{
+  id: ID! @id
+  createTime:DateTime @createdAt 
+  desc:String!
+  company:Company
+}
+
+type CompanyProduct{
+  id: ID! @id
+  name:String!  @unique
+  introduce:String!
+  inputs:[Company!]! @relation(name: "Purchase")
+  outputs:[Company!]! @relation(name: "Sell")
+}
+
+
 type Company{
   id: ID! @id
   symbol:String! @unique
@@ -113,6 +128,10 @@ type Company{
   isHS:String
   scope:String
   desc:String
+  purchases:[CompanyProduct!]! @relation(name: "Purchase")
+  selles:[CompanyProduct!]! @relation(name: "Sell")
+  comments:[Comment!]!
+  pool:Boolean
   trades:[Industry!]!
   events:[CompanyEvent!]!
 }

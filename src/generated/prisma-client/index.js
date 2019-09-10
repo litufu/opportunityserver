@@ -53,6 +53,14 @@ var models = [
     embedded: false
   },
   {
+    name: "Comment",
+    embedded: false
+  },
+  {
+    name: "CompanyProduct",
+    embedded: false
+  },
+  {
     name: "Company",
     embedded: false
   }

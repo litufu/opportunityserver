@@ -3,11 +3,19 @@ module.exports = {
   // Please don't change this file manually but run `prisma generate` to update it.
   // For more information, please read the docs: https://www.prisma.io/docs/prisma-client/
 
-/* GraphQL */ `type AggregateCompany {
+/* GraphQL */ `type AggregateComment {
+  count: Int!
+}
+
+type AggregateCompany {
   count: Int!
 }
 
 type AggregateCompanyEvent {
+  count: Int!
+}
+
+type AggregateCompanyProduct {
   count: Int!
 }
 
@@ -43,6 +51,207 @@ type BatchPayload {
   count: Long!
 }
 
+type Comment {
+  id: ID!
+  createTime: DateTime
+  desc: String!
+  company: Company
+}
+
+type CommentConnection {
+  pageInfo: PageInfo!
+  edges: [CommentEdge]!
+  aggregate: AggregateComment!
+}
+
+input CommentCreateInput {
+  id: ID
+  desc: String!
+  company: CompanyCreateOneWithoutCommentsInput
+}
+
+input CommentCreateManyWithoutCompanyInput {
+  create: [CommentCreateWithoutCompanyInput!]
+  connect: [CommentWhereUniqueInput!]
+}
+
+input CommentCreateWithoutCompanyInput {
+  id: ID
+  desc: String!
+}
+
+type CommentEdge {
+  node: Comment!
+  cursor: String!
+}
+
+enum CommentOrderByInput {
+  id_ASC
+  id_DESC
+  createTime_ASC
+  createTime_DESC
+  desc_ASC
+  desc_DESC
+}
+
+type CommentPreviousValues {
+  id: ID!
+  createTime: DateTime
+  desc: String!
+}
+
+input CommentScalarWhereInput {
+  id: ID
+  id_not: ID
+  id_in: [ID!]
+  id_not_in: [ID!]
+  id_lt: ID
+  id_lte: ID
+  id_gt: ID
+  id_gte: ID
+  id_contains: ID
+  id_not_contains: ID
+  id_starts_with: ID
+  id_not_starts_with: ID
+  id_ends_with: ID
+  id_not_ends_with: ID
+  createTime: DateTime
+  createTime_not: DateTime
+  createTime_in: [DateTime!]
+  createTime_not_in: [DateTime!]
+  createTime_lt: DateTime
+  createTime_lte: DateTime
+  createTime_gt: DateTime
+  createTime_gte: DateTime
+  desc: String
+  desc_not: String
+  desc_in: [String!]
+  desc_not_in: [String!]
+  desc_lt: String
+  desc_lte: String
+  desc_gt: String
+  desc_gte: String
+  desc_contains: String
+  desc_not_contains: String
+  desc_starts_with: String
+  desc_not_starts_with: String
+  desc_ends_with: String
+  desc_not_ends_with: String
+  AND: [CommentScalarWhereInput!]
+  OR: [CommentScalarWhereInput!]
+  NOT: [CommentScalarWhereInput!]
+}
+
+type CommentSubscriptionPayload {
+  mutation: MutationType!
+  node: Comment
+  updatedFields: [String!]
+  previousValues: CommentPreviousValues
+}
+
+input CommentSubscriptionWhereInput {
+  mutation_in: [MutationType!]
+  updatedFields_contains: String
+  updatedFields_contains_every: [String!]
+  updatedFields_contains_some: [String!]
+  node: CommentWhereInput
+  AND: [CommentSubscriptionWhereInput!]
+  OR: [CommentSubscriptionWhereInput!]
+  NOT: [CommentSubscriptionWhereInput!]
+}
+
+input CommentUpdateInput {
+  desc: String
+  company: CompanyUpdateOneWithoutCommentsInput
+}
+
+input CommentUpdateManyDataInput {
+  desc: String
+}
+
+input CommentUpdateManyMutationInput {
+  desc: String
+}
+
+input CommentUpdateManyWithoutCompanyInput {
+  create: [CommentCreateWithoutCompanyInput!]
+  delete: [CommentWhereUniqueInput!]
+  connect: [CommentWhereUniqueInput!]
+  set: [CommentWhereUniqueInput!]
+  disconnect: [CommentWhereUniqueInput!]
+  update: [CommentUpdateWithWhereUniqueWithoutCompanyInput!]
+  upsert: [CommentUpsertWithWhereUniqueWithoutCompanyInput!]
+  deleteMany: [CommentScalarWhereInput!]
+  updateMany: [CommentUpdateManyWithWhereNestedInput!]
+}
+
+input CommentUpdateManyWithWhereNestedInput {
+  where: CommentScalarWhereInput!
+  data: CommentUpdateManyDataInput!
+}
+
+input CommentUpdateWithoutCompanyDataInput {
+  desc: String
+}
+
+input CommentUpdateWithWhereUniqueWithoutCompanyInput {
+  where: CommentWhereUniqueInput!
+  data: CommentUpdateWithoutCompanyDataInput!
+}
+
+input CommentUpsertWithWhereUniqueWithoutCompanyInput {
+  where: CommentWhereUniqueInput!
+  update: CommentUpdateWithoutCompanyDataInput!
+  create: CommentCreateWithoutCompanyInput!
+}
+
+input CommentWhereInput {
+  id: ID
+  id_not: ID
+  id_in: [ID!]
+  id_not_in: [ID!]
+  id_lt: ID
+  id_lte: ID
+  id_gt: ID
+  id_gte: ID
+  id_contains: ID
+  id_not_contains: ID
+  id_starts_with: ID
+  id_not_starts_with: ID
+  id_ends_with: ID
+  id_not_ends_with: ID
+  createTime: DateTime
+  createTime_not: DateTime
+  createTime_in: [DateTime!]
+  createTime_not_in: [DateTime!]
+  createTime_lt: DateTime
+  createTime_lte: DateTime
+  createTime_gt: DateTime
+  createTime_gte: DateTime
+  desc: String
+  desc_not: String
+  desc_in: [String!]
+  desc_not_in: [String!]
+  desc_lt: String
+  desc_lte: String
+  desc_gt: String
+  desc_gte: String
+  desc_contains: String
+  desc_not_contains: String
+  desc_starts_with: String
+  desc_not_starts_with: String
+  desc_ends_with: String
+  desc_not_ends_with: String
+  company: CompanyWhereInput
+  AND: [CommentWhereInput!]
+  OR: [CommentWhereInput!]
+  NOT: [CommentWhereInput!]
+}
+
+input CommentWhereUniqueInput {
+  id: ID
+}
+
 type Company {
   id: ID!
   symbol: String!
@@ -60,6 +269,10 @@ type Company {
   isHS: String
   scope: String
   desc: String
+  purchases(where: CompanyProductWhereInput, orderBy: CompanyProductOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [CompanyProduct!]
+  selles(where: CompanyProductWhereInput, orderBy: CompanyProductOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [CompanyProduct!]
+  comments(where: CommentWhereInput, orderBy: CommentOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Comment!]
+  pool: Boolean
   trades(where: IndustryWhereInput, orderBy: IndustryOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Industry!]
   events(where: CompanyEventWhereInput, orderBy: CompanyEventOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [CompanyEvent!]
 }
@@ -87,8 +300,22 @@ input CompanyCreateInput {
   isHS: String
   scope: String
   desc: String
+  purchases: CompanyProductCreateManyWithoutInputsInput
+  selles: CompanyProductCreateManyWithoutOutputsInput
+  comments: CommentCreateManyWithoutCompanyInput
+  pool: Boolean
   trades: IndustryCreateManyWithoutCompaniesInput
   events: CompanyEventCreateManyWithoutCompanyInput
+}
+
+input CompanyCreateManyWithoutPurchasesInput {
+  create: [CompanyCreateWithoutPurchasesInput!]
+  connect: [CompanyWhereUniqueInput!]
+}
+
+input CompanyCreateManyWithoutSellesInput {
+  create: [CompanyCreateWithoutSellesInput!]
+  connect: [CompanyWhereUniqueInput!]
 }
 
 input CompanyCreateManyWithoutTradesInput {
@@ -96,9 +323,38 @@ input CompanyCreateManyWithoutTradesInput {
   connect: [CompanyWhereUniqueInput!]
 }
 
+input CompanyCreateOneWithoutCommentsInput {
+  create: CompanyCreateWithoutCommentsInput
+  connect: CompanyWhereUniqueInput
+}
+
 input CompanyCreateOneWithoutEventsInput {
   create: CompanyCreateWithoutEventsInput
   connect: CompanyWhereUniqueInput
+}
+
+input CompanyCreateWithoutCommentsInput {
+  id: ID
+  symbol: String!
+  name: String!
+  area: String
+  industry: String
+  fullname: String
+  enname: String
+  market: String
+  exchange: String
+  currType: String
+  listStatus: String
+  listDate: String
+  delistDate: String
+  isHS: String
+  scope: String
+  desc: String
+  purchases: CompanyProductCreateManyWithoutInputsInput
+  selles: CompanyProductCreateManyWithoutOutputsInput
+  pool: Boolean
+  trades: IndustryCreateManyWithoutCompaniesInput
+  events: CompanyEventCreateManyWithoutCompanyInput
 }
 
 input CompanyCreateWithoutEventsInput {
@@ -118,7 +374,59 @@ input CompanyCreateWithoutEventsInput {
   isHS: String
   scope: String
   desc: String
+  purchases: CompanyProductCreateManyWithoutInputsInput
+  selles: CompanyProductCreateManyWithoutOutputsInput
+  comments: CommentCreateManyWithoutCompanyInput
+  pool: Boolean
   trades: IndustryCreateManyWithoutCompaniesInput
+}
+
+input CompanyCreateWithoutPurchasesInput {
+  id: ID
+  symbol: String!
+  name: String!
+  area: String
+  industry: String
+  fullname: String
+  enname: String
+  market: String
+  exchange: String
+  currType: String
+  listStatus: String
+  listDate: String
+  delistDate: String
+  isHS: String
+  scope: String
+  desc: String
+  selles: CompanyProductCreateManyWithoutOutputsInput
+  comments: CommentCreateManyWithoutCompanyInput
+  pool: Boolean
+  trades: IndustryCreateManyWithoutCompaniesInput
+  events: CompanyEventCreateManyWithoutCompanyInput
+}
+
+input CompanyCreateWithoutSellesInput {
+  id: ID
+  symbol: String!
+  name: String!
+  area: String
+  industry: String
+  fullname: String
+  enname: String
+  market: String
+  exchange: String
+  currType: String
+  listStatus: String
+  listDate: String
+  delistDate: String
+  isHS: String
+  scope: String
+  desc: String
+  purchases: CompanyProductCreateManyWithoutInputsInput
+  comments: CommentCreateManyWithoutCompanyInput
+  pool: Boolean
+  trades: IndustryCreateManyWithoutCompaniesInput
+  events: CompanyEventCreateManyWithoutCompanyInput
 }
 
 input CompanyCreateWithoutTradesInput {
@@ -138,6 +446,10 @@ input CompanyCreateWithoutTradesInput {
   isHS: String
   scope: String
   desc: String
+  purchases: CompanyProductCreateManyWithoutInputsInput
+  selles: CompanyProductCreateManyWithoutOutputsInput
+  comments: CommentCreateManyWithoutCompanyInput
+  pool: Boolean
   events: CompanyEventCreateManyWithoutCompanyInput
 }
 
@@ -542,6 +854,8 @@ enum CompanyOrderByInput {
   scope_DESC
   desc_ASC
   desc_DESC
+  pool_ASC
+  pool_DESC
 }
 
 type CompanyPreviousValues {
@@ -561,6 +875,278 @@ type CompanyPreviousValues {
   isHS: String
   scope: String
   desc: String
+  pool: Boolean
+}
+
+type CompanyProduct {
+  id: ID!
+  name: String!
+  introduce: String!
+  inputs(where: CompanyWhereInput, orderBy: CompanyOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Company!]
+  outputs(where: CompanyWhereInput, orderBy: CompanyOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Company!]
+}
+
+type CompanyProductConnection {
+  pageInfo: PageInfo!
+  edges: [CompanyProductEdge]!
+  aggregate: AggregateCompanyProduct!
+}
+
+input CompanyProductCreateInput {
+  id: ID
+  name: String!
+  introduce: String!
+  inputs: CompanyCreateManyWithoutPurchasesInput
+  outputs: CompanyCreateManyWithoutSellesInput
+}
+
+input CompanyProductCreateManyWithoutInputsInput {
+  create: [CompanyProductCreateWithoutInputsInput!]
+  connect: [CompanyProductWhereUniqueInput!]
+}
+
+input CompanyProductCreateManyWithoutOutputsInput {
+  create: [CompanyProductCreateWithoutOutputsInput!]
+  connect: [CompanyProductWhereUniqueInput!]
+}
+
+input CompanyProductCreateWithoutInputsInput {
+  id: ID
+  name: String!
+  introduce: String!
+  outputs: CompanyCreateManyWithoutSellesInput
+}
+
+input CompanyProductCreateWithoutOutputsInput {
+  id: ID
+  name: String!
+  introduce: String!
+  inputs: CompanyCreateManyWithoutPurchasesInput
+}
+
+type CompanyProductEdge {
+  node: CompanyProduct!
+  cursor: String!
+}
+
+enum CompanyProductOrderByInput {
+  id_ASC
+  id_DESC
+  name_ASC
+  name_DESC
+  introduce_ASC
+  introduce_DESC
+}
+
+type CompanyProductPreviousValues {
+  id: ID!
+  name: String!
+  introduce: String!
+}
+
+input CompanyProductScalarWhereInput {
+  id: ID
+  id_not: ID
+  id_in: [ID!]
+  id_not_in: [ID!]
+  id_lt: ID
+  id_lte: ID
+  id_gt: ID
+  id_gte: ID
+  id_contains: ID
+  id_not_contains: ID
+  id_starts_with: ID
+  id_not_starts_with: ID
+  id_ends_with: ID
+  id_not_ends_with: ID
+  name: String
+  name_not: String
+  name_in: [String!]
+  name_not_in: [String!]
+  name_lt: String
+  name_lte: String
+  name_gt: String
+  name_gte: String
+  name_contains: String
+  name_not_contains: String
+  name_starts_with: String
+  name_not_starts_with: String
+  name_ends_with: String
+  name_not_ends_with: String
+  introduce: String
+  introduce_not: String
+  introduce_in: [String!]
+  introduce_not_in: [String!]
+  introduce_lt: String
+  introduce_lte: String
+  introduce_gt: String
+  introduce_gte: String
+  introduce_contains: String
+  introduce_not_contains: String
+  introduce_starts_with: String
+  introduce_not_starts_with: String
+  introduce_ends_with: String
+  introduce_not_ends_with: String
+  AND: [CompanyProductScalarWhereInput!]
+  OR: [CompanyProductScalarWhereInput!]
+  NOT: [CompanyProductScalarWhereInput!]
+}
+
+type CompanyProductSubscriptionPayload {
+  mutation: MutationType!
+  node: CompanyProduct
+  updatedFields: [String!]
+  previousValues: CompanyProductPreviousValues
+}
+
+input CompanyProductSubscriptionWhereInput {
+  mutation_in: [MutationType!]
+  updatedFields_contains: String
+  updatedFields_contains_every: [String!]
+  updatedFields_contains_some: [String!]
+  node: CompanyProductWhereInput
+  AND: [CompanyProductSubscriptionWhereInput!]
+  OR: [CompanyProductSubscriptionWhereInput!]
+  NOT: [CompanyProductSubscriptionWhereInput!]
+}
+
+input CompanyProductUpdateInput {
+  name: String
+  introduce: String
+  inputs: CompanyUpdateManyWithoutPurchasesInput
+  outputs: CompanyUpdateManyWithoutSellesInput
+}
+
+input CompanyProductUpdateManyDataInput {
+  name: String
+  introduce: String
+}
+
+input CompanyProductUpdateManyMutationInput {
+  name: String
+  introduce: String
+}
+
+input CompanyProductUpdateManyWithoutInputsInput {
+  create: [CompanyProductCreateWithoutInputsInput!]
+  delete: [CompanyProductWhereUniqueInput!]
+  connect: [CompanyProductWhereUniqueInput!]
+  set: [CompanyProductWhereUniqueInput!]
+  disconnect: [CompanyProductWhereUniqueInput!]
+  update: [CompanyProductUpdateWithWhereUniqueWithoutInputsInput!]
+  upsert: [CompanyProductUpsertWithWhereUniqueWithoutInputsInput!]
+  deleteMany: [CompanyProductScalarWhereInput!]
+  updateMany: [CompanyProductUpdateManyWithWhereNestedInput!]
+}
+
+input CompanyProductUpdateManyWithoutOutputsInput {
+  create: [CompanyProductCreateWithoutOutputsInput!]
+  delete: [CompanyProductWhereUniqueInput!]
+  connect: [CompanyProductWhereUniqueInput!]
+  set: [CompanyProductWhereUniqueInput!]
+  disconnect: [CompanyProductWhereUniqueInput!]
+  update: [CompanyProductUpdateWithWhereUniqueWithoutOutputsInput!]
+  upsert: [CompanyProductUpsertWithWhereUniqueWithoutOutputsInput!]
+  deleteMany: [CompanyProductScalarWhereInput!]
+  updateMany: [CompanyProductUpdateManyWithWhereNestedInput!]
+}
+
+input CompanyProductUpdateManyWithWhereNestedInput {
+  where: CompanyProductScalarWhereInput!
+  data: CompanyProductUpdateManyDataInput!
+}
+
+input CompanyProductUpdateWithoutInputsDataInput {
+  name: String
+  introduce: String
+  outputs: CompanyUpdateManyWithoutSellesInput
+}
+
+input CompanyProductUpdateWithoutOutputsDataInput {
+  name: String
+  introduce: String
+  inputs: CompanyUpdateManyWithoutPurchasesInput
+}
+
+input CompanyProductUpdateWithWhereUniqueWithoutInputsInput {
+  where: CompanyProductWhereUniqueInput!
+  data: CompanyProductUpdateWithoutInputsDataInput!
+}
+
+input CompanyProductUpdateWithWhereUniqueWithoutOutputsInput {
+  where: CompanyProductWhereUniqueInput!
+  data: CompanyProductUpdateWithoutOutputsDataInput!
+}
+
+input CompanyProductUpsertWithWhereUniqueWithoutInputsInput {
+  where: CompanyProductWhereUniqueInput!
+  update: CompanyProductUpdateWithoutInputsDataInput!
+  create: CompanyProductCreateWithoutInputsInput!
+}
+
+input CompanyProductUpsertWithWhereUniqueWithoutOutputsInput {
+  where: CompanyProductWhereUniqueInput!
+  update: CompanyProductUpdateWithoutOutputsDataInput!
+  create: CompanyProductCreateWithoutOutputsInput!
+}
+
+input CompanyProductWhereInput {
+  id: ID
+  id_not: ID
+  id_in: [ID!]
+  id_not_in: [ID!]
+  id_lt: ID
+  id_lte: ID
+  id_gt: ID
+  id_gte: ID
+  id_contains: ID
+  id_not_contains: ID
+  id_starts_with: ID
+  id_not_starts_with: ID
+  id_ends_with: ID
+  id_not_ends_with: ID
+  name: String
+  name_not: String
+  name_in: [String!]
+  name_not_in: [String!]
+  name_lt: String
+  name_lte: String
+  name_gt: String
+  name_gte: String
+  name_contains: String
+  name_not_contains: String
+  name_starts_with: String
+  name_not_starts_with: String
+  name_ends_with: String
+  name_not_ends_with: String
+  introduce: String
+  introduce_not: String
+  introduce_in: [String!]
+  introduce_not_in: [String!]
+  introduce_lt: String
+  introduce_lte: String
+  introduce_gt: String
+  introduce_gte: String
+  introduce_contains: String
+  introduce_not_contains: String
+  introduce_starts_with: String
+  introduce_not_starts_with: String
+  introduce_ends_with: String
+  introduce_not_ends_with: String
+  inputs_every: CompanyWhereInput
+  inputs_some: CompanyWhereInput
+  inputs_none: CompanyWhereInput
+  outputs_every: CompanyWhereInput
+  outputs_some: CompanyWhereInput
+  outputs_none: CompanyWhereInput
+  AND: [CompanyProductWhereInput!]
+  OR: [CompanyProductWhereInput!]
+  NOT: [CompanyProductWhereInput!]
+}
+
+input CompanyProductWhereUniqueInput {
+  id: ID
+  name: String
 }
 
 input CompanyScalarWhereInput {
@@ -788,6 +1374,8 @@ input CompanyScalarWhereInput {
   desc_not_starts_with: String
   desc_ends_with: String
   desc_not_ends_with: String
+  pool: Boolean
+  pool_not: Boolean
   AND: [CompanyScalarWhereInput!]
   OR: [CompanyScalarWhereInput!]
   NOT: [CompanyScalarWhereInput!]
@@ -827,6 +1415,10 @@ input CompanyUpdateInput {
   isHS: String
   scope: String
   desc: String
+  purchases: CompanyProductUpdateManyWithoutInputsInput
+  selles: CompanyProductUpdateManyWithoutOutputsInput
+  comments: CommentUpdateManyWithoutCompanyInput
+  pool: Boolean
   trades: IndustryUpdateManyWithoutCompaniesInput
   events: CompanyEventUpdateManyWithoutCompanyInput
 }
@@ -847,6 +1439,7 @@ input CompanyUpdateManyDataInput {
   isHS: String
   scope: String
   desc: String
+  pool: Boolean
 }
 
 input CompanyUpdateManyMutationInput {
@@ -865,6 +1458,31 @@ input CompanyUpdateManyMutationInput {
   isHS: String
   scope: String
   desc: String
+  pool: Boolean
+}
+
+input CompanyUpdateManyWithoutPurchasesInput {
+  create: [CompanyCreateWithoutPurchasesInput!]
+  delete: [CompanyWhereUniqueInput!]
+  connect: [CompanyWhereUniqueInput!]
+  set: [CompanyWhereUniqueInput!]
+  disconnect: [CompanyWhereUniqueInput!]
+  update: [CompanyUpdateWithWhereUniqueWithoutPurchasesInput!]
+  upsert: [CompanyUpsertWithWhereUniqueWithoutPurchasesInput!]
+  deleteMany: [CompanyScalarWhereInput!]
+  updateMany: [CompanyUpdateManyWithWhereNestedInput!]
+}
+
+input CompanyUpdateManyWithoutSellesInput {
+  create: [CompanyCreateWithoutSellesInput!]
+  delete: [CompanyWhereUniqueInput!]
+  connect: [CompanyWhereUniqueInput!]
+  set: [CompanyWhereUniqueInput!]
+  disconnect: [CompanyWhereUniqueInput!]
+  update: [CompanyUpdateWithWhereUniqueWithoutSellesInput!]
+  upsert: [CompanyUpsertWithWhereUniqueWithoutSellesInput!]
+  deleteMany: [CompanyScalarWhereInput!]
+  updateMany: [CompanyUpdateManyWithWhereNestedInput!]
 }
 
 input CompanyUpdateManyWithoutTradesInput {
@@ -891,6 +1509,38 @@ input CompanyUpdateOneRequiredWithoutEventsInput {
   connect: CompanyWhereUniqueInput
 }
 
+input CompanyUpdateOneWithoutCommentsInput {
+  create: CompanyCreateWithoutCommentsInput
+  update: CompanyUpdateWithoutCommentsDataInput
+  upsert: CompanyUpsertWithoutCommentsInput
+  delete: Boolean
+  disconnect: Boolean
+  connect: CompanyWhereUniqueInput
+}
+
+input CompanyUpdateWithoutCommentsDataInput {
+  symbol: String
+  name: String
+  area: String
+  industry: String
+  fullname: String
+  enname: String
+  market: String
+  exchange: String
+  currType: String
+  listStatus: String
+  listDate: String
+  delistDate: String
+  isHS: String
+  scope: String
+  desc: String
+  purchases: CompanyProductUpdateManyWithoutInputsInput
+  selles: CompanyProductUpdateManyWithoutOutputsInput
+  pool: Boolean
+  trades: IndustryUpdateManyWithoutCompaniesInput
+  events: CompanyEventUpdateManyWithoutCompanyInput
+}
+
 input CompanyUpdateWithoutEventsDataInput {
   symbol: String
   name: String
@@ -907,7 +1557,57 @@ input CompanyUpdateWithoutEventsDataInput {
   isHS: String
   scope: String
   desc: String
+  purchases: CompanyProductUpdateManyWithoutInputsInput
+  selles: CompanyProductUpdateManyWithoutOutputsInput
+  comments: CommentUpdateManyWithoutCompanyInput
+  pool: Boolean
   trades: IndustryUpdateManyWithoutCompaniesInput
+}
+
+input CompanyUpdateWithoutPurchasesDataInput {
+  symbol: String
+  name: String
+  area: String
+  industry: String
+  fullname: String
+  enname: String
+  market: String
+  exchange: String
+  currType: String
+  listStatus: String
+  listDate: String
+  delistDate: String
+  isHS: String
+  scope: String
+  desc: String
+  selles: CompanyProductUpdateManyWithoutOutputsInput
+  comments: CommentUpdateManyWithoutCompanyInput
+  pool: Boolean
+  trades: IndustryUpdateManyWithoutCompaniesInput
+  events: CompanyEventUpdateManyWithoutCompanyInput
+}
+
+input CompanyUpdateWithoutSellesDataInput {
+  symbol: String
+  name: String
+  area: String
+  industry: String
+  fullname: String
+  enname: String
+  market: String
+  exchange: String
+  currType: String
+  listStatus: String
+  listDate: String
+  delistDate: String
+  isHS: String
+  scope: String
+  desc: String
+  purchases: CompanyProductUpdateManyWithoutInputsInput
+  comments: CommentUpdateManyWithoutCompanyInput
+  pool: Boolean
+  trades: IndustryUpdateManyWithoutCompaniesInput
+  events: CompanyEventUpdateManyWithoutCompanyInput
 }
 
 input CompanyUpdateWithoutTradesDataInput {
@@ -926,7 +1626,21 @@ input CompanyUpdateWithoutTradesDataInput {
   isHS: String
   scope: String
   desc: String
+  purchases: CompanyProductUpdateManyWithoutInputsInput
+  selles: CompanyProductUpdateManyWithoutOutputsInput
+  comments: CommentUpdateManyWithoutCompanyInput
+  pool: Boolean
   events: CompanyEventUpdateManyWithoutCompanyInput
+}
+
+input CompanyUpdateWithWhereUniqueWithoutPurchasesInput {
+  where: CompanyWhereUniqueInput!
+  data: CompanyUpdateWithoutPurchasesDataInput!
+}
+
+input CompanyUpdateWithWhereUniqueWithoutSellesInput {
+  where: CompanyWhereUniqueInput!
+  data: CompanyUpdateWithoutSellesDataInput!
 }
 
 input CompanyUpdateWithWhereUniqueWithoutTradesInput {
@@ -934,9 +1648,26 @@ input CompanyUpdateWithWhereUniqueWithoutTradesInput {
   data: CompanyUpdateWithoutTradesDataInput!
 }
 
+input CompanyUpsertWithoutCommentsInput {
+  update: CompanyUpdateWithoutCommentsDataInput!
+  create: CompanyCreateWithoutCommentsInput!
+}
+
 input CompanyUpsertWithoutEventsInput {
   update: CompanyUpdateWithoutEventsDataInput!
   create: CompanyCreateWithoutEventsInput!
+}
+
+input CompanyUpsertWithWhereUniqueWithoutPurchasesInput {
+  where: CompanyWhereUniqueInput!
+  update: CompanyUpdateWithoutPurchasesDataInput!
+  create: CompanyCreateWithoutPurchasesInput!
+}
+
+input CompanyUpsertWithWhereUniqueWithoutSellesInput {
+  where: CompanyWhereUniqueInput!
+  update: CompanyUpdateWithoutSellesDataInput!
+  create: CompanyCreateWithoutSellesInput!
 }
 
 input CompanyUpsertWithWhereUniqueWithoutTradesInput {
@@ -1170,6 +1901,17 @@ input CompanyWhereInput {
   desc_not_starts_with: String
   desc_ends_with: String
   desc_not_ends_with: String
+  purchases_every: CompanyProductWhereInput
+  purchases_some: CompanyProductWhereInput
+  purchases_none: CompanyProductWhereInput
+  selles_every: CompanyProductWhereInput
+  selles_some: CompanyProductWhereInput
+  selles_none: CompanyProductWhereInput
+  comments_every: CommentWhereInput
+  comments_some: CommentWhereInput
+  comments_none: CommentWhereInput
+  pool: Boolean
+  pool_not: Boolean
   trades_every: IndustryWhereInput
   trades_some: IndustryWhereInput
   trades_none: IndustryWhereInput
@@ -2254,6 +2996,12 @@ input KeywordWhereUniqueInput {
 scalar Long
 
 type Mutation {
+  createComment(data: CommentCreateInput!): Comment!
+  updateComment(data: CommentUpdateInput!, where: CommentWhereUniqueInput!): Comment
+  updateManyComments(data: CommentUpdateManyMutationInput!, where: CommentWhereInput): BatchPayload!
+  upsertComment(where: CommentWhereUniqueInput!, create: CommentCreateInput!, update: CommentUpdateInput!): Comment!
+  deleteComment(where: CommentWhereUniqueInput!): Comment
+  deleteManyComments(where: CommentWhereInput): BatchPayload!
   createCompany(data: CompanyCreateInput!): Company!
   updateCompany(data: CompanyUpdateInput!, where: CompanyWhereUniqueInput!): Company
   updateManyCompanies(data: CompanyUpdateManyMutationInput!, where: CompanyWhereInput): BatchPayload!
@@ -2266,6 +3014,12 @@ type Mutation {
   upsertCompanyEvent(where: CompanyEventWhereUniqueInput!, create: CompanyEventCreateInput!, update: CompanyEventUpdateInput!): CompanyEvent!
   deleteCompanyEvent(where: CompanyEventWhereUniqueInput!): CompanyEvent
   deleteManyCompanyEvents(where: CompanyEventWhereInput): BatchPayload!
+  createCompanyProduct(data: CompanyProductCreateInput!): CompanyProduct!
+  updateCompanyProduct(data: CompanyProductUpdateInput!, where: CompanyProductWhereUniqueInput!): CompanyProduct
+  updateManyCompanyProducts(data: CompanyProductUpdateManyMutationInput!, where: CompanyProductWhereInput): BatchPayload!
+  upsertCompanyProduct(where: CompanyProductWhereUniqueInput!, create: CompanyProductCreateInput!, update: CompanyProductUpdateInput!): CompanyProduct!
+  deleteCompanyProduct(where: CompanyProductWhereUniqueInput!): CompanyProduct
+  deleteManyCompanyProducts(where: CompanyProductWhereInput): BatchPayload!
   createIndustry(data: IndustryCreateInput!): Industry!
   updateIndustry(data: IndustryUpdateInput!, where: IndustryWhereUniqueInput!): Industry
   updateManyIndustries(data: IndustryUpdateManyMutationInput!, where: IndustryWhereInput): BatchPayload!
@@ -2599,12 +3353,18 @@ input ProductWhereUniqueInput {
 }
 
 type Query {
+  comment(where: CommentWhereUniqueInput!): Comment
+  comments(where: CommentWhereInput, orderBy: CommentOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Comment]!
+  commentsConnection(where: CommentWhereInput, orderBy: CommentOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): CommentConnection!
   company(where: CompanyWhereUniqueInput!): Company
   companies(where: CompanyWhereInput, orderBy: CompanyOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Company]!
   companiesConnection(where: CompanyWhereInput, orderBy: CompanyOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): CompanyConnection!
   companyEvent(where: CompanyEventWhereUniqueInput!): CompanyEvent
   companyEvents(where: CompanyEventWhereInput, orderBy: CompanyEventOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [CompanyEvent]!
   companyEventsConnection(where: CompanyEventWhereInput, orderBy: CompanyEventOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): CompanyEventConnection!
+  companyProduct(where: CompanyProductWhereUniqueInput!): CompanyProduct
+  companyProducts(where: CompanyProductWhereInput, orderBy: CompanyProductOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [CompanyProduct]!
+  companyProductsConnection(where: CompanyProductWhereInput, orderBy: CompanyProductOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): CompanyProductConnection!
   industry(where: IndustryWhereUniqueInput!): Industry
   industries(where: IndustryWhereInput, orderBy: IndustryOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Industry]!
   industriesConnection(where: IndustryWhereInput, orderBy: IndustryOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): IndustryConnection!
@@ -2807,8 +3567,10 @@ enum Role {
 }
 
 type Subscription {
+  comment(where: CommentSubscriptionWhereInput): CommentSubscriptionPayload
   company(where: CompanySubscriptionWhereInput): CompanySubscriptionPayload
   companyEvent(where: CompanyEventSubscriptionWhereInput): CompanyEventSubscriptionPayload
+  companyProduct(where: CompanyProductSubscriptionWhereInput): CompanyProductSubscriptionPayload
   industry(where: IndustrySubscriptionWhereInput): IndustrySubscriptionPayload
   industryEvent(where: IndustryEventSubscriptionWhereInput): IndustryEventSubscriptionPayload
   industryInfluence(where: IndustryInfluenceSubscriptionWhereInput): IndustryInfluenceSubscriptionPayload

@@ -35,8 +35,29 @@ const Query = {
     } 
     return allCompanies
   },
+  influencesByCompany:async (parent, {symbol}, ctx) => {
+    const industries = await ctx.prisma.company({symbol}).trades()
+    
+    
+    let allInflueces = []
+    for(const industry of industries){
+      const influences = await ctx.prisma.industry({id:industry.id}).influences()
+      allInflueces = [...allInflueces,...influences]
+    } 
+    return allInflueces
+  },
+  company:async (parent, {symbol}, ctx) => {
+    return ctx.prisma.company({ symbol})
+     
+  },
   products:(parent, {inputvalue}, ctx) => {
     return ctx.prisma.products({ 
+      where:{name_contains:inputvalue},
+      first:10
+     })
+  },
+  companyProducts:(parent, {inputvalue}, ctx) => {
+    return ctx.prisma.companyProducts({ 
       where:{name_contains:inputvalue},
       first:10
      })
@@ -52,6 +73,9 @@ const Query = {
       where:{name_contains:inputvalue},
       first:10
      })
+  },
+  allKeywords:(parent,args,ctx)=>{
+    return ctx.prisma.keywords()
   },
 }
 

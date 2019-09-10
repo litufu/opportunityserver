@@ -5,6 +5,15 @@ const Company = {
     events: ({ id }, args, context) => {
         return context.prisma.company({ id }).events()
     },
+    comments: ({ id }, args, context) => {
+      return context.prisma.company({ id }).comments()
+    },
+    purchases:({ id }, args, context) => {
+      return context.prisma.company({ id }).purchases()
+    },
+    selles:({ id }, args, context) => {
+      return context.prisma.company({ id }).selles()
+    },
   }
     
   module.exports = {

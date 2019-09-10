@@ -4,6 +4,8 @@ const { Company } = require('./Company')
 const { Industry } = require('./Industry')
 const { Product } = require('./Product')
 const { IndustryInfluence } = require('./IndustryInfluence')
+const {Comment} = require('./Comment')
+const {CompanyProduct} = require('./CompanyProduct')
 
 const resolvers = {
   Query,
@@ -12,6 +14,8 @@ const resolvers = {
   Industry,
   Product,
   IndustryInfluence,
+  Comment,
+  CompanyProduct,
 }
 
 module.exports = {

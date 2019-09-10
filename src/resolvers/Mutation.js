@@ -71,7 +71,6 @@ const Mutation = {
       const getCompanyScopeAndDescProcess = spawn('python',[scopeAndDescPath]);
       getCompanyScopeAndDescProcess.stdout.on('data', async (data) => {
         res = JSON.parse(data)
-        console.log(res.symbol)
         await ctx.prisma.updateCompany({
           where:{symbol:res.symbol},
           data:{
@@ -96,6 +95,16 @@ const Mutation = {
         introduce
       })
   },
+  createCompanyProduct:async (parent,{name,introduce}, ctx) => {
+    const products = await ctx.prisma.companyProducts({where:{name}})
+    if(products.length>0){
+      throw new Error("该产品已经存在，无需重复输入")
+    }
+    return ctx.prisma.createCompanyProduct({
+      name,
+      introduce
+    })
+},
   createIndustry:async (parent,{name,desc}, ctx) => {
     const industries = await ctx.prisma.industries({
       where:{name}
@@ -124,6 +133,23 @@ const Mutation = {
       throw new Error("交易性质错误")
     }
     return newIndustry
+  },
+  productLinkCompany:async (parent,{CompanyName,productName,deal}, ctx) => {
+    let newCompany
+    if(deal==="purchase"){
+      newCompany = await ctx.prisma.updateCompany({
+        where:{name:CompanyName},
+        data:{purchases:{connect:{name:productName}}}
+      })
+    }else if(deal==="sell"){
+      newCompany = await ctx.prisma.updateCompany({
+        where:{name:CompanyName},
+        data:{selles:{connect:{name:productName}}}
+      })
+    }else{
+      throw new Error("交易性质错误")
+    }
+    return newCompany
   },
   companyLinkIndustry:async (parent,{companyNames,industryName}, ctx) => {
     const companyConnectNames = companyNames.map(companyName=>({name:companyName}))
@@ -164,6 +190,12 @@ const Mutation = {
       keywordDirection,
       keyword:{connect:{name:keyword}},
       industry:{connect:{name:industryName}}
+    })
+  },
+  addCompanyComment:async (parent,{companyName,comment}, ctx) => {
+    return ctx.prisma.createComment({
+      company:{connect:{name:companyName}},
+      desc:comment
     })
   },
 }

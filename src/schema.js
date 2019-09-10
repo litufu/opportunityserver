@@ -7,9 +7,13 @@ const typeDefs = gql`
     companies(keyword:String!): [Company]
     companiesByCodeOrName(inputvalue:String!):[Company]
     companiesByInfluence(keyword:String!,keywordDirection:Direction!):[Company]
+    company(symbol:String!):Company!
+    influencesByCompany(symbol:String!):[IndustryInfluence]
     products(inputvalue:String!):[Product]
+    companyProducts(inputvalue:String!):[CompanyProduct]
     industries(inputvalue:String!):[Industry]
     keywords(inputvalue:String!):[Keyword]
+    allKeywords:[Keyword]
   }
 
   type Mutation {
@@ -17,12 +21,15 @@ const typeDefs = gql`
     getCompanies:Boolean!
     updateCompanyScopAndDesc:Boolean!
     createProduct(name:String!,introduce:String!):Product!
+    createCompanyProduct(name:String!,introduce:String!):CompanyProduct!
     createIndustry(name:String!,desc:String!):Industry!
     productLinkIndustry(industryName:String!,productName:String!,deal:String!):Industry
+    productLinkCompany(companyName:String!,productName:String!,deal:String!):Company
     companyLinkIndustry(companyNames:[String!]!,industryName:String!):Industry
     industryResearch(industryName:String!,research:String!):Industry!
     addKeyword(keyword:String!):Keyword!
     addIndustryInfluence(industryName:String!,keyword:String!,keywordDirection:Direction!,kind:FactorKind!,desc:String!,direction:Direction!):IndustryInfluence!
+    addCompanyComment(companyName:String!,comment:String!):Comment!
   }
 
   type AuthPayload {
@@ -134,6 +141,22 @@ type Industry{
 }
 
 
+type Comment{
+  id: ID!
+  createTime:DateTime
+  desc:String!
+  company:Company
+}
+
+type CompanyProduct{
+  id: ID!
+  name:String!
+  introduce:String!
+  inputs:[Company]
+  outputs:[Company]
+}
+
+
 
 type Company{
   id: ID!
@@ -152,6 +175,10 @@ type Company{
   isHS:String
   scope:String
   desc:String
+  comments:[Comment]
+  purchases:[CompanyProduct]
+  selles:[CompanyProduct]
+  pool:Boolean
   trades:[Industry]
   events:[CompanyEvent]
 }
