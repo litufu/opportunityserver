@@ -18,6 +18,22 @@ class Company(Base):
     scope = Column(String)
     desc = Column(String)
 
+# 财务报表科目
+class Daily(Base):
+    __tablename__ = 'daily'
+    id = Column(Integer, primary_key=True)
+    ts_code = Column(String)
+    trade_date = Column(String)
+    open = Column(Float)
+    high = Column(Float)
+    low = Column(Float)
+    close = Column(Float)
+    pre_close = Column(Float)
+    change = Column(Float)
+    pct_chg = Column(Float)
+    vol = Column(Float)
+    amount = Column(Float)
+
       
 if __name__ == "__main__":
     engine = create_engine('sqlite:///company.sqlite?check_same_thread=False')  

@@ -6,6 +6,7 @@ const { Product } = require('./Product')
 const { IndustryInfluence } = require('./IndustryInfluence')
 const {Comment} = require('./Comment')
 const {CompanyProduct} = require('./CompanyProduct')
+const {Daily} = require('./Daily')
 
 const resolvers = {
   Query,
@@ -16,6 +17,7 @@ const resolvers = {
   IndustryInfluence,
   Comment,
   CompanyProduct,
+  Daily,
 }
 
 module.exports = {

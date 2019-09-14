@@ -14,6 +14,8 @@ const typeDefs = gql`
     industries(inputvalue:String!):[Industry]
     keywords(inputvalue:String!):[Keyword]
     allKeywords:[Keyword]
+    bottomCrossCompanies(nowDay:String!,beforeDays:Int,firstNum:Int,resNum:Int):[Company]
+    bottomVolume(nowDay:String!,yesterday:String!,beforeDays:Int,firstNum:Int,resNum:Int):[Company]
   }
 
   type Mutation {
@@ -30,6 +32,8 @@ const typeDefs = gql`
     addKeyword(keyword:String!):Keyword!
     addIndustryInfluence(industryName:String!,keyword:String!,keywordDirection:Direction!,kind:FactorKind!,desc:String!,direction:Direction!):IndustryInfluence!
     addCompanyComment(companyName:String!,comment:String!):Comment!
+    addDailyFromTushare(date:String,startDate:String,endDate:String!):Boolean!
+    addCurrentDaily:Boolean!
   }
 
   type AuthPayload {
@@ -156,8 +160,6 @@ type CompanyProduct{
   outputs:[Company]
 }
 
-
-
 type Company{
   id: ID!
   symbol:String!
@@ -181,6 +183,23 @@ type Company{
   pool:Boolean
   trades:[Industry]
   events:[CompanyEvent]
+  dailies:[Daily]
+}
+
+type Daily{
+  id: ID!
+  company:Company!
+  symbol:String
+  tradeDate:DateTime!
+  open:Float
+  high:Float
+  low:Float
+  close:Float
+  preClose:Float
+  change:Float
+  pctChg:Float
+  vol:Float
+  amount:Float
 }
 
   

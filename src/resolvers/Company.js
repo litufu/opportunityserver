@@ -14,6 +14,9 @@ const Company = {
     selles:({ id }, args, context) => {
       return context.prisma.company({ id }).selles()
     },
+    dailies:({ id }, args, context) => {
+      return context.prisma.company({ id }).dailies()
+    },
   }
     
   module.exports = {

@@ -1,6 +1,9 @@
 const { spawn, spawnSync} = require('child_process');
 const path = require('path')
 const _ = require('lodash');
+const fetch = require('node-fetch');
+
+const { parseDate,parseSinaStock,getToday } = require('../utils')
 
 
 const Mutation = {
@@ -67,6 +70,7 @@ const Mutation = {
     return true
   },
   updateCompanyScopAndDesc:async (parent,args, ctx) => {
+      await getCompanies()
       const scopeAndDescPath = path.join(path.resolve(__dirname, '..'), './pythonFolder/get_scope_and_desc.py')
       const getCompanyScopeAndDescProcess = spawn('python',[scopeAndDescPath]);
       getCompanyScopeAndDescProcess.stdout.on('data', async (data) => {
@@ -197,6 +201,150 @@ const Mutation = {
       company:{connect:{name:companyName}},
       desc:comment
     })
+  },
+  addDailyFromTushare: async (parent,{startDate,endDate},ctx)=>{
+    const getDailyPath = path.join(path.resolve(__dirname, '..'), './pythonFolder/get_daily.py')
+    const getDailyProcess = spawn('python',[getDailyPath,startDate,endDate]);
+    getDailyProcess.stdout.on('data', async (data) => {
+      try {
+        res = JSON.parse(data)
+        if(Array.isArray(res)){
+            for (let i=0;i<res.length;i++) {
+                const companySymbol = _.split(res[i].ts_code, ".")[0]
+                const tradeDate = parseDate(res[i].trade_date)
+                const open = res[i].open  
+                const high = res[i].high
+                const low = res[i].low
+                const close = res[i].close
+                const preClose = res[i].pre_close  
+                const change = res[i].change
+                const pctChg = res[i].pct_chg  
+                const vol = res[i].vol
+                const amount = res[i].amount
+                const dailies = await ctx.prisma.dailies({
+                  where:{
+                      AND:[
+                        {symbol:companySymbol},
+                        {tradeDate}
+                    ]
+                  }
+                })
+                if(dailies.length>0){
+                  await ctx.prisma.updateDaily({
+                    where:{id:dailies[0].id},
+                    data:{
+                      open,
+                      high,
+                      low,
+                      close,
+                      preClose,
+                      change,
+                      pctChg,
+                      vol,
+                      amount
+                    }
+                  })
+                }else{
+                  await ctx.prisma.createDaily({
+                    company:{connect:{symbol:companySymbol}},
+                    symbol:companySymbol,
+                    tradeDate,
+                    open,
+                    high,
+                    low,
+                    close,
+                    preClose,
+                    change,
+                    pctChg,
+                    vol,
+                    amount
+                  })
+                }
+              }
+            }
+      }
+      catch(err) {
+          console.log('------------')
+          console.log(data.toString())
+          console.log('------------')
+          console.log(err)
+      }
+    });
+    getDailyProcess.stderr.on('data', (data) => {
+      throw new Error(`获取交易信息失败${data}`)
+    });
+    getDailyProcess.on('exit', (code) => {
+      if(code!==0){
+        throw new Error(`客户信息下载失败，请确认客户名称是否正确`)
+      }else{
+        console.log("添加日交易记录完成")
+      }
+    });
+    
+    return true
+  },
+  addCurrentDaily: async (parent,args,ctx)=>{
+    // 从sina获取当前时间的所有股票交易数据
+    const companies = await ctx.prisma.companies()
+    let symbols = []
+    for(const company of companies){
+      let symbol = company.symbol
+      let marketSymbol
+      if(_.startsWith(symbol,"6")){
+        marketSymbol = "sh"+symbol
+      }else{
+        marketSymbol = 'sz'+symbol
+      }
+      symbols.push(marketSymbol)
+      if(symbols.length==100){
+        const symbolsStr = _.join(symbols,',')
+        const url = `http://hq.sinajs.cn/list=${symbolsStr}`
+        const res = await fetch(url)
+        const text = await res.text();
+        const results = parseSinaStock(text)
+        for(const result of results){
+          const dailies = await ctx.prisma.dailies({
+            where:{
+              AND:[
+              {symbol:result.symbol},
+              {tradeDate:getToday()}
+            ]
+            }
+          })
+          let daily
+          if(dailies.length>0){
+            daily = await ctx.prisma.updateDaily({
+              where:{id:dailies[0].id},
+              data:{
+                open:result.open,
+                high:result.high,
+                low:result.low,
+                close:result.close,
+                preClose:result.preClose,
+                vol:result.vol,
+                amount:result.amount
+              }
+            })
+          }else{
+            daily = await ctx.prisma.createDaily({
+              company:{connect:{symbol:result.symbol}},
+              symbol:result.symbol,
+              tradeDate:getToday(),
+              open:result.open,
+              high:result.high,
+              low:result.low,
+              close:result.close,
+              preClose:result.preClose,
+              vol:result.vol,
+              amount:result.amount
+            })
+          }
+        }
+        symbols=[]
+      }
+    }
+    
+    return true
   },
 }
 

@@ -19,6 +19,10 @@ type AggregateCompanyProduct {
   count: Int!
 }
 
+type AggregateDaily {
+  count: Int!
+}
+
 type AggregateIndustry {
   count: Int!
 }
@@ -275,6 +279,7 @@ type Company {
   pool: Boolean
   trades(where: IndustryWhereInput, orderBy: IndustryOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Industry!]
   events(where: CompanyEventWhereInput, orderBy: CompanyEventOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [CompanyEvent!]
+  dailies(where: DailyWhereInput, orderBy: DailyOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Daily!]
 }
 
 type CompanyConnection {
@@ -306,6 +311,7 @@ input CompanyCreateInput {
   pool: Boolean
   trades: IndustryCreateManyWithoutCompaniesInput
   events: CompanyEventCreateManyWithoutCompanyInput
+  dailies: DailyCreateManyWithoutCompanyInput
 }
 
 input CompanyCreateManyWithoutPurchasesInput {
@@ -325,6 +331,11 @@ input CompanyCreateManyWithoutTradesInput {
 
 input CompanyCreateOneWithoutCommentsInput {
   create: CompanyCreateWithoutCommentsInput
+  connect: CompanyWhereUniqueInput
+}
+
+input CompanyCreateOneWithoutDailiesInput {
+  create: CompanyCreateWithoutDailiesInput
   connect: CompanyWhereUniqueInput
 }
 
@@ -355,6 +366,32 @@ input CompanyCreateWithoutCommentsInput {
   pool: Boolean
   trades: IndustryCreateManyWithoutCompaniesInput
   events: CompanyEventCreateManyWithoutCompanyInput
+  dailies: DailyCreateManyWithoutCompanyInput
+}
+
+input CompanyCreateWithoutDailiesInput {
+  id: ID
+  symbol: String!
+  name: String!
+  area: String
+  industry: String
+  fullname: String
+  enname: String
+  market: String
+  exchange: String
+  currType: String
+  listStatus: String
+  listDate: String
+  delistDate: String
+  isHS: String
+  scope: String
+  desc: String
+  purchases: CompanyProductCreateManyWithoutInputsInput
+  selles: CompanyProductCreateManyWithoutOutputsInput
+  comments: CommentCreateManyWithoutCompanyInput
+  pool: Boolean
+  trades: IndustryCreateManyWithoutCompaniesInput
+  events: CompanyEventCreateManyWithoutCompanyInput
 }
 
 input CompanyCreateWithoutEventsInput {
@@ -379,6 +416,7 @@ input CompanyCreateWithoutEventsInput {
   comments: CommentCreateManyWithoutCompanyInput
   pool: Boolean
   trades: IndustryCreateManyWithoutCompaniesInput
+  dailies: DailyCreateManyWithoutCompanyInput
 }
 
 input CompanyCreateWithoutPurchasesInput {
@@ -403,6 +441,7 @@ input CompanyCreateWithoutPurchasesInput {
   pool: Boolean
   trades: IndustryCreateManyWithoutCompaniesInput
   events: CompanyEventCreateManyWithoutCompanyInput
+  dailies: DailyCreateManyWithoutCompanyInput
 }
 
 input CompanyCreateWithoutSellesInput {
@@ -427,6 +466,7 @@ input CompanyCreateWithoutSellesInput {
   pool: Boolean
   trades: IndustryCreateManyWithoutCompaniesInput
   events: CompanyEventCreateManyWithoutCompanyInput
+  dailies: DailyCreateManyWithoutCompanyInput
 }
 
 input CompanyCreateWithoutTradesInput {
@@ -451,6 +491,7 @@ input CompanyCreateWithoutTradesInput {
   comments: CommentCreateManyWithoutCompanyInput
   pool: Boolean
   events: CompanyEventCreateManyWithoutCompanyInput
+  dailies: DailyCreateManyWithoutCompanyInput
 }
 
 type CompanyEdge {
@@ -1421,6 +1462,7 @@ input CompanyUpdateInput {
   pool: Boolean
   trades: IndustryUpdateManyWithoutCompaniesInput
   events: CompanyEventUpdateManyWithoutCompanyInput
+  dailies: DailyUpdateManyWithoutCompanyInput
 }
 
 input CompanyUpdateManyDataInput {
@@ -1502,6 +1544,13 @@ input CompanyUpdateManyWithWhereNestedInput {
   data: CompanyUpdateManyDataInput!
 }
 
+input CompanyUpdateOneRequiredWithoutDailiesInput {
+  create: CompanyCreateWithoutDailiesInput
+  update: CompanyUpdateWithoutDailiesDataInput
+  upsert: CompanyUpsertWithoutDailiesInput
+  connect: CompanyWhereUniqueInput
+}
+
 input CompanyUpdateOneRequiredWithoutEventsInput {
   create: CompanyCreateWithoutEventsInput
   update: CompanyUpdateWithoutEventsDataInput
@@ -1539,6 +1588,31 @@ input CompanyUpdateWithoutCommentsDataInput {
   pool: Boolean
   trades: IndustryUpdateManyWithoutCompaniesInput
   events: CompanyEventUpdateManyWithoutCompanyInput
+  dailies: DailyUpdateManyWithoutCompanyInput
+}
+
+input CompanyUpdateWithoutDailiesDataInput {
+  symbol: String
+  name: String
+  area: String
+  industry: String
+  fullname: String
+  enname: String
+  market: String
+  exchange: String
+  currType: String
+  listStatus: String
+  listDate: String
+  delistDate: String
+  isHS: String
+  scope: String
+  desc: String
+  purchases: CompanyProductUpdateManyWithoutInputsInput
+  selles: CompanyProductUpdateManyWithoutOutputsInput
+  comments: CommentUpdateManyWithoutCompanyInput
+  pool: Boolean
+  trades: IndustryUpdateManyWithoutCompaniesInput
+  events: CompanyEventUpdateManyWithoutCompanyInput
 }
 
 input CompanyUpdateWithoutEventsDataInput {
@@ -1562,6 +1636,7 @@ input CompanyUpdateWithoutEventsDataInput {
   comments: CommentUpdateManyWithoutCompanyInput
   pool: Boolean
   trades: IndustryUpdateManyWithoutCompaniesInput
+  dailies: DailyUpdateManyWithoutCompanyInput
 }
 
 input CompanyUpdateWithoutPurchasesDataInput {
@@ -1585,6 +1660,7 @@ input CompanyUpdateWithoutPurchasesDataInput {
   pool: Boolean
   trades: IndustryUpdateManyWithoutCompaniesInput
   events: CompanyEventUpdateManyWithoutCompanyInput
+  dailies: DailyUpdateManyWithoutCompanyInput
 }
 
 input CompanyUpdateWithoutSellesDataInput {
@@ -1608,6 +1684,7 @@ input CompanyUpdateWithoutSellesDataInput {
   pool: Boolean
   trades: IndustryUpdateManyWithoutCompaniesInput
   events: CompanyEventUpdateManyWithoutCompanyInput
+  dailies: DailyUpdateManyWithoutCompanyInput
 }
 
 input CompanyUpdateWithoutTradesDataInput {
@@ -1631,6 +1708,7 @@ input CompanyUpdateWithoutTradesDataInput {
   comments: CommentUpdateManyWithoutCompanyInput
   pool: Boolean
   events: CompanyEventUpdateManyWithoutCompanyInput
+  dailies: DailyUpdateManyWithoutCompanyInput
 }
 
 input CompanyUpdateWithWhereUniqueWithoutPurchasesInput {
@@ -1651,6 +1729,11 @@ input CompanyUpdateWithWhereUniqueWithoutTradesInput {
 input CompanyUpsertWithoutCommentsInput {
   update: CompanyUpdateWithoutCommentsDataInput!
   create: CompanyCreateWithoutCommentsInput!
+}
+
+input CompanyUpsertWithoutDailiesInput {
+  update: CompanyUpdateWithoutDailiesDataInput!
+  create: CompanyCreateWithoutDailiesInput!
 }
 
 input CompanyUpsertWithoutEventsInput {
@@ -1918,6 +2001,9 @@ input CompanyWhereInput {
   events_every: CompanyEventWhereInput
   events_some: CompanyEventWhereInput
   events_none: CompanyEventWhereInput
+  dailies_every: DailyWhereInput
+  dailies_some: DailyWhereInput
+  dailies_none: DailyWhereInput
   AND: [CompanyWhereInput!]
   OR: [CompanyWhereInput!]
   NOT: [CompanyWhereInput!]
@@ -1927,6 +2013,447 @@ input CompanyWhereUniqueInput {
   id: ID
   symbol: String
   name: String
+}
+
+type Daily {
+  id: ID!
+  company: Company!
+  symbol: String
+  tradeDate: DateTime!
+  open: Float
+  high: Float
+  low: Float
+  close: Float
+  preClose: Float
+  change: Float
+  pctChg: Float
+  vol: Float
+  amount: Float
+}
+
+type DailyConnection {
+  pageInfo: PageInfo!
+  edges: [DailyEdge]!
+  aggregate: AggregateDaily!
+}
+
+input DailyCreateInput {
+  id: ID
+  company: CompanyCreateOneWithoutDailiesInput!
+  symbol: String
+  tradeDate: DateTime!
+  open: Float
+  high: Float
+  low: Float
+  close: Float
+  preClose: Float
+  change: Float
+  pctChg: Float
+  vol: Float
+  amount: Float
+}
+
+input DailyCreateManyWithoutCompanyInput {
+  create: [DailyCreateWithoutCompanyInput!]
+  connect: [DailyWhereUniqueInput!]
+}
+
+input DailyCreateWithoutCompanyInput {
+  id: ID
+  symbol: String
+  tradeDate: DateTime!
+  open: Float
+  high: Float
+  low: Float
+  close: Float
+  preClose: Float
+  change: Float
+  pctChg: Float
+  vol: Float
+  amount: Float
+}
+
+type DailyEdge {
+  node: Daily!
+  cursor: String!
+}
+
+enum DailyOrderByInput {
+  id_ASC
+  id_DESC
+  symbol_ASC
+  symbol_DESC
+  tradeDate_ASC
+  tradeDate_DESC
+  open_ASC
+  open_DESC
+  high_ASC
+  high_DESC
+  low_ASC
+  low_DESC
+  close_ASC
+  close_DESC
+  preClose_ASC
+  preClose_DESC
+  change_ASC
+  change_DESC
+  pctChg_ASC
+  pctChg_DESC
+  vol_ASC
+  vol_DESC
+  amount_ASC
+  amount_DESC
+}
+
+type DailyPreviousValues {
+  id: ID!
+  symbol: String
+  tradeDate: DateTime!
+  open: Float
+  high: Float
+  low: Float
+  close: Float
+  preClose: Float
+  change: Float
+  pctChg: Float
+  vol: Float
+  amount: Float
+}
+
+input DailyScalarWhereInput {
+  id: ID
+  id_not: ID
+  id_in: [ID!]
+  id_not_in: [ID!]
+  id_lt: ID
+  id_lte: ID
+  id_gt: ID
+  id_gte: ID
+  id_contains: ID
+  id_not_contains: ID
+  id_starts_with: ID
+  id_not_starts_with: ID
+  id_ends_with: ID
+  id_not_ends_with: ID
+  symbol: String
+  symbol_not: String
+  symbol_in: [String!]
+  symbol_not_in: [String!]
+  symbol_lt: String
+  symbol_lte: String
+  symbol_gt: String
+  symbol_gte: String
+  symbol_contains: String
+  symbol_not_contains: String
+  symbol_starts_with: String
+  symbol_not_starts_with: String
+  symbol_ends_with: String
+  symbol_not_ends_with: String
+  tradeDate: DateTime
+  tradeDate_not: DateTime
+  tradeDate_in: [DateTime!]
+  tradeDate_not_in: [DateTime!]
+  tradeDate_lt: DateTime
+  tradeDate_lte: DateTime
+  tradeDate_gt: DateTime
+  tradeDate_gte: DateTime
+  open: Float
+  open_not: Float
+  open_in: [Float!]
+  open_not_in: [Float!]
+  open_lt: Float
+  open_lte: Float
+  open_gt: Float
+  open_gte: Float
+  high: Float
+  high_not: Float
+  high_in: [Float!]
+  high_not_in: [Float!]
+  high_lt: Float
+  high_lte: Float
+  high_gt: Float
+  high_gte: Float
+  low: Float
+  low_not: Float
+  low_in: [Float!]
+  low_not_in: [Float!]
+  low_lt: Float
+  low_lte: Float
+  low_gt: Float
+  low_gte: Float
+  close: Float
+  close_not: Float
+  close_in: [Float!]
+  close_not_in: [Float!]
+  close_lt: Float
+  close_lte: Float
+  close_gt: Float
+  close_gte: Float
+  preClose: Float
+  preClose_not: Float
+  preClose_in: [Float!]
+  preClose_not_in: [Float!]
+  preClose_lt: Float
+  preClose_lte: Float
+  preClose_gt: Float
+  preClose_gte: Float
+  change: Float
+  change_not: Float
+  change_in: [Float!]
+  change_not_in: [Float!]
+  change_lt: Float
+  change_lte: Float
+  change_gt: Float
+  change_gte: Float
+  pctChg: Float
+  pctChg_not: Float
+  pctChg_in: [Float!]
+  pctChg_not_in: [Float!]
+  pctChg_lt: Float
+  pctChg_lte: Float
+  pctChg_gt: Float
+  pctChg_gte: Float
+  vol: Float
+  vol_not: Float
+  vol_in: [Float!]
+  vol_not_in: [Float!]
+  vol_lt: Float
+  vol_lte: Float
+  vol_gt: Float
+  vol_gte: Float
+  amount: Float
+  amount_not: Float
+  amount_in: [Float!]
+  amount_not_in: [Float!]
+  amount_lt: Float
+  amount_lte: Float
+  amount_gt: Float
+  amount_gte: Float
+  AND: [DailyScalarWhereInput!]
+  OR: [DailyScalarWhereInput!]
+  NOT: [DailyScalarWhereInput!]
+}
+
+type DailySubscriptionPayload {
+  mutation: MutationType!
+  node: Daily
+  updatedFields: [String!]
+  previousValues: DailyPreviousValues
+}
+
+input DailySubscriptionWhereInput {
+  mutation_in: [MutationType!]
+  updatedFields_contains: String
+  updatedFields_contains_every: [String!]
+  updatedFields_contains_some: [String!]
+  node: DailyWhereInput
+  AND: [DailySubscriptionWhereInput!]
+  OR: [DailySubscriptionWhereInput!]
+  NOT: [DailySubscriptionWhereInput!]
+}
+
+input DailyUpdateInput {
+  company: CompanyUpdateOneRequiredWithoutDailiesInput
+  symbol: String
+  tradeDate: DateTime
+  open: Float
+  high: Float
+  low: Float
+  close: Float
+  preClose: Float
+  change: Float
+  pctChg: Float
+  vol: Float
+  amount: Float
+}
+
+input DailyUpdateManyDataInput {
+  symbol: String
+  tradeDate: DateTime
+  open: Float
+  high: Float
+  low: Float
+  close: Float
+  preClose: Float
+  change: Float
+  pctChg: Float
+  vol: Float
+  amount: Float
+}
+
+input DailyUpdateManyMutationInput {
+  symbol: String
+  tradeDate: DateTime
+  open: Float
+  high: Float
+  low: Float
+  close: Float
+  preClose: Float
+  change: Float
+  pctChg: Float
+  vol: Float
+  amount: Float
+}
+
+input DailyUpdateManyWithoutCompanyInput {
+  create: [DailyCreateWithoutCompanyInput!]
+  delete: [DailyWhereUniqueInput!]
+  connect: [DailyWhereUniqueInput!]
+  set: [DailyWhereUniqueInput!]
+  disconnect: [DailyWhereUniqueInput!]
+  update: [DailyUpdateWithWhereUniqueWithoutCompanyInput!]
+  upsert: [DailyUpsertWithWhereUniqueWithoutCompanyInput!]
+  deleteMany: [DailyScalarWhereInput!]
+  updateMany: [DailyUpdateManyWithWhereNestedInput!]
+}
+
+input DailyUpdateManyWithWhereNestedInput {
+  where: DailyScalarWhereInput!
+  data: DailyUpdateManyDataInput!
+}
+
+input DailyUpdateWithoutCompanyDataInput {
+  symbol: String
+  tradeDate: DateTime
+  open: Float
+  high: Float
+  low: Float
+  close: Float
+  preClose: Float
+  change: Float
+  pctChg: Float
+  vol: Float
+  amount: Float
+}
+
+input DailyUpdateWithWhereUniqueWithoutCompanyInput {
+  where: DailyWhereUniqueInput!
+  data: DailyUpdateWithoutCompanyDataInput!
+}
+
+input DailyUpsertWithWhereUniqueWithoutCompanyInput {
+  where: DailyWhereUniqueInput!
+  update: DailyUpdateWithoutCompanyDataInput!
+  create: DailyCreateWithoutCompanyInput!
+}
+
+input DailyWhereInput {
+  id: ID
+  id_not: ID
+  id_in: [ID!]
+  id_not_in: [ID!]
+  id_lt: ID
+  id_lte: ID
+  id_gt: ID
+  id_gte: ID
+  id_contains: ID
+  id_not_contains: ID
+  id_starts_with: ID
+  id_not_starts_with: ID
+  id_ends_with: ID
+  id_not_ends_with: ID
+  company: CompanyWhereInput
+  symbol: String
+  symbol_not: String
+  symbol_in: [String!]
+  symbol_not_in: [String!]
+  symbol_lt: String
+  symbol_lte: String
+  symbol_gt: String
+  symbol_gte: String
+  symbol_contains: String
+  symbol_not_contains: String
+  symbol_starts_with: String
+  symbol_not_starts_with: String
+  symbol_ends_with: String
+  symbol_not_ends_with: String
+  tradeDate: DateTime
+  tradeDate_not: DateTime
+  tradeDate_in: [DateTime!]
+  tradeDate_not_in: [DateTime!]
+  tradeDate_lt: DateTime
+  tradeDate_lte: DateTime
+  tradeDate_gt: DateTime
+  tradeDate_gte: DateTime
+  open: Float
+  open_not: Float
+  open_in: [Float!]
+  open_not_in: [Float!]
+  open_lt: Float
+  open_lte: Float
+  open_gt: Float
+  open_gte: Float
+  high: Float
+  high_not: Float
+  high_in: [Float!]
+  high_not_in: [Float!]
+  high_lt: Float
+  high_lte: Float
+  high_gt: Float
+  high_gte: Float
+  low: Float
+  low_not: Float
+  low_in: [Float!]
+  low_not_in: [Float!]
+  low_lt: Float
+  low_lte: Float
+  low_gt: Float
+  low_gte: Float
+  close: Float
+  close_not: Float
+  close_in: [Float!]
+  close_not_in: [Float!]
+  close_lt: Float
+  close_lte: Float
+  close_gt: Float
+  close_gte: Float
+  preClose: Float
+  preClose_not: Float
+  preClose_in: [Float!]
+  preClose_not_in: [Float!]
+  preClose_lt: Float
+  preClose_lte: Float
+  preClose_gt: Float
+  preClose_gte: Float
+  change: Float
+  change_not: Float
+  change_in: [Float!]
+  change_not_in: [Float!]
+  change_lt: Float
+  change_lte: Float
+  change_gt: Float
+  change_gte: Float
+  pctChg: Float
+  pctChg_not: Float
+  pctChg_in: [Float!]
+  pctChg_not_in: [Float!]
+  pctChg_lt: Float
+  pctChg_lte: Float
+  pctChg_gt: Float
+  pctChg_gte: Float
+  vol: Float
+  vol_not: Float
+  vol_in: [Float!]
+  vol_not_in: [Float!]
+  vol_lt: Float
+  vol_lte: Float
+  vol_gt: Float
+  vol_gte: Float
+  amount: Float
+  amount_not: Float
+  amount_in: [Float!]
+  amount_not_in: [Float!]
+  amount_lt: Float
+  amount_lte: Float
+  amount_gt: Float
+  amount_gte: Float
+  AND: [DailyWhereInput!]
+  OR: [DailyWhereInput!]
+  NOT: [DailyWhereInput!]
+}
+
+input DailyWhereUniqueInput {
+  id: ID
 }
 
 scalar DateTime
@@ -3020,6 +3547,12 @@ type Mutation {
   upsertCompanyProduct(where: CompanyProductWhereUniqueInput!, create: CompanyProductCreateInput!, update: CompanyProductUpdateInput!): CompanyProduct!
   deleteCompanyProduct(where: CompanyProductWhereUniqueInput!): CompanyProduct
   deleteManyCompanyProducts(where: CompanyProductWhereInput): BatchPayload!
+  createDaily(data: DailyCreateInput!): Daily!
+  updateDaily(data: DailyUpdateInput!, where: DailyWhereUniqueInput!): Daily
+  updateManyDailies(data: DailyUpdateManyMutationInput!, where: DailyWhereInput): BatchPayload!
+  upsertDaily(where: DailyWhereUniqueInput!, create: DailyCreateInput!, update: DailyUpdateInput!): Daily!
+  deleteDaily(where: DailyWhereUniqueInput!): Daily
+  deleteManyDailies(where: DailyWhereInput): BatchPayload!
   createIndustry(data: IndustryCreateInput!): Industry!
   updateIndustry(data: IndustryUpdateInput!, where: IndustryWhereUniqueInput!): Industry
   updateManyIndustries(data: IndustryUpdateManyMutationInput!, where: IndustryWhereInput): BatchPayload!
@@ -3365,6 +3898,9 @@ type Query {
   companyProduct(where: CompanyProductWhereUniqueInput!): CompanyProduct
   companyProducts(where: CompanyProductWhereInput, orderBy: CompanyProductOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [CompanyProduct]!
   companyProductsConnection(where: CompanyProductWhereInput, orderBy: CompanyProductOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): CompanyProductConnection!
+  daily(where: DailyWhereUniqueInput!): Daily
+  dailies(where: DailyWhereInput, orderBy: DailyOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Daily]!
+  dailiesConnection(where: DailyWhereInput, orderBy: DailyOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): DailyConnection!
   industry(where: IndustryWhereUniqueInput!): Industry
   industries(where: IndustryWhereInput, orderBy: IndustryOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Industry]!
   industriesConnection(where: IndustryWhereInput, orderBy: IndustryOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): IndustryConnection!
@@ -3571,6 +4107,7 @@ type Subscription {
   company(where: CompanySubscriptionWhereInput): CompanySubscriptionPayload
   companyEvent(where: CompanyEventSubscriptionWhereInput): CompanyEventSubscriptionPayload
   companyProduct(where: CompanyProductSubscriptionWhereInput): CompanyProductSubscriptionPayload
+  daily(where: DailySubscriptionWhereInput): DailySubscriptionPayload
   industry(where: IndustrySubscriptionWhereInput): IndustrySubscriptionPayload
   industryEvent(where: IndustryEventSubscriptionWhereInput): IndustryEventSubscriptionPayload
   industryInfluence(where: IndustryInfluenceSubscriptionWhereInput): IndustryInfluenceSubscriptionPayload

@@ -134,4 +134,21 @@ type Company{
   pool:Boolean
   trades:[Industry!]!
   events:[CompanyEvent!]!
+  dailies:[Daily!]!
+}
+
+type Daily{
+  id: ID! @id
+  company:Company!
+  symbol:String
+  tradeDate:DateTime!
+  open:Float
+  high:Float
+  low:Float
+  close:Float
+  preClose:Float
+  change:Float
+  pctChg:Float
+  vol:Float
+  amount:Float
 }

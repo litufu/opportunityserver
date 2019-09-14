@@ -1,4 +1,5 @@
 const _ = require('lodash');
+const { getBottomPct,getBeforeDate,getChangePct } = require('../utils')
 
 const Query = {
   companies: (parent, {keyword}, ctx) => {
@@ -76,6 +77,91 @@ const Query = {
   },
   allKeywords:(parent,args,ctx)=>{
     return ctx.prisma.keywords()
+  },
+  bottomCrossCompanies:async (parent,{nowDay,beforeDays,firstNum,resNum},ctx)=>{
+    
+    const today = new Date(nowDay)
+    const beforeDay = getBeforeDate(nowDay,beforeDays)
+    const dailies = await ctx.prisma.dailies({
+      where:{tradeDate:today}
+    })
+    dailies.sort(function(a, b){
+      return getBottomPct(b)-getBottomPct(a)
+    });
+    const firstDailies = dailies.slice(0,firstNum)
+    const companySymbols = firstDailies.map(daily=>daily.symbol)
+    const beforeDailies = await ctx.prisma.dailies({
+      where:{
+        AND:[
+          {tradeDate:beforeDay},
+          {symbol_in:companySymbols}
+        ]
+      }
+    })
+    firstDailies.sort(function(a,b){
+      return getChangePct(b,beforeDailies) - getChangePct(a,beforeDailies)
+    })
+    const resDailies = firstDailies.slice(0,resNum)
+    
+    const companies = []
+    for(const daily of resDailies){
+      const company = await ctx.prisma.company({symbol:daily.symbol})
+      companies.push(company)
+    }
+    return companies
+  },
+  bottomVolume:async (parent,{nowDay,yesterday,beforeDays,firstNum,resNum},ctx)=>{
+    
+    const today = new Date(nowDay)
+    const lastDay = new Date(yesterday)
+    const beforeDay = getBeforeDate(nowDay,beforeDays)
+    const dailies = await ctx.prisma.dailies({
+      where:{tradeDate:today}
+    })
+    const lastDailies = await ctx.prisma.dailies({
+      where:{tradeDate:lastDay}
+    })
+    const res = []
+    for(const daily of dailies){
+      const symbol = daily.symbol
+      const vol = daily.vol
+      const yesterdayDaily = lastDailies.filter(d=>d.symbol===symbol)
+      if(yesterdayDaily.length>0){
+        const yesterdayVol = yesterdayDaily[0].vol
+        res.push({symbol,change:vol/yesterdayVol})
+      }
+    }
+    res.sort(function(a, b){
+      return b.change-a.change
+    });
+    const companySymbols = res.slice(0,firstNum).map(r=>r.symbol)
+    const firstDailies = await ctx.prisma.dailies({
+      where:{
+        AND:[
+          {tradeDate:today},
+          {symbol_in:companySymbols}
+        ]
+      }
+    })
+    const beforeDailies = await ctx.prisma.dailies({
+      where:{
+        AND:[
+          {tradeDate:beforeDay},
+          {symbol_in:companySymbols}
+        ]
+      }
+    })
+    firstDailies.sort(function(a,b){
+      return getChangePct(b,beforeDailies) - getChangePct(a,beforeDailies)
+    })
+    const resDailies = firstDailies.slice(0,resNum)
+    
+    const companies = []
+    for(const daily of resDailies){
+      const company = await ctx.prisma.company({symbol:daily.symbol})
+      companies.push(company)
+    }
+    return companies
   },
 }
 
