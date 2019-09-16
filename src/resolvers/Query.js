@@ -1,7 +1,10 @@
 const _ = require('lodash');
-const { getBottomPct,getBeforeDate,getChangePct } = require('../utils')
+const { getBottomPct,getBeforeDate,getChangePct,parseDate,getToday } = require('../utils')
 
 const Query = {
+  allCompanies:(parent, args, ctx) => {
+    return ctx.prisma.companies()
+  },
   companies: (parent, {keyword}, ctx) => {
     return ctx.prisma.companies({ 
       where:{desc_contains:keyword},
@@ -49,6 +52,38 @@ const Query = {
   },
   company:async (parent, {symbol}, ctx) => {
     return ctx.prisma.company({ symbol})
+     
+  },
+  finaIndicators:async (parent,{endDate},ctx)=>{
+    return ctx.prisma.finaIndicators({
+      where:{endDate:new Date(endDate)}
+    })
+  },
+  conditionSearchCompanies:async (parent, {years,qSalesYoy,dtNetprofitYoy,endDate}, ctx) => {
+    const today = getToday()
+    const companies = await ctx.prisma.companies()
+    const newCompanies = companies.filter(async company=>{
+      const companyfinaIndicators = await ctx.prisma.finaIndicators({
+        where:{
+          AND:[
+            {endDate:new Date(endDate)},
+            {symbol:company.symbol}
+          ]
+        }
+      })
+      const listDate = parseDate(company.listDate)
+      const dateSpan = today - listDate
+      const iDays = parseInt(dateSpan / (24 * 3600 * 1000))
+      if(iDays>(years-1)*365 && iDays<(years*365) 
+      && (companyfinaIndicators.length>0)
+      && (companyfinaIndicators[0].qSalesYoy>qSalesYoy)
+      && (companyfinaIndicators[0].dtNetprofitYoy>dtNetprofitYoy)
+      ){
+        return true
+      }
+      return false
+    })
+    return newCompanies
      
   },
   products:(parent, {inputvalue}, ctx) => {
@@ -115,6 +150,7 @@ const Query = {
     const today = new Date(nowDay)
     const lastDay = new Date(yesterday)
     const beforeDay = getBeforeDate(nowDay,beforeDays)
+    console.log(beforeDay)
     const dailies = await ctx.prisma.dailies({
       where:{tradeDate:today}
     })
@@ -162,6 +198,11 @@ const Query = {
       companies.push(company)
     }
     return companies
+  },
+  companyFinaIndicators:(parent, {symbol}, ctx) => {
+    return ctx.prisma.finaIndicators({ 
+      where:{company:{symbol}}
+    })
   },
 }
 

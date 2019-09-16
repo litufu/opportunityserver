@@ -23,6 +23,10 @@ type AggregateDaily {
   count: Int!
 }
 
+type AggregateFinaIndicator {
+  count: Int!
+}
+
 type AggregateIndustry {
   count: Int!
 }
@@ -280,6 +284,7 @@ type Company {
   trades(where: IndustryWhereInput, orderBy: IndustryOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Industry!]
   events(where: CompanyEventWhereInput, orderBy: CompanyEventOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [CompanyEvent!]
   dailies(where: DailyWhereInput, orderBy: DailyOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Daily!]
+  finaIndicators(where: FinaIndicatorWhereInput, orderBy: FinaIndicatorOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [FinaIndicator!]
 }
 
 type CompanyConnection {
@@ -312,6 +317,7 @@ input CompanyCreateInput {
   trades: IndustryCreateManyWithoutCompaniesInput
   events: CompanyEventCreateManyWithoutCompanyInput
   dailies: DailyCreateManyWithoutCompanyInput
+  finaIndicators: FinaIndicatorCreateManyWithoutCompanyInput
 }
 
 input CompanyCreateManyWithoutPurchasesInput {
@@ -344,6 +350,11 @@ input CompanyCreateOneWithoutEventsInput {
   connect: CompanyWhereUniqueInput
 }
 
+input CompanyCreateOneWithoutFinaIndicatorsInput {
+  create: CompanyCreateWithoutFinaIndicatorsInput
+  connect: CompanyWhereUniqueInput
+}
+
 input CompanyCreateWithoutCommentsInput {
   id: ID
   symbol: String!
@@ -367,6 +378,7 @@ input CompanyCreateWithoutCommentsInput {
   trades: IndustryCreateManyWithoutCompaniesInput
   events: CompanyEventCreateManyWithoutCompanyInput
   dailies: DailyCreateManyWithoutCompanyInput
+  finaIndicators: FinaIndicatorCreateManyWithoutCompanyInput
 }
 
 input CompanyCreateWithoutDailiesInput {
@@ -392,6 +404,7 @@ input CompanyCreateWithoutDailiesInput {
   pool: Boolean
   trades: IndustryCreateManyWithoutCompaniesInput
   events: CompanyEventCreateManyWithoutCompanyInput
+  finaIndicators: FinaIndicatorCreateManyWithoutCompanyInput
 }
 
 input CompanyCreateWithoutEventsInput {
@@ -416,6 +429,33 @@ input CompanyCreateWithoutEventsInput {
   comments: CommentCreateManyWithoutCompanyInput
   pool: Boolean
   trades: IndustryCreateManyWithoutCompaniesInput
+  dailies: DailyCreateManyWithoutCompanyInput
+  finaIndicators: FinaIndicatorCreateManyWithoutCompanyInput
+}
+
+input CompanyCreateWithoutFinaIndicatorsInput {
+  id: ID
+  symbol: String!
+  name: String!
+  area: String
+  industry: String
+  fullname: String
+  enname: String
+  market: String
+  exchange: String
+  currType: String
+  listStatus: String
+  listDate: String
+  delistDate: String
+  isHS: String
+  scope: String
+  desc: String
+  purchases: CompanyProductCreateManyWithoutInputsInput
+  selles: CompanyProductCreateManyWithoutOutputsInput
+  comments: CommentCreateManyWithoutCompanyInput
+  pool: Boolean
+  trades: IndustryCreateManyWithoutCompaniesInput
+  events: CompanyEventCreateManyWithoutCompanyInput
   dailies: DailyCreateManyWithoutCompanyInput
 }
 
@@ -442,6 +482,7 @@ input CompanyCreateWithoutPurchasesInput {
   trades: IndustryCreateManyWithoutCompaniesInput
   events: CompanyEventCreateManyWithoutCompanyInput
   dailies: DailyCreateManyWithoutCompanyInput
+  finaIndicators: FinaIndicatorCreateManyWithoutCompanyInput
 }
 
 input CompanyCreateWithoutSellesInput {
@@ -467,6 +508,7 @@ input CompanyCreateWithoutSellesInput {
   trades: IndustryCreateManyWithoutCompaniesInput
   events: CompanyEventCreateManyWithoutCompanyInput
   dailies: DailyCreateManyWithoutCompanyInput
+  finaIndicators: FinaIndicatorCreateManyWithoutCompanyInput
 }
 
 input CompanyCreateWithoutTradesInput {
@@ -492,6 +534,7 @@ input CompanyCreateWithoutTradesInput {
   pool: Boolean
   events: CompanyEventCreateManyWithoutCompanyInput
   dailies: DailyCreateManyWithoutCompanyInput
+  finaIndicators: FinaIndicatorCreateManyWithoutCompanyInput
 }
 
 type CompanyEdge {
@@ -1463,6 +1506,7 @@ input CompanyUpdateInput {
   trades: IndustryUpdateManyWithoutCompaniesInput
   events: CompanyEventUpdateManyWithoutCompanyInput
   dailies: DailyUpdateManyWithoutCompanyInput
+  finaIndicators: FinaIndicatorUpdateManyWithoutCompanyInput
 }
 
 input CompanyUpdateManyDataInput {
@@ -1558,6 +1602,13 @@ input CompanyUpdateOneRequiredWithoutEventsInput {
   connect: CompanyWhereUniqueInput
 }
 
+input CompanyUpdateOneRequiredWithoutFinaIndicatorsInput {
+  create: CompanyCreateWithoutFinaIndicatorsInput
+  update: CompanyUpdateWithoutFinaIndicatorsDataInput
+  upsert: CompanyUpsertWithoutFinaIndicatorsInput
+  connect: CompanyWhereUniqueInput
+}
+
 input CompanyUpdateOneWithoutCommentsInput {
   create: CompanyCreateWithoutCommentsInput
   update: CompanyUpdateWithoutCommentsDataInput
@@ -1589,6 +1640,7 @@ input CompanyUpdateWithoutCommentsDataInput {
   trades: IndustryUpdateManyWithoutCompaniesInput
   events: CompanyEventUpdateManyWithoutCompanyInput
   dailies: DailyUpdateManyWithoutCompanyInput
+  finaIndicators: FinaIndicatorUpdateManyWithoutCompanyInput
 }
 
 input CompanyUpdateWithoutDailiesDataInput {
@@ -1613,6 +1665,7 @@ input CompanyUpdateWithoutDailiesDataInput {
   pool: Boolean
   trades: IndustryUpdateManyWithoutCompaniesInput
   events: CompanyEventUpdateManyWithoutCompanyInput
+  finaIndicators: FinaIndicatorUpdateManyWithoutCompanyInput
 }
 
 input CompanyUpdateWithoutEventsDataInput {
@@ -1636,6 +1689,32 @@ input CompanyUpdateWithoutEventsDataInput {
   comments: CommentUpdateManyWithoutCompanyInput
   pool: Boolean
   trades: IndustryUpdateManyWithoutCompaniesInput
+  dailies: DailyUpdateManyWithoutCompanyInput
+  finaIndicators: FinaIndicatorUpdateManyWithoutCompanyInput
+}
+
+input CompanyUpdateWithoutFinaIndicatorsDataInput {
+  symbol: String
+  name: String
+  area: String
+  industry: String
+  fullname: String
+  enname: String
+  market: String
+  exchange: String
+  currType: String
+  listStatus: String
+  listDate: String
+  delistDate: String
+  isHS: String
+  scope: String
+  desc: String
+  purchases: CompanyProductUpdateManyWithoutInputsInput
+  selles: CompanyProductUpdateManyWithoutOutputsInput
+  comments: CommentUpdateManyWithoutCompanyInput
+  pool: Boolean
+  trades: IndustryUpdateManyWithoutCompaniesInput
+  events: CompanyEventUpdateManyWithoutCompanyInput
   dailies: DailyUpdateManyWithoutCompanyInput
 }
 
@@ -1661,6 +1740,7 @@ input CompanyUpdateWithoutPurchasesDataInput {
   trades: IndustryUpdateManyWithoutCompaniesInput
   events: CompanyEventUpdateManyWithoutCompanyInput
   dailies: DailyUpdateManyWithoutCompanyInput
+  finaIndicators: FinaIndicatorUpdateManyWithoutCompanyInput
 }
 
 input CompanyUpdateWithoutSellesDataInput {
@@ -1685,6 +1765,7 @@ input CompanyUpdateWithoutSellesDataInput {
   trades: IndustryUpdateManyWithoutCompaniesInput
   events: CompanyEventUpdateManyWithoutCompanyInput
   dailies: DailyUpdateManyWithoutCompanyInput
+  finaIndicators: FinaIndicatorUpdateManyWithoutCompanyInput
 }
 
 input CompanyUpdateWithoutTradesDataInput {
@@ -1709,6 +1790,7 @@ input CompanyUpdateWithoutTradesDataInput {
   pool: Boolean
   events: CompanyEventUpdateManyWithoutCompanyInput
   dailies: DailyUpdateManyWithoutCompanyInput
+  finaIndicators: FinaIndicatorUpdateManyWithoutCompanyInput
 }
 
 input CompanyUpdateWithWhereUniqueWithoutPurchasesInput {
@@ -1739,6 +1821,11 @@ input CompanyUpsertWithoutDailiesInput {
 input CompanyUpsertWithoutEventsInput {
   update: CompanyUpdateWithoutEventsDataInput!
   create: CompanyCreateWithoutEventsInput!
+}
+
+input CompanyUpsertWithoutFinaIndicatorsInput {
+  update: CompanyUpdateWithoutFinaIndicatorsDataInput!
+  create: CompanyCreateWithoutFinaIndicatorsInput!
 }
 
 input CompanyUpsertWithWhereUniqueWithoutPurchasesInput {
@@ -2004,6 +2091,9 @@ input CompanyWhereInput {
   dailies_every: DailyWhereInput
   dailies_some: DailyWhereInput
   dailies_none: DailyWhereInput
+  finaIndicators_every: FinaIndicatorWhereInput
+  finaIndicators_some: FinaIndicatorWhereInput
+  finaIndicators_none: FinaIndicatorWhereInput
   AND: [CompanyWhereInput!]
   OR: [CompanyWhereInput!]
   NOT: [CompanyWhereInput!]
@@ -2471,6 +2561,4539 @@ enum FactorKind {
   COST
   FEE
   BRAND
+}
+
+type FinaIndicator {
+  id: ID!
+  company: Company!
+  symbol: String
+  annDate: String
+  endDate: String
+  eps: Float
+  dtEps: Float
+  totalRevenuePs: Float
+  revenuePs: Float
+  capitalResePs: Float
+  surplusResePs: Float
+  undistProfitPs: Float
+  extraItem: Float
+  profitDedt: Float
+  grossMargin: Float
+  currentRatio: Float
+  quickRatio: Float
+  cashRatio: Float
+  invturnDays: Float
+  arturnDays: Float
+  invTurn: Float
+  arTurn: Float
+  caTurn: Float
+  faTurn: Float
+  assetsTurn: Float
+  opIncome: Float
+  valuechangeIncome: Float
+  interstIncome: Float
+  daa: Float
+  ebit: Float
+  ebitda: Float
+  fcff: Float
+  fcfe: Float
+  currentExint: Float
+  noncurrentExint: Float
+  interestdebt: Float
+  netdebt: Float
+  tangibleAsset: Float
+  workingCapital: Float
+  networkingCapital: Float
+  investCapital: Float
+  retainedEarnings: Float
+  diluted2Eps: Float
+  bps: Float
+  ocfps: Float
+  retainedps: Float
+  cfps: Float
+  ebitPs: Float
+  fcffPs: Float
+  fcfePs: Float
+  netprofitMargin: Float
+  grossprofitMargin: Float
+  cogsOfSales: Float
+  expenseOfSales: Float
+  profitToGr: Float
+  saleexpToGr: Float
+  adminexpOfGr: Float
+  finaexpOfGr: Float
+  impaiTtm: Float
+  gcOfGr: Float
+  opOfGr: Float
+  ebitOfGr: Float
+  roe: Float
+  roeWaa: Float
+  roeDt: Float
+  roa: Float
+  npta: Float
+  roic: Float
+  roeYearly: Float
+  roa2Yearly: Float
+  roeAvg: Float
+  opincomeOfEbt: Float
+  investincomeOfEbt: Float
+  nOpProfitOfEbt: Float
+  taxToEbt: Float
+  dtprofitToProfit: Float
+  salescashToOr: Float
+  ocfToOr: Float
+  ocfToOpincome: Float
+  capitalizedToDa: Float
+  debtToAssets: Float
+  assetsToEqt: Float
+  dpAssetsToEqt: Float
+  caToAssets: Float
+  ncaToAssets: Float
+  tbassetsToTotalassets: Float
+  intToTalcap: Float
+  eqtToTalcapital: Float
+  currentdebtToDebt: Float
+  longdebToDebt: Float
+  ocfToShortdebt: Float
+  debtToEqt: Float
+  eqtToDebt: Float
+  eqtToInterestdebt: Float
+  tangibleassetToDebt: Float
+  tangassetToIntdebt: Float
+  tangibleassetToNetdebt: Float
+  ocfToDebt: Float
+  ocfToInterestdebt: Float
+  ocfToNetdebt: Float
+  ebitToInterest: Float
+  longdebtToWorkingcapital: Float
+  ebitdaToDebt: Float
+  turnDays: Float
+  roaYearly: Float
+  roaDp: Float
+  fixedAssets: Float
+  profitPrefinExp: Float
+  nonOpProfit: Float
+  opToEbt: Float
+  nopToEbt: Float
+  ocfToProfit: Float
+  cashToLiqdebt: Float
+  cashToLiqdebtWithinterest: Float
+  opToLiqdebt: Float
+  opToDebt: Float
+  roicYearly: Float
+  totalFaTrun: Float
+  profitToOp: Float
+  qOpincome: Float
+  qInvestincome: Float
+  qDtprofit: Float
+  qEps: Float
+  qNetprofitMargin: Float
+  qGsprofitMargin: Float
+  qExpToSales: Float
+  qProfitToGr: Float
+  qSaleexpToGr: Float
+  qAdminexpToGr: Float
+  qFinaexpToGr: Float
+  qImpairToGrTtm: Float
+  qGcToGr: Float
+  qOpToGr: Float
+  qRoe: Float
+  qDtRoe: Float
+  qNpta: Float
+  qOpincomeToEbt: Float
+  qInvestincomeToEbt: Float
+  qDtprofitToProfit: Float
+  qSalescashToOr: Float
+  qOcfToSales: Float
+  qOcfToOr: Float
+  basicEpsYoy: Float
+  dtEpsYoy: Float
+  cfpsYoy: Float
+  opYoy: Float
+  ebtYoy: Float
+  netprofitYoy: Float
+  dtNetprofitYoy: Float
+  ocfYoy: Float
+  roeYoy: Float
+  bpsYoy: Float
+  assetsYoy: Float
+  eqtYoy: Float
+  trYoy: Float
+  orYoy: Float
+  qGrYoy: Float
+  qGrQoq: Float
+  qSalesYoy: Float
+  qSalesQoq: Float
+  qOpYoy: Float
+  qOpQoq: Float
+  qProfitYoy: Float
+  qProfitQoq: Float
+  qNetprofitYoy: Float
+  qNetprofitQoq: Float
+  equityYoy: Float
+  rdExp: Float
+  updateFlag: String
+}
+
+type FinaIndicatorConnection {
+  pageInfo: PageInfo!
+  edges: [FinaIndicatorEdge]!
+  aggregate: AggregateFinaIndicator!
+}
+
+input FinaIndicatorCreateInput {
+  id: ID
+  company: CompanyCreateOneWithoutFinaIndicatorsInput!
+  symbol: String
+  annDate: String
+  endDate: String
+  eps: Float
+  dtEps: Float
+  totalRevenuePs: Float
+  revenuePs: Float
+  capitalResePs: Float
+  surplusResePs: Float
+  undistProfitPs: Float
+  extraItem: Float
+  profitDedt: Float
+  grossMargin: Float
+  currentRatio: Float
+  quickRatio: Float
+  cashRatio: Float
+  invturnDays: Float
+  arturnDays: Float
+  invTurn: Float
+  arTurn: Float
+  caTurn: Float
+  faTurn: Float
+  assetsTurn: Float
+  opIncome: Float
+  valuechangeIncome: Float
+  interstIncome: Float
+  daa: Float
+  ebit: Float
+  ebitda: Float
+  fcff: Float
+  fcfe: Float
+  currentExint: Float
+  noncurrentExint: Float
+  interestdebt: Float
+  netdebt: Float
+  tangibleAsset: Float
+  workingCapital: Float
+  networkingCapital: Float
+  investCapital: Float
+  retainedEarnings: Float
+  diluted2Eps: Float
+  bps: Float
+  ocfps: Float
+  retainedps: Float
+  cfps: Float
+  ebitPs: Float
+  fcffPs: Float
+  fcfePs: Float
+  netprofitMargin: Float
+  grossprofitMargin: Float
+  cogsOfSales: Float
+  expenseOfSales: Float
+  profitToGr: Float
+  saleexpToGr: Float
+  adminexpOfGr: Float
+  finaexpOfGr: Float
+  impaiTtm: Float
+  gcOfGr: Float
+  opOfGr: Float
+  ebitOfGr: Float
+  roe: Float
+  roeWaa: Float
+  roeDt: Float
+  roa: Float
+  npta: Float
+  roic: Float
+  roeYearly: Float
+  roa2Yearly: Float
+  roeAvg: Float
+  opincomeOfEbt: Float
+  investincomeOfEbt: Float
+  nOpProfitOfEbt: Float
+  taxToEbt: Float
+  dtprofitToProfit: Float
+  salescashToOr: Float
+  ocfToOr: Float
+  ocfToOpincome: Float
+  capitalizedToDa: Float
+  debtToAssets: Float
+  assetsToEqt: Float
+  dpAssetsToEqt: Float
+  caToAssets: Float
+  ncaToAssets: Float
+  tbassetsToTotalassets: Float
+  intToTalcap: Float
+  eqtToTalcapital: Float
+  currentdebtToDebt: Float
+  longdebToDebt: Float
+  ocfToShortdebt: Float
+  debtToEqt: Float
+  eqtToDebt: Float
+  eqtToInterestdebt: Float
+  tangibleassetToDebt: Float
+  tangassetToIntdebt: Float
+  tangibleassetToNetdebt: Float
+  ocfToDebt: Float
+  ocfToInterestdebt: Float
+  ocfToNetdebt: Float
+  ebitToInterest: Float
+  longdebtToWorkingcapital: Float
+  ebitdaToDebt: Float
+  turnDays: Float
+  roaYearly: Float
+  roaDp: Float
+  fixedAssets: Float
+  profitPrefinExp: Float
+  nonOpProfit: Float
+  opToEbt: Float
+  nopToEbt: Float
+  ocfToProfit: Float
+  cashToLiqdebt: Float
+  cashToLiqdebtWithinterest: Float
+  opToLiqdebt: Float
+  opToDebt: Float
+  roicYearly: Float
+  totalFaTrun: Float
+  profitToOp: Float
+  qOpincome: Float
+  qInvestincome: Float
+  qDtprofit: Float
+  qEps: Float
+  qNetprofitMargin: Float
+  qGsprofitMargin: Float
+  qExpToSales: Float
+  qProfitToGr: Float
+  qSaleexpToGr: Float
+  qAdminexpToGr: Float
+  qFinaexpToGr: Float
+  qImpairToGrTtm: Float
+  qGcToGr: Float
+  qOpToGr: Float
+  qRoe: Float
+  qDtRoe: Float
+  qNpta: Float
+  qOpincomeToEbt: Float
+  qInvestincomeToEbt: Float
+  qDtprofitToProfit: Float
+  qSalescashToOr: Float
+  qOcfToSales: Float
+  qOcfToOr: Float
+  basicEpsYoy: Float
+  dtEpsYoy: Float
+  cfpsYoy: Float
+  opYoy: Float
+  ebtYoy: Float
+  netprofitYoy: Float
+  dtNetprofitYoy: Float
+  ocfYoy: Float
+  roeYoy: Float
+  bpsYoy: Float
+  assetsYoy: Float
+  eqtYoy: Float
+  trYoy: Float
+  orYoy: Float
+  qGrYoy: Float
+  qGrQoq: Float
+  qSalesYoy: Float
+  qSalesQoq: Float
+  qOpYoy: Float
+  qOpQoq: Float
+  qProfitYoy: Float
+  qProfitQoq: Float
+  qNetprofitYoy: Float
+  qNetprofitQoq: Float
+  equityYoy: Float
+  rdExp: Float
+  updateFlag: String
+}
+
+input FinaIndicatorCreateManyWithoutCompanyInput {
+  create: [FinaIndicatorCreateWithoutCompanyInput!]
+  connect: [FinaIndicatorWhereUniqueInput!]
+}
+
+input FinaIndicatorCreateWithoutCompanyInput {
+  id: ID
+  symbol: String
+  annDate: String
+  endDate: String
+  eps: Float
+  dtEps: Float
+  totalRevenuePs: Float
+  revenuePs: Float
+  capitalResePs: Float
+  surplusResePs: Float
+  undistProfitPs: Float
+  extraItem: Float
+  profitDedt: Float
+  grossMargin: Float
+  currentRatio: Float
+  quickRatio: Float
+  cashRatio: Float
+  invturnDays: Float
+  arturnDays: Float
+  invTurn: Float
+  arTurn: Float
+  caTurn: Float
+  faTurn: Float
+  assetsTurn: Float
+  opIncome: Float
+  valuechangeIncome: Float
+  interstIncome: Float
+  daa: Float
+  ebit: Float
+  ebitda: Float
+  fcff: Float
+  fcfe: Float
+  currentExint: Float
+  noncurrentExint: Float
+  interestdebt: Float
+  netdebt: Float
+  tangibleAsset: Float
+  workingCapital: Float
+  networkingCapital: Float
+  investCapital: Float
+  retainedEarnings: Float
+  diluted2Eps: Float
+  bps: Float
+  ocfps: Float
+  retainedps: Float
+  cfps: Float
+  ebitPs: Float
+  fcffPs: Float
+  fcfePs: Float
+  netprofitMargin: Float
+  grossprofitMargin: Float
+  cogsOfSales: Float
+  expenseOfSales: Float
+  profitToGr: Float
+  saleexpToGr: Float
+  adminexpOfGr: Float
+  finaexpOfGr: Float
+  impaiTtm: Float
+  gcOfGr: Float
+  opOfGr: Float
+  ebitOfGr: Float
+  roe: Float
+  roeWaa: Float
+  roeDt: Float
+  roa: Float
+  npta: Float
+  roic: Float
+  roeYearly: Float
+  roa2Yearly: Float
+  roeAvg: Float
+  opincomeOfEbt: Float
+  investincomeOfEbt: Float
+  nOpProfitOfEbt: Float
+  taxToEbt: Float
+  dtprofitToProfit: Float
+  salescashToOr: Float
+  ocfToOr: Float
+  ocfToOpincome: Float
+  capitalizedToDa: Float
+  debtToAssets: Float
+  assetsToEqt: Float
+  dpAssetsToEqt: Float
+  caToAssets: Float
+  ncaToAssets: Float
+  tbassetsToTotalassets: Float
+  intToTalcap: Float
+  eqtToTalcapital: Float
+  currentdebtToDebt: Float
+  longdebToDebt: Float
+  ocfToShortdebt: Float
+  debtToEqt: Float
+  eqtToDebt: Float
+  eqtToInterestdebt: Float
+  tangibleassetToDebt: Float
+  tangassetToIntdebt: Float
+  tangibleassetToNetdebt: Float
+  ocfToDebt: Float
+  ocfToInterestdebt: Float
+  ocfToNetdebt: Float
+  ebitToInterest: Float
+  longdebtToWorkingcapital: Float
+  ebitdaToDebt: Float
+  turnDays: Float
+  roaYearly: Float
+  roaDp: Float
+  fixedAssets: Float
+  profitPrefinExp: Float
+  nonOpProfit: Float
+  opToEbt: Float
+  nopToEbt: Float
+  ocfToProfit: Float
+  cashToLiqdebt: Float
+  cashToLiqdebtWithinterest: Float
+  opToLiqdebt: Float
+  opToDebt: Float
+  roicYearly: Float
+  totalFaTrun: Float
+  profitToOp: Float
+  qOpincome: Float
+  qInvestincome: Float
+  qDtprofit: Float
+  qEps: Float
+  qNetprofitMargin: Float
+  qGsprofitMargin: Float
+  qExpToSales: Float
+  qProfitToGr: Float
+  qSaleexpToGr: Float
+  qAdminexpToGr: Float
+  qFinaexpToGr: Float
+  qImpairToGrTtm: Float
+  qGcToGr: Float
+  qOpToGr: Float
+  qRoe: Float
+  qDtRoe: Float
+  qNpta: Float
+  qOpincomeToEbt: Float
+  qInvestincomeToEbt: Float
+  qDtprofitToProfit: Float
+  qSalescashToOr: Float
+  qOcfToSales: Float
+  qOcfToOr: Float
+  basicEpsYoy: Float
+  dtEpsYoy: Float
+  cfpsYoy: Float
+  opYoy: Float
+  ebtYoy: Float
+  netprofitYoy: Float
+  dtNetprofitYoy: Float
+  ocfYoy: Float
+  roeYoy: Float
+  bpsYoy: Float
+  assetsYoy: Float
+  eqtYoy: Float
+  trYoy: Float
+  orYoy: Float
+  qGrYoy: Float
+  qGrQoq: Float
+  qSalesYoy: Float
+  qSalesQoq: Float
+  qOpYoy: Float
+  qOpQoq: Float
+  qProfitYoy: Float
+  qProfitQoq: Float
+  qNetprofitYoy: Float
+  qNetprofitQoq: Float
+  equityYoy: Float
+  rdExp: Float
+  updateFlag: String
+}
+
+type FinaIndicatorEdge {
+  node: FinaIndicator!
+  cursor: String!
+}
+
+enum FinaIndicatorOrderByInput {
+  id_ASC
+  id_DESC
+  symbol_ASC
+  symbol_DESC
+  annDate_ASC
+  annDate_DESC
+  endDate_ASC
+  endDate_DESC
+  eps_ASC
+  eps_DESC
+  dtEps_ASC
+  dtEps_DESC
+  totalRevenuePs_ASC
+  totalRevenuePs_DESC
+  revenuePs_ASC
+  revenuePs_DESC
+  capitalResePs_ASC
+  capitalResePs_DESC
+  surplusResePs_ASC
+  surplusResePs_DESC
+  undistProfitPs_ASC
+  undistProfitPs_DESC
+  extraItem_ASC
+  extraItem_DESC
+  profitDedt_ASC
+  profitDedt_DESC
+  grossMargin_ASC
+  grossMargin_DESC
+  currentRatio_ASC
+  currentRatio_DESC
+  quickRatio_ASC
+  quickRatio_DESC
+  cashRatio_ASC
+  cashRatio_DESC
+  invturnDays_ASC
+  invturnDays_DESC
+  arturnDays_ASC
+  arturnDays_DESC
+  invTurn_ASC
+  invTurn_DESC
+  arTurn_ASC
+  arTurn_DESC
+  caTurn_ASC
+  caTurn_DESC
+  faTurn_ASC
+  faTurn_DESC
+  assetsTurn_ASC
+  assetsTurn_DESC
+  opIncome_ASC
+  opIncome_DESC
+  valuechangeIncome_ASC
+  valuechangeIncome_DESC
+  interstIncome_ASC
+  interstIncome_DESC
+  daa_ASC
+  daa_DESC
+  ebit_ASC
+  ebit_DESC
+  ebitda_ASC
+  ebitda_DESC
+  fcff_ASC
+  fcff_DESC
+  fcfe_ASC
+  fcfe_DESC
+  currentExint_ASC
+  currentExint_DESC
+  noncurrentExint_ASC
+  noncurrentExint_DESC
+  interestdebt_ASC
+  interestdebt_DESC
+  netdebt_ASC
+  netdebt_DESC
+  tangibleAsset_ASC
+  tangibleAsset_DESC
+  workingCapital_ASC
+  workingCapital_DESC
+  networkingCapital_ASC
+  networkingCapital_DESC
+  investCapital_ASC
+  investCapital_DESC
+  retainedEarnings_ASC
+  retainedEarnings_DESC
+  diluted2Eps_ASC
+  diluted2Eps_DESC
+  bps_ASC
+  bps_DESC
+  ocfps_ASC
+  ocfps_DESC
+  retainedps_ASC
+  retainedps_DESC
+  cfps_ASC
+  cfps_DESC
+  ebitPs_ASC
+  ebitPs_DESC
+  fcffPs_ASC
+  fcffPs_DESC
+  fcfePs_ASC
+  fcfePs_DESC
+  netprofitMargin_ASC
+  netprofitMargin_DESC
+  grossprofitMargin_ASC
+  grossprofitMargin_DESC
+  cogsOfSales_ASC
+  cogsOfSales_DESC
+  expenseOfSales_ASC
+  expenseOfSales_DESC
+  profitToGr_ASC
+  profitToGr_DESC
+  saleexpToGr_ASC
+  saleexpToGr_DESC
+  adminexpOfGr_ASC
+  adminexpOfGr_DESC
+  finaexpOfGr_ASC
+  finaexpOfGr_DESC
+  impaiTtm_ASC
+  impaiTtm_DESC
+  gcOfGr_ASC
+  gcOfGr_DESC
+  opOfGr_ASC
+  opOfGr_DESC
+  ebitOfGr_ASC
+  ebitOfGr_DESC
+  roe_ASC
+  roe_DESC
+  roeWaa_ASC
+  roeWaa_DESC
+  roeDt_ASC
+  roeDt_DESC
+  roa_ASC
+  roa_DESC
+  npta_ASC
+  npta_DESC
+  roic_ASC
+  roic_DESC
+  roeYearly_ASC
+  roeYearly_DESC
+  roa2Yearly_ASC
+  roa2Yearly_DESC
+  roeAvg_ASC
+  roeAvg_DESC
+  opincomeOfEbt_ASC
+  opincomeOfEbt_DESC
+  investincomeOfEbt_ASC
+  investincomeOfEbt_DESC
+  nOpProfitOfEbt_ASC
+  nOpProfitOfEbt_DESC
+  taxToEbt_ASC
+  taxToEbt_DESC
+  dtprofitToProfit_ASC
+  dtprofitToProfit_DESC
+  salescashToOr_ASC
+  salescashToOr_DESC
+  ocfToOr_ASC
+  ocfToOr_DESC
+  ocfToOpincome_ASC
+  ocfToOpincome_DESC
+  capitalizedToDa_ASC
+  capitalizedToDa_DESC
+  debtToAssets_ASC
+  debtToAssets_DESC
+  assetsToEqt_ASC
+  assetsToEqt_DESC
+  dpAssetsToEqt_ASC
+  dpAssetsToEqt_DESC
+  caToAssets_ASC
+  caToAssets_DESC
+  ncaToAssets_ASC
+  ncaToAssets_DESC
+  tbassetsToTotalassets_ASC
+  tbassetsToTotalassets_DESC
+  intToTalcap_ASC
+  intToTalcap_DESC
+  eqtToTalcapital_ASC
+  eqtToTalcapital_DESC
+  currentdebtToDebt_ASC
+  currentdebtToDebt_DESC
+  longdebToDebt_ASC
+  longdebToDebt_DESC
+  ocfToShortdebt_ASC
+  ocfToShortdebt_DESC
+  debtToEqt_ASC
+  debtToEqt_DESC
+  eqtToDebt_ASC
+  eqtToDebt_DESC
+  eqtToInterestdebt_ASC
+  eqtToInterestdebt_DESC
+  tangibleassetToDebt_ASC
+  tangibleassetToDebt_DESC
+  tangassetToIntdebt_ASC
+  tangassetToIntdebt_DESC
+  tangibleassetToNetdebt_ASC
+  tangibleassetToNetdebt_DESC
+  ocfToDebt_ASC
+  ocfToDebt_DESC
+  ocfToInterestdebt_ASC
+  ocfToInterestdebt_DESC
+  ocfToNetdebt_ASC
+  ocfToNetdebt_DESC
+  ebitToInterest_ASC
+  ebitToInterest_DESC
+  longdebtToWorkingcapital_ASC
+  longdebtToWorkingcapital_DESC
+  ebitdaToDebt_ASC
+  ebitdaToDebt_DESC
+  turnDays_ASC
+  turnDays_DESC
+  roaYearly_ASC
+  roaYearly_DESC
+  roaDp_ASC
+  roaDp_DESC
+  fixedAssets_ASC
+  fixedAssets_DESC
+  profitPrefinExp_ASC
+  profitPrefinExp_DESC
+  nonOpProfit_ASC
+  nonOpProfit_DESC
+  opToEbt_ASC
+  opToEbt_DESC
+  nopToEbt_ASC
+  nopToEbt_DESC
+  ocfToProfit_ASC
+  ocfToProfit_DESC
+  cashToLiqdebt_ASC
+  cashToLiqdebt_DESC
+  cashToLiqdebtWithinterest_ASC
+  cashToLiqdebtWithinterest_DESC
+  opToLiqdebt_ASC
+  opToLiqdebt_DESC
+  opToDebt_ASC
+  opToDebt_DESC
+  roicYearly_ASC
+  roicYearly_DESC
+  totalFaTrun_ASC
+  totalFaTrun_DESC
+  profitToOp_ASC
+  profitToOp_DESC
+  qOpincome_ASC
+  qOpincome_DESC
+  qInvestincome_ASC
+  qInvestincome_DESC
+  qDtprofit_ASC
+  qDtprofit_DESC
+  qEps_ASC
+  qEps_DESC
+  qNetprofitMargin_ASC
+  qNetprofitMargin_DESC
+  qGsprofitMargin_ASC
+  qGsprofitMargin_DESC
+  qExpToSales_ASC
+  qExpToSales_DESC
+  qProfitToGr_ASC
+  qProfitToGr_DESC
+  qSaleexpToGr_ASC
+  qSaleexpToGr_DESC
+  qAdminexpToGr_ASC
+  qAdminexpToGr_DESC
+  qFinaexpToGr_ASC
+  qFinaexpToGr_DESC
+  qImpairToGrTtm_ASC
+  qImpairToGrTtm_DESC
+  qGcToGr_ASC
+  qGcToGr_DESC
+  qOpToGr_ASC
+  qOpToGr_DESC
+  qRoe_ASC
+  qRoe_DESC
+  qDtRoe_ASC
+  qDtRoe_DESC
+  qNpta_ASC
+  qNpta_DESC
+  qOpincomeToEbt_ASC
+  qOpincomeToEbt_DESC
+  qInvestincomeToEbt_ASC
+  qInvestincomeToEbt_DESC
+  qDtprofitToProfit_ASC
+  qDtprofitToProfit_DESC
+  qSalescashToOr_ASC
+  qSalescashToOr_DESC
+  qOcfToSales_ASC
+  qOcfToSales_DESC
+  qOcfToOr_ASC
+  qOcfToOr_DESC
+  basicEpsYoy_ASC
+  basicEpsYoy_DESC
+  dtEpsYoy_ASC
+  dtEpsYoy_DESC
+  cfpsYoy_ASC
+  cfpsYoy_DESC
+  opYoy_ASC
+  opYoy_DESC
+  ebtYoy_ASC
+  ebtYoy_DESC
+  netprofitYoy_ASC
+  netprofitYoy_DESC
+  dtNetprofitYoy_ASC
+  dtNetprofitYoy_DESC
+  ocfYoy_ASC
+  ocfYoy_DESC
+  roeYoy_ASC
+  roeYoy_DESC
+  bpsYoy_ASC
+  bpsYoy_DESC
+  assetsYoy_ASC
+  assetsYoy_DESC
+  eqtYoy_ASC
+  eqtYoy_DESC
+  trYoy_ASC
+  trYoy_DESC
+  orYoy_ASC
+  orYoy_DESC
+  qGrYoy_ASC
+  qGrYoy_DESC
+  qGrQoq_ASC
+  qGrQoq_DESC
+  qSalesYoy_ASC
+  qSalesYoy_DESC
+  qSalesQoq_ASC
+  qSalesQoq_DESC
+  qOpYoy_ASC
+  qOpYoy_DESC
+  qOpQoq_ASC
+  qOpQoq_DESC
+  qProfitYoy_ASC
+  qProfitYoy_DESC
+  qProfitQoq_ASC
+  qProfitQoq_DESC
+  qNetprofitYoy_ASC
+  qNetprofitYoy_DESC
+  qNetprofitQoq_ASC
+  qNetprofitQoq_DESC
+  equityYoy_ASC
+  equityYoy_DESC
+  rdExp_ASC
+  rdExp_DESC
+  updateFlag_ASC
+  updateFlag_DESC
+}
+
+type FinaIndicatorPreviousValues {
+  id: ID!
+  symbol: String
+  annDate: String
+  endDate: String
+  eps: Float
+  dtEps: Float
+  totalRevenuePs: Float
+  revenuePs: Float
+  capitalResePs: Float
+  surplusResePs: Float
+  undistProfitPs: Float
+  extraItem: Float
+  profitDedt: Float
+  grossMargin: Float
+  currentRatio: Float
+  quickRatio: Float
+  cashRatio: Float
+  invturnDays: Float
+  arturnDays: Float
+  invTurn: Float
+  arTurn: Float
+  caTurn: Float
+  faTurn: Float
+  assetsTurn: Float
+  opIncome: Float
+  valuechangeIncome: Float
+  interstIncome: Float
+  daa: Float
+  ebit: Float
+  ebitda: Float
+  fcff: Float
+  fcfe: Float
+  currentExint: Float
+  noncurrentExint: Float
+  interestdebt: Float
+  netdebt: Float
+  tangibleAsset: Float
+  workingCapital: Float
+  networkingCapital: Float
+  investCapital: Float
+  retainedEarnings: Float
+  diluted2Eps: Float
+  bps: Float
+  ocfps: Float
+  retainedps: Float
+  cfps: Float
+  ebitPs: Float
+  fcffPs: Float
+  fcfePs: Float
+  netprofitMargin: Float
+  grossprofitMargin: Float
+  cogsOfSales: Float
+  expenseOfSales: Float
+  profitToGr: Float
+  saleexpToGr: Float
+  adminexpOfGr: Float
+  finaexpOfGr: Float
+  impaiTtm: Float
+  gcOfGr: Float
+  opOfGr: Float
+  ebitOfGr: Float
+  roe: Float
+  roeWaa: Float
+  roeDt: Float
+  roa: Float
+  npta: Float
+  roic: Float
+  roeYearly: Float
+  roa2Yearly: Float
+  roeAvg: Float
+  opincomeOfEbt: Float
+  investincomeOfEbt: Float
+  nOpProfitOfEbt: Float
+  taxToEbt: Float
+  dtprofitToProfit: Float
+  salescashToOr: Float
+  ocfToOr: Float
+  ocfToOpincome: Float
+  capitalizedToDa: Float
+  debtToAssets: Float
+  assetsToEqt: Float
+  dpAssetsToEqt: Float
+  caToAssets: Float
+  ncaToAssets: Float
+  tbassetsToTotalassets: Float
+  intToTalcap: Float
+  eqtToTalcapital: Float
+  currentdebtToDebt: Float
+  longdebToDebt: Float
+  ocfToShortdebt: Float
+  debtToEqt: Float
+  eqtToDebt: Float
+  eqtToInterestdebt: Float
+  tangibleassetToDebt: Float
+  tangassetToIntdebt: Float
+  tangibleassetToNetdebt: Float
+  ocfToDebt: Float
+  ocfToInterestdebt: Float
+  ocfToNetdebt: Float
+  ebitToInterest: Float
+  longdebtToWorkingcapital: Float
+  ebitdaToDebt: Float
+  turnDays: Float
+  roaYearly: Float
+  roaDp: Float
+  fixedAssets: Float
+  profitPrefinExp: Float
+  nonOpProfit: Float
+  opToEbt: Float
+  nopToEbt: Float
+  ocfToProfit: Float
+  cashToLiqdebt: Float
+  cashToLiqdebtWithinterest: Float
+  opToLiqdebt: Float
+  opToDebt: Float
+  roicYearly: Float
+  totalFaTrun: Float
+  profitToOp: Float
+  qOpincome: Float
+  qInvestincome: Float
+  qDtprofit: Float
+  qEps: Float
+  qNetprofitMargin: Float
+  qGsprofitMargin: Float
+  qExpToSales: Float
+  qProfitToGr: Float
+  qSaleexpToGr: Float
+  qAdminexpToGr: Float
+  qFinaexpToGr: Float
+  qImpairToGrTtm: Float
+  qGcToGr: Float
+  qOpToGr: Float
+  qRoe: Float
+  qDtRoe: Float
+  qNpta: Float
+  qOpincomeToEbt: Float
+  qInvestincomeToEbt: Float
+  qDtprofitToProfit: Float
+  qSalescashToOr: Float
+  qOcfToSales: Float
+  qOcfToOr: Float
+  basicEpsYoy: Float
+  dtEpsYoy: Float
+  cfpsYoy: Float
+  opYoy: Float
+  ebtYoy: Float
+  netprofitYoy: Float
+  dtNetprofitYoy: Float
+  ocfYoy: Float
+  roeYoy: Float
+  bpsYoy: Float
+  assetsYoy: Float
+  eqtYoy: Float
+  trYoy: Float
+  orYoy: Float
+  qGrYoy: Float
+  qGrQoq: Float
+  qSalesYoy: Float
+  qSalesQoq: Float
+  qOpYoy: Float
+  qOpQoq: Float
+  qProfitYoy: Float
+  qProfitQoq: Float
+  qNetprofitYoy: Float
+  qNetprofitQoq: Float
+  equityYoy: Float
+  rdExp: Float
+  updateFlag: String
+}
+
+input FinaIndicatorScalarWhereInput {
+  id: ID
+  id_not: ID
+  id_in: [ID!]
+  id_not_in: [ID!]
+  id_lt: ID
+  id_lte: ID
+  id_gt: ID
+  id_gte: ID
+  id_contains: ID
+  id_not_contains: ID
+  id_starts_with: ID
+  id_not_starts_with: ID
+  id_ends_with: ID
+  id_not_ends_with: ID
+  symbol: String
+  symbol_not: String
+  symbol_in: [String!]
+  symbol_not_in: [String!]
+  symbol_lt: String
+  symbol_lte: String
+  symbol_gt: String
+  symbol_gte: String
+  symbol_contains: String
+  symbol_not_contains: String
+  symbol_starts_with: String
+  symbol_not_starts_with: String
+  symbol_ends_with: String
+  symbol_not_ends_with: String
+  annDate: String
+  annDate_not: String
+  annDate_in: [String!]
+  annDate_not_in: [String!]
+  annDate_lt: String
+  annDate_lte: String
+  annDate_gt: String
+  annDate_gte: String
+  annDate_contains: String
+  annDate_not_contains: String
+  annDate_starts_with: String
+  annDate_not_starts_with: String
+  annDate_ends_with: String
+  annDate_not_ends_with: String
+  endDate: String
+  endDate_not: String
+  endDate_in: [String!]
+  endDate_not_in: [String!]
+  endDate_lt: String
+  endDate_lte: String
+  endDate_gt: String
+  endDate_gte: String
+  endDate_contains: String
+  endDate_not_contains: String
+  endDate_starts_with: String
+  endDate_not_starts_with: String
+  endDate_ends_with: String
+  endDate_not_ends_with: String
+  eps: Float
+  eps_not: Float
+  eps_in: [Float!]
+  eps_not_in: [Float!]
+  eps_lt: Float
+  eps_lte: Float
+  eps_gt: Float
+  eps_gte: Float
+  dtEps: Float
+  dtEps_not: Float
+  dtEps_in: [Float!]
+  dtEps_not_in: [Float!]
+  dtEps_lt: Float
+  dtEps_lte: Float
+  dtEps_gt: Float
+  dtEps_gte: Float
+  totalRevenuePs: Float
+  totalRevenuePs_not: Float
+  totalRevenuePs_in: [Float!]
+  totalRevenuePs_not_in: [Float!]
+  totalRevenuePs_lt: Float
+  totalRevenuePs_lte: Float
+  totalRevenuePs_gt: Float
+  totalRevenuePs_gte: Float
+  revenuePs: Float
+  revenuePs_not: Float
+  revenuePs_in: [Float!]
+  revenuePs_not_in: [Float!]
+  revenuePs_lt: Float
+  revenuePs_lte: Float
+  revenuePs_gt: Float
+  revenuePs_gte: Float
+  capitalResePs: Float
+  capitalResePs_not: Float
+  capitalResePs_in: [Float!]
+  capitalResePs_not_in: [Float!]
+  capitalResePs_lt: Float
+  capitalResePs_lte: Float
+  capitalResePs_gt: Float
+  capitalResePs_gte: Float
+  surplusResePs: Float
+  surplusResePs_not: Float
+  surplusResePs_in: [Float!]
+  surplusResePs_not_in: [Float!]
+  surplusResePs_lt: Float
+  surplusResePs_lte: Float
+  surplusResePs_gt: Float
+  surplusResePs_gte: Float
+  undistProfitPs: Float
+  undistProfitPs_not: Float
+  undistProfitPs_in: [Float!]
+  undistProfitPs_not_in: [Float!]
+  undistProfitPs_lt: Float
+  undistProfitPs_lte: Float
+  undistProfitPs_gt: Float
+  undistProfitPs_gte: Float
+  extraItem: Float
+  extraItem_not: Float
+  extraItem_in: [Float!]
+  extraItem_not_in: [Float!]
+  extraItem_lt: Float
+  extraItem_lte: Float
+  extraItem_gt: Float
+  extraItem_gte: Float
+  profitDedt: Float
+  profitDedt_not: Float
+  profitDedt_in: [Float!]
+  profitDedt_not_in: [Float!]
+  profitDedt_lt: Float
+  profitDedt_lte: Float
+  profitDedt_gt: Float
+  profitDedt_gte: Float
+  grossMargin: Float
+  grossMargin_not: Float
+  grossMargin_in: [Float!]
+  grossMargin_not_in: [Float!]
+  grossMargin_lt: Float
+  grossMargin_lte: Float
+  grossMargin_gt: Float
+  grossMargin_gte: Float
+  currentRatio: Float
+  currentRatio_not: Float
+  currentRatio_in: [Float!]
+  currentRatio_not_in: [Float!]
+  currentRatio_lt: Float
+  currentRatio_lte: Float
+  currentRatio_gt: Float
+  currentRatio_gte: Float
+  quickRatio: Float
+  quickRatio_not: Float
+  quickRatio_in: [Float!]
+  quickRatio_not_in: [Float!]
+  quickRatio_lt: Float
+  quickRatio_lte: Float
+  quickRatio_gt: Float
+  quickRatio_gte: Float
+  cashRatio: Float
+  cashRatio_not: Float
+  cashRatio_in: [Float!]
+  cashRatio_not_in: [Float!]
+  cashRatio_lt: Float
+  cashRatio_lte: Float
+  cashRatio_gt: Float
+  cashRatio_gte: Float
+  invturnDays: Float
+  invturnDays_not: Float
+  invturnDays_in: [Float!]
+  invturnDays_not_in: [Float!]
+  invturnDays_lt: Float
+  invturnDays_lte: Float
+  invturnDays_gt: Float
+  invturnDays_gte: Float
+  arturnDays: Float
+  arturnDays_not: Float
+  arturnDays_in: [Float!]
+  arturnDays_not_in: [Float!]
+  arturnDays_lt: Float
+  arturnDays_lte: Float
+  arturnDays_gt: Float
+  arturnDays_gte: Float
+  invTurn: Float
+  invTurn_not: Float
+  invTurn_in: [Float!]
+  invTurn_not_in: [Float!]
+  invTurn_lt: Float
+  invTurn_lte: Float
+  invTurn_gt: Float
+  invTurn_gte: Float
+  arTurn: Float
+  arTurn_not: Float
+  arTurn_in: [Float!]
+  arTurn_not_in: [Float!]
+  arTurn_lt: Float
+  arTurn_lte: Float
+  arTurn_gt: Float
+  arTurn_gte: Float
+  caTurn: Float
+  caTurn_not: Float
+  caTurn_in: [Float!]
+  caTurn_not_in: [Float!]
+  caTurn_lt: Float
+  caTurn_lte: Float
+  caTurn_gt: Float
+  caTurn_gte: Float
+  faTurn: Float
+  faTurn_not: Float
+  faTurn_in: [Float!]
+  faTurn_not_in: [Float!]
+  faTurn_lt: Float
+  faTurn_lte: Float
+  faTurn_gt: Float
+  faTurn_gte: Float
+  assetsTurn: Float
+  assetsTurn_not: Float
+  assetsTurn_in: [Float!]
+  assetsTurn_not_in: [Float!]
+  assetsTurn_lt: Float
+  assetsTurn_lte: Float
+  assetsTurn_gt: Float
+  assetsTurn_gte: Float
+  opIncome: Float
+  opIncome_not: Float
+  opIncome_in: [Float!]
+  opIncome_not_in: [Float!]
+  opIncome_lt: Float
+  opIncome_lte: Float
+  opIncome_gt: Float
+  opIncome_gte: Float
+  valuechangeIncome: Float
+  valuechangeIncome_not: Float
+  valuechangeIncome_in: [Float!]
+  valuechangeIncome_not_in: [Float!]
+  valuechangeIncome_lt: Float
+  valuechangeIncome_lte: Float
+  valuechangeIncome_gt: Float
+  valuechangeIncome_gte: Float
+  interstIncome: Float
+  interstIncome_not: Float
+  interstIncome_in: [Float!]
+  interstIncome_not_in: [Float!]
+  interstIncome_lt: Float
+  interstIncome_lte: Float
+  interstIncome_gt: Float
+  interstIncome_gte: Float
+  daa: Float
+  daa_not: Float
+  daa_in: [Float!]
+  daa_not_in: [Float!]
+  daa_lt: Float
+  daa_lte: Float
+  daa_gt: Float
+  daa_gte: Float
+  ebit: Float
+  ebit_not: Float
+  ebit_in: [Float!]
+  ebit_not_in: [Float!]
+  ebit_lt: Float
+  ebit_lte: Float
+  ebit_gt: Float
+  ebit_gte: Float
+  ebitda: Float
+  ebitda_not: Float
+  ebitda_in: [Float!]
+  ebitda_not_in: [Float!]
+  ebitda_lt: Float
+  ebitda_lte: Float
+  ebitda_gt: Float
+  ebitda_gte: Float
+  fcff: Float
+  fcff_not: Float
+  fcff_in: [Float!]
+  fcff_not_in: [Float!]
+  fcff_lt: Float
+  fcff_lte: Float
+  fcff_gt: Float
+  fcff_gte: Float
+  fcfe: Float
+  fcfe_not: Float
+  fcfe_in: [Float!]
+  fcfe_not_in: [Float!]
+  fcfe_lt: Float
+  fcfe_lte: Float
+  fcfe_gt: Float
+  fcfe_gte: Float
+  currentExint: Float
+  currentExint_not: Float
+  currentExint_in: [Float!]
+  currentExint_not_in: [Float!]
+  currentExint_lt: Float
+  currentExint_lte: Float
+  currentExint_gt: Float
+  currentExint_gte: Float
+  noncurrentExint: Float
+  noncurrentExint_not: Float
+  noncurrentExint_in: [Float!]
+  noncurrentExint_not_in: [Float!]
+  noncurrentExint_lt: Float
+  noncurrentExint_lte: Float
+  noncurrentExint_gt: Float
+  noncurrentExint_gte: Float
+  interestdebt: Float
+  interestdebt_not: Float
+  interestdebt_in: [Float!]
+  interestdebt_not_in: [Float!]
+  interestdebt_lt: Float
+  interestdebt_lte: Float
+  interestdebt_gt: Float
+  interestdebt_gte: Float
+  netdebt: Float
+  netdebt_not: Float
+  netdebt_in: [Float!]
+  netdebt_not_in: [Float!]
+  netdebt_lt: Float
+  netdebt_lte: Float
+  netdebt_gt: Float
+  netdebt_gte: Float
+  tangibleAsset: Float
+  tangibleAsset_not: Float
+  tangibleAsset_in: [Float!]
+  tangibleAsset_not_in: [Float!]
+  tangibleAsset_lt: Float
+  tangibleAsset_lte: Float
+  tangibleAsset_gt: Float
+  tangibleAsset_gte: Float
+  workingCapital: Float
+  workingCapital_not: Float
+  workingCapital_in: [Float!]
+  workingCapital_not_in: [Float!]
+  workingCapital_lt: Float
+  workingCapital_lte: Float
+  workingCapital_gt: Float
+  workingCapital_gte: Float
+  networkingCapital: Float
+  networkingCapital_not: Float
+  networkingCapital_in: [Float!]
+  networkingCapital_not_in: [Float!]
+  networkingCapital_lt: Float
+  networkingCapital_lte: Float
+  networkingCapital_gt: Float
+  networkingCapital_gte: Float
+  investCapital: Float
+  investCapital_not: Float
+  investCapital_in: [Float!]
+  investCapital_not_in: [Float!]
+  investCapital_lt: Float
+  investCapital_lte: Float
+  investCapital_gt: Float
+  investCapital_gte: Float
+  retainedEarnings: Float
+  retainedEarnings_not: Float
+  retainedEarnings_in: [Float!]
+  retainedEarnings_not_in: [Float!]
+  retainedEarnings_lt: Float
+  retainedEarnings_lte: Float
+  retainedEarnings_gt: Float
+  retainedEarnings_gte: Float
+  diluted2Eps: Float
+  diluted2Eps_not: Float
+  diluted2Eps_in: [Float!]
+  diluted2Eps_not_in: [Float!]
+  diluted2Eps_lt: Float
+  diluted2Eps_lte: Float
+  diluted2Eps_gt: Float
+  diluted2Eps_gte: Float
+  bps: Float
+  bps_not: Float
+  bps_in: [Float!]
+  bps_not_in: [Float!]
+  bps_lt: Float
+  bps_lte: Float
+  bps_gt: Float
+  bps_gte: Float
+  ocfps: Float
+  ocfps_not: Float
+  ocfps_in: [Float!]
+  ocfps_not_in: [Float!]
+  ocfps_lt: Float
+  ocfps_lte: Float
+  ocfps_gt: Float
+  ocfps_gte: Float
+  retainedps: Float
+  retainedps_not: Float
+  retainedps_in: [Float!]
+  retainedps_not_in: [Float!]
+  retainedps_lt: Float
+  retainedps_lte: Float
+  retainedps_gt: Float
+  retainedps_gte: Float
+  cfps: Float
+  cfps_not: Float
+  cfps_in: [Float!]
+  cfps_not_in: [Float!]
+  cfps_lt: Float
+  cfps_lte: Float
+  cfps_gt: Float
+  cfps_gte: Float
+  ebitPs: Float
+  ebitPs_not: Float
+  ebitPs_in: [Float!]
+  ebitPs_not_in: [Float!]
+  ebitPs_lt: Float
+  ebitPs_lte: Float
+  ebitPs_gt: Float
+  ebitPs_gte: Float
+  fcffPs: Float
+  fcffPs_not: Float
+  fcffPs_in: [Float!]
+  fcffPs_not_in: [Float!]
+  fcffPs_lt: Float
+  fcffPs_lte: Float
+  fcffPs_gt: Float
+  fcffPs_gte: Float
+  fcfePs: Float
+  fcfePs_not: Float
+  fcfePs_in: [Float!]
+  fcfePs_not_in: [Float!]
+  fcfePs_lt: Float
+  fcfePs_lte: Float
+  fcfePs_gt: Float
+  fcfePs_gte: Float
+  netprofitMargin: Float
+  netprofitMargin_not: Float
+  netprofitMargin_in: [Float!]
+  netprofitMargin_not_in: [Float!]
+  netprofitMargin_lt: Float
+  netprofitMargin_lte: Float
+  netprofitMargin_gt: Float
+  netprofitMargin_gte: Float
+  grossprofitMargin: Float
+  grossprofitMargin_not: Float
+  grossprofitMargin_in: [Float!]
+  grossprofitMargin_not_in: [Float!]
+  grossprofitMargin_lt: Float
+  grossprofitMargin_lte: Float
+  grossprofitMargin_gt: Float
+  grossprofitMargin_gte: Float
+  cogsOfSales: Float
+  cogsOfSales_not: Float
+  cogsOfSales_in: [Float!]
+  cogsOfSales_not_in: [Float!]
+  cogsOfSales_lt: Float
+  cogsOfSales_lte: Float
+  cogsOfSales_gt: Float
+  cogsOfSales_gte: Float
+  expenseOfSales: Float
+  expenseOfSales_not: Float
+  expenseOfSales_in: [Float!]
+  expenseOfSales_not_in: [Float!]
+  expenseOfSales_lt: Float
+  expenseOfSales_lte: Float
+  expenseOfSales_gt: Float
+  expenseOfSales_gte: Float
+  profitToGr: Float
+  profitToGr_not: Float
+  profitToGr_in: [Float!]
+  profitToGr_not_in: [Float!]
+  profitToGr_lt: Float
+  profitToGr_lte: Float
+  profitToGr_gt: Float
+  profitToGr_gte: Float
+  saleexpToGr: Float
+  saleexpToGr_not: Float
+  saleexpToGr_in: [Float!]
+  saleexpToGr_not_in: [Float!]
+  saleexpToGr_lt: Float
+  saleexpToGr_lte: Float
+  saleexpToGr_gt: Float
+  saleexpToGr_gte: Float
+  adminexpOfGr: Float
+  adminexpOfGr_not: Float
+  adminexpOfGr_in: [Float!]
+  adminexpOfGr_not_in: [Float!]
+  adminexpOfGr_lt: Float
+  adminexpOfGr_lte: Float
+  adminexpOfGr_gt: Float
+  adminexpOfGr_gte: Float
+  finaexpOfGr: Float
+  finaexpOfGr_not: Float
+  finaexpOfGr_in: [Float!]
+  finaexpOfGr_not_in: [Float!]
+  finaexpOfGr_lt: Float
+  finaexpOfGr_lte: Float
+  finaexpOfGr_gt: Float
+  finaexpOfGr_gte: Float
+  impaiTtm: Float
+  impaiTtm_not: Float
+  impaiTtm_in: [Float!]
+  impaiTtm_not_in: [Float!]
+  impaiTtm_lt: Float
+  impaiTtm_lte: Float
+  impaiTtm_gt: Float
+  impaiTtm_gte: Float
+  gcOfGr: Float
+  gcOfGr_not: Float
+  gcOfGr_in: [Float!]
+  gcOfGr_not_in: [Float!]
+  gcOfGr_lt: Float
+  gcOfGr_lte: Float
+  gcOfGr_gt: Float
+  gcOfGr_gte: Float
+  opOfGr: Float
+  opOfGr_not: Float
+  opOfGr_in: [Float!]
+  opOfGr_not_in: [Float!]
+  opOfGr_lt: Float
+  opOfGr_lte: Float
+  opOfGr_gt: Float
+  opOfGr_gte: Float
+  ebitOfGr: Float
+  ebitOfGr_not: Float
+  ebitOfGr_in: [Float!]
+  ebitOfGr_not_in: [Float!]
+  ebitOfGr_lt: Float
+  ebitOfGr_lte: Float
+  ebitOfGr_gt: Float
+  ebitOfGr_gte: Float
+  roe: Float
+  roe_not: Float
+  roe_in: [Float!]
+  roe_not_in: [Float!]
+  roe_lt: Float
+  roe_lte: Float
+  roe_gt: Float
+  roe_gte: Float
+  roeWaa: Float
+  roeWaa_not: Float
+  roeWaa_in: [Float!]
+  roeWaa_not_in: [Float!]
+  roeWaa_lt: Float
+  roeWaa_lte: Float
+  roeWaa_gt: Float
+  roeWaa_gte: Float
+  roeDt: Float
+  roeDt_not: Float
+  roeDt_in: [Float!]
+  roeDt_not_in: [Float!]
+  roeDt_lt: Float
+  roeDt_lte: Float
+  roeDt_gt: Float
+  roeDt_gte: Float
+  roa: Float
+  roa_not: Float
+  roa_in: [Float!]
+  roa_not_in: [Float!]
+  roa_lt: Float
+  roa_lte: Float
+  roa_gt: Float
+  roa_gte: Float
+  npta: Float
+  npta_not: Float
+  npta_in: [Float!]
+  npta_not_in: [Float!]
+  npta_lt: Float
+  npta_lte: Float
+  npta_gt: Float
+  npta_gte: Float
+  roic: Float
+  roic_not: Float
+  roic_in: [Float!]
+  roic_not_in: [Float!]
+  roic_lt: Float
+  roic_lte: Float
+  roic_gt: Float
+  roic_gte: Float
+  roeYearly: Float
+  roeYearly_not: Float
+  roeYearly_in: [Float!]
+  roeYearly_not_in: [Float!]
+  roeYearly_lt: Float
+  roeYearly_lte: Float
+  roeYearly_gt: Float
+  roeYearly_gte: Float
+  roa2Yearly: Float
+  roa2Yearly_not: Float
+  roa2Yearly_in: [Float!]
+  roa2Yearly_not_in: [Float!]
+  roa2Yearly_lt: Float
+  roa2Yearly_lte: Float
+  roa2Yearly_gt: Float
+  roa2Yearly_gte: Float
+  roeAvg: Float
+  roeAvg_not: Float
+  roeAvg_in: [Float!]
+  roeAvg_not_in: [Float!]
+  roeAvg_lt: Float
+  roeAvg_lte: Float
+  roeAvg_gt: Float
+  roeAvg_gte: Float
+  opincomeOfEbt: Float
+  opincomeOfEbt_not: Float
+  opincomeOfEbt_in: [Float!]
+  opincomeOfEbt_not_in: [Float!]
+  opincomeOfEbt_lt: Float
+  opincomeOfEbt_lte: Float
+  opincomeOfEbt_gt: Float
+  opincomeOfEbt_gte: Float
+  investincomeOfEbt: Float
+  investincomeOfEbt_not: Float
+  investincomeOfEbt_in: [Float!]
+  investincomeOfEbt_not_in: [Float!]
+  investincomeOfEbt_lt: Float
+  investincomeOfEbt_lte: Float
+  investincomeOfEbt_gt: Float
+  investincomeOfEbt_gte: Float
+  nOpProfitOfEbt: Float
+  nOpProfitOfEbt_not: Float
+  nOpProfitOfEbt_in: [Float!]
+  nOpProfitOfEbt_not_in: [Float!]
+  nOpProfitOfEbt_lt: Float
+  nOpProfitOfEbt_lte: Float
+  nOpProfitOfEbt_gt: Float
+  nOpProfitOfEbt_gte: Float
+  taxToEbt: Float
+  taxToEbt_not: Float
+  taxToEbt_in: [Float!]
+  taxToEbt_not_in: [Float!]
+  taxToEbt_lt: Float
+  taxToEbt_lte: Float
+  taxToEbt_gt: Float
+  taxToEbt_gte: Float
+  dtprofitToProfit: Float
+  dtprofitToProfit_not: Float
+  dtprofitToProfit_in: [Float!]
+  dtprofitToProfit_not_in: [Float!]
+  dtprofitToProfit_lt: Float
+  dtprofitToProfit_lte: Float
+  dtprofitToProfit_gt: Float
+  dtprofitToProfit_gte: Float
+  salescashToOr: Float
+  salescashToOr_not: Float
+  salescashToOr_in: [Float!]
+  salescashToOr_not_in: [Float!]
+  salescashToOr_lt: Float
+  salescashToOr_lte: Float
+  salescashToOr_gt: Float
+  salescashToOr_gte: Float
+  ocfToOr: Float
+  ocfToOr_not: Float
+  ocfToOr_in: [Float!]
+  ocfToOr_not_in: [Float!]
+  ocfToOr_lt: Float
+  ocfToOr_lte: Float
+  ocfToOr_gt: Float
+  ocfToOr_gte: Float
+  ocfToOpincome: Float
+  ocfToOpincome_not: Float
+  ocfToOpincome_in: [Float!]
+  ocfToOpincome_not_in: [Float!]
+  ocfToOpincome_lt: Float
+  ocfToOpincome_lte: Float
+  ocfToOpincome_gt: Float
+  ocfToOpincome_gte: Float
+  capitalizedToDa: Float
+  capitalizedToDa_not: Float
+  capitalizedToDa_in: [Float!]
+  capitalizedToDa_not_in: [Float!]
+  capitalizedToDa_lt: Float
+  capitalizedToDa_lte: Float
+  capitalizedToDa_gt: Float
+  capitalizedToDa_gte: Float
+  debtToAssets: Float
+  debtToAssets_not: Float
+  debtToAssets_in: [Float!]
+  debtToAssets_not_in: [Float!]
+  debtToAssets_lt: Float
+  debtToAssets_lte: Float
+  debtToAssets_gt: Float
+  debtToAssets_gte: Float
+  assetsToEqt: Float
+  assetsToEqt_not: Float
+  assetsToEqt_in: [Float!]
+  assetsToEqt_not_in: [Float!]
+  assetsToEqt_lt: Float
+  assetsToEqt_lte: Float
+  assetsToEqt_gt: Float
+  assetsToEqt_gte: Float
+  dpAssetsToEqt: Float
+  dpAssetsToEqt_not: Float
+  dpAssetsToEqt_in: [Float!]
+  dpAssetsToEqt_not_in: [Float!]
+  dpAssetsToEqt_lt: Float
+  dpAssetsToEqt_lte: Float
+  dpAssetsToEqt_gt: Float
+  dpAssetsToEqt_gte: Float
+  caToAssets: Float
+  caToAssets_not: Float
+  caToAssets_in: [Float!]
+  caToAssets_not_in: [Float!]
+  caToAssets_lt: Float
+  caToAssets_lte: Float
+  caToAssets_gt: Float
+  caToAssets_gte: Float
+  ncaToAssets: Float
+  ncaToAssets_not: Float
+  ncaToAssets_in: [Float!]
+  ncaToAssets_not_in: [Float!]
+  ncaToAssets_lt: Float
+  ncaToAssets_lte: Float
+  ncaToAssets_gt: Float
+  ncaToAssets_gte: Float
+  tbassetsToTotalassets: Float
+  tbassetsToTotalassets_not: Float
+  tbassetsToTotalassets_in: [Float!]
+  tbassetsToTotalassets_not_in: [Float!]
+  tbassetsToTotalassets_lt: Float
+  tbassetsToTotalassets_lte: Float
+  tbassetsToTotalassets_gt: Float
+  tbassetsToTotalassets_gte: Float
+  intToTalcap: Float
+  intToTalcap_not: Float
+  intToTalcap_in: [Float!]
+  intToTalcap_not_in: [Float!]
+  intToTalcap_lt: Float
+  intToTalcap_lte: Float
+  intToTalcap_gt: Float
+  intToTalcap_gte: Float
+  eqtToTalcapital: Float
+  eqtToTalcapital_not: Float
+  eqtToTalcapital_in: [Float!]
+  eqtToTalcapital_not_in: [Float!]
+  eqtToTalcapital_lt: Float
+  eqtToTalcapital_lte: Float
+  eqtToTalcapital_gt: Float
+  eqtToTalcapital_gte: Float
+  currentdebtToDebt: Float
+  currentdebtToDebt_not: Float
+  currentdebtToDebt_in: [Float!]
+  currentdebtToDebt_not_in: [Float!]
+  currentdebtToDebt_lt: Float
+  currentdebtToDebt_lte: Float
+  currentdebtToDebt_gt: Float
+  currentdebtToDebt_gte: Float
+  longdebToDebt: Float
+  longdebToDebt_not: Float
+  longdebToDebt_in: [Float!]
+  longdebToDebt_not_in: [Float!]
+  longdebToDebt_lt: Float
+  longdebToDebt_lte: Float
+  longdebToDebt_gt: Float
+  longdebToDebt_gte: Float
+  ocfToShortdebt: Float
+  ocfToShortdebt_not: Float
+  ocfToShortdebt_in: [Float!]
+  ocfToShortdebt_not_in: [Float!]
+  ocfToShortdebt_lt: Float
+  ocfToShortdebt_lte: Float
+  ocfToShortdebt_gt: Float
+  ocfToShortdebt_gte: Float
+  debtToEqt: Float
+  debtToEqt_not: Float
+  debtToEqt_in: [Float!]
+  debtToEqt_not_in: [Float!]
+  debtToEqt_lt: Float
+  debtToEqt_lte: Float
+  debtToEqt_gt: Float
+  debtToEqt_gte: Float
+  eqtToDebt: Float
+  eqtToDebt_not: Float
+  eqtToDebt_in: [Float!]
+  eqtToDebt_not_in: [Float!]
+  eqtToDebt_lt: Float
+  eqtToDebt_lte: Float
+  eqtToDebt_gt: Float
+  eqtToDebt_gte: Float
+  eqtToInterestdebt: Float
+  eqtToInterestdebt_not: Float
+  eqtToInterestdebt_in: [Float!]
+  eqtToInterestdebt_not_in: [Float!]
+  eqtToInterestdebt_lt: Float
+  eqtToInterestdebt_lte: Float
+  eqtToInterestdebt_gt: Float
+  eqtToInterestdebt_gte: Float
+  tangibleassetToDebt: Float
+  tangibleassetToDebt_not: Float
+  tangibleassetToDebt_in: [Float!]
+  tangibleassetToDebt_not_in: [Float!]
+  tangibleassetToDebt_lt: Float
+  tangibleassetToDebt_lte: Float
+  tangibleassetToDebt_gt: Float
+  tangibleassetToDebt_gte: Float
+  tangassetToIntdebt: Float
+  tangassetToIntdebt_not: Float
+  tangassetToIntdebt_in: [Float!]
+  tangassetToIntdebt_not_in: [Float!]
+  tangassetToIntdebt_lt: Float
+  tangassetToIntdebt_lte: Float
+  tangassetToIntdebt_gt: Float
+  tangassetToIntdebt_gte: Float
+  tangibleassetToNetdebt: Float
+  tangibleassetToNetdebt_not: Float
+  tangibleassetToNetdebt_in: [Float!]
+  tangibleassetToNetdebt_not_in: [Float!]
+  tangibleassetToNetdebt_lt: Float
+  tangibleassetToNetdebt_lte: Float
+  tangibleassetToNetdebt_gt: Float
+  tangibleassetToNetdebt_gte: Float
+  ocfToDebt: Float
+  ocfToDebt_not: Float
+  ocfToDebt_in: [Float!]
+  ocfToDebt_not_in: [Float!]
+  ocfToDebt_lt: Float
+  ocfToDebt_lte: Float
+  ocfToDebt_gt: Float
+  ocfToDebt_gte: Float
+  ocfToInterestdebt: Float
+  ocfToInterestdebt_not: Float
+  ocfToInterestdebt_in: [Float!]
+  ocfToInterestdebt_not_in: [Float!]
+  ocfToInterestdebt_lt: Float
+  ocfToInterestdebt_lte: Float
+  ocfToInterestdebt_gt: Float
+  ocfToInterestdebt_gte: Float
+  ocfToNetdebt: Float
+  ocfToNetdebt_not: Float
+  ocfToNetdebt_in: [Float!]
+  ocfToNetdebt_not_in: [Float!]
+  ocfToNetdebt_lt: Float
+  ocfToNetdebt_lte: Float
+  ocfToNetdebt_gt: Float
+  ocfToNetdebt_gte: Float
+  ebitToInterest: Float
+  ebitToInterest_not: Float
+  ebitToInterest_in: [Float!]
+  ebitToInterest_not_in: [Float!]
+  ebitToInterest_lt: Float
+  ebitToInterest_lte: Float
+  ebitToInterest_gt: Float
+  ebitToInterest_gte: Float
+  longdebtToWorkingcapital: Float
+  longdebtToWorkingcapital_not: Float
+  longdebtToWorkingcapital_in: [Float!]
+  longdebtToWorkingcapital_not_in: [Float!]
+  longdebtToWorkingcapital_lt: Float
+  longdebtToWorkingcapital_lte: Float
+  longdebtToWorkingcapital_gt: Float
+  longdebtToWorkingcapital_gte: Float
+  ebitdaToDebt: Float
+  ebitdaToDebt_not: Float
+  ebitdaToDebt_in: [Float!]
+  ebitdaToDebt_not_in: [Float!]
+  ebitdaToDebt_lt: Float
+  ebitdaToDebt_lte: Float
+  ebitdaToDebt_gt: Float
+  ebitdaToDebt_gte: Float
+  turnDays: Float
+  turnDays_not: Float
+  turnDays_in: [Float!]
+  turnDays_not_in: [Float!]
+  turnDays_lt: Float
+  turnDays_lte: Float
+  turnDays_gt: Float
+  turnDays_gte: Float
+  roaYearly: Float
+  roaYearly_not: Float
+  roaYearly_in: [Float!]
+  roaYearly_not_in: [Float!]
+  roaYearly_lt: Float
+  roaYearly_lte: Float
+  roaYearly_gt: Float
+  roaYearly_gte: Float
+  roaDp: Float
+  roaDp_not: Float
+  roaDp_in: [Float!]
+  roaDp_not_in: [Float!]
+  roaDp_lt: Float
+  roaDp_lte: Float
+  roaDp_gt: Float
+  roaDp_gte: Float
+  fixedAssets: Float
+  fixedAssets_not: Float
+  fixedAssets_in: [Float!]
+  fixedAssets_not_in: [Float!]
+  fixedAssets_lt: Float
+  fixedAssets_lte: Float
+  fixedAssets_gt: Float
+  fixedAssets_gte: Float
+  profitPrefinExp: Float
+  profitPrefinExp_not: Float
+  profitPrefinExp_in: [Float!]
+  profitPrefinExp_not_in: [Float!]
+  profitPrefinExp_lt: Float
+  profitPrefinExp_lte: Float
+  profitPrefinExp_gt: Float
+  profitPrefinExp_gte: Float
+  nonOpProfit: Float
+  nonOpProfit_not: Float
+  nonOpProfit_in: [Float!]
+  nonOpProfit_not_in: [Float!]
+  nonOpProfit_lt: Float
+  nonOpProfit_lte: Float
+  nonOpProfit_gt: Float
+  nonOpProfit_gte: Float
+  opToEbt: Float
+  opToEbt_not: Float
+  opToEbt_in: [Float!]
+  opToEbt_not_in: [Float!]
+  opToEbt_lt: Float
+  opToEbt_lte: Float
+  opToEbt_gt: Float
+  opToEbt_gte: Float
+  nopToEbt: Float
+  nopToEbt_not: Float
+  nopToEbt_in: [Float!]
+  nopToEbt_not_in: [Float!]
+  nopToEbt_lt: Float
+  nopToEbt_lte: Float
+  nopToEbt_gt: Float
+  nopToEbt_gte: Float
+  ocfToProfit: Float
+  ocfToProfit_not: Float
+  ocfToProfit_in: [Float!]
+  ocfToProfit_not_in: [Float!]
+  ocfToProfit_lt: Float
+  ocfToProfit_lte: Float
+  ocfToProfit_gt: Float
+  ocfToProfit_gte: Float
+  cashToLiqdebt: Float
+  cashToLiqdebt_not: Float
+  cashToLiqdebt_in: [Float!]
+  cashToLiqdebt_not_in: [Float!]
+  cashToLiqdebt_lt: Float
+  cashToLiqdebt_lte: Float
+  cashToLiqdebt_gt: Float
+  cashToLiqdebt_gte: Float
+  cashToLiqdebtWithinterest: Float
+  cashToLiqdebtWithinterest_not: Float
+  cashToLiqdebtWithinterest_in: [Float!]
+  cashToLiqdebtWithinterest_not_in: [Float!]
+  cashToLiqdebtWithinterest_lt: Float
+  cashToLiqdebtWithinterest_lte: Float
+  cashToLiqdebtWithinterest_gt: Float
+  cashToLiqdebtWithinterest_gte: Float
+  opToLiqdebt: Float
+  opToLiqdebt_not: Float
+  opToLiqdebt_in: [Float!]
+  opToLiqdebt_not_in: [Float!]
+  opToLiqdebt_lt: Float
+  opToLiqdebt_lte: Float
+  opToLiqdebt_gt: Float
+  opToLiqdebt_gte: Float
+  opToDebt: Float
+  opToDebt_not: Float
+  opToDebt_in: [Float!]
+  opToDebt_not_in: [Float!]
+  opToDebt_lt: Float
+  opToDebt_lte: Float
+  opToDebt_gt: Float
+  opToDebt_gte: Float
+  roicYearly: Float
+  roicYearly_not: Float
+  roicYearly_in: [Float!]
+  roicYearly_not_in: [Float!]
+  roicYearly_lt: Float
+  roicYearly_lte: Float
+  roicYearly_gt: Float
+  roicYearly_gte: Float
+  totalFaTrun: Float
+  totalFaTrun_not: Float
+  totalFaTrun_in: [Float!]
+  totalFaTrun_not_in: [Float!]
+  totalFaTrun_lt: Float
+  totalFaTrun_lte: Float
+  totalFaTrun_gt: Float
+  totalFaTrun_gte: Float
+  profitToOp: Float
+  profitToOp_not: Float
+  profitToOp_in: [Float!]
+  profitToOp_not_in: [Float!]
+  profitToOp_lt: Float
+  profitToOp_lte: Float
+  profitToOp_gt: Float
+  profitToOp_gte: Float
+  qOpincome: Float
+  qOpincome_not: Float
+  qOpincome_in: [Float!]
+  qOpincome_not_in: [Float!]
+  qOpincome_lt: Float
+  qOpincome_lte: Float
+  qOpincome_gt: Float
+  qOpincome_gte: Float
+  qInvestincome: Float
+  qInvestincome_not: Float
+  qInvestincome_in: [Float!]
+  qInvestincome_not_in: [Float!]
+  qInvestincome_lt: Float
+  qInvestincome_lte: Float
+  qInvestincome_gt: Float
+  qInvestincome_gte: Float
+  qDtprofit: Float
+  qDtprofit_not: Float
+  qDtprofit_in: [Float!]
+  qDtprofit_not_in: [Float!]
+  qDtprofit_lt: Float
+  qDtprofit_lte: Float
+  qDtprofit_gt: Float
+  qDtprofit_gte: Float
+  qEps: Float
+  qEps_not: Float
+  qEps_in: [Float!]
+  qEps_not_in: [Float!]
+  qEps_lt: Float
+  qEps_lte: Float
+  qEps_gt: Float
+  qEps_gte: Float
+  qNetprofitMargin: Float
+  qNetprofitMargin_not: Float
+  qNetprofitMargin_in: [Float!]
+  qNetprofitMargin_not_in: [Float!]
+  qNetprofitMargin_lt: Float
+  qNetprofitMargin_lte: Float
+  qNetprofitMargin_gt: Float
+  qNetprofitMargin_gte: Float
+  qGsprofitMargin: Float
+  qGsprofitMargin_not: Float
+  qGsprofitMargin_in: [Float!]
+  qGsprofitMargin_not_in: [Float!]
+  qGsprofitMargin_lt: Float
+  qGsprofitMargin_lte: Float
+  qGsprofitMargin_gt: Float
+  qGsprofitMargin_gte: Float
+  qExpToSales: Float
+  qExpToSales_not: Float
+  qExpToSales_in: [Float!]
+  qExpToSales_not_in: [Float!]
+  qExpToSales_lt: Float
+  qExpToSales_lte: Float
+  qExpToSales_gt: Float
+  qExpToSales_gte: Float
+  qProfitToGr: Float
+  qProfitToGr_not: Float
+  qProfitToGr_in: [Float!]
+  qProfitToGr_not_in: [Float!]
+  qProfitToGr_lt: Float
+  qProfitToGr_lte: Float
+  qProfitToGr_gt: Float
+  qProfitToGr_gte: Float
+  qSaleexpToGr: Float
+  qSaleexpToGr_not: Float
+  qSaleexpToGr_in: [Float!]
+  qSaleexpToGr_not_in: [Float!]
+  qSaleexpToGr_lt: Float
+  qSaleexpToGr_lte: Float
+  qSaleexpToGr_gt: Float
+  qSaleexpToGr_gte: Float
+  qAdminexpToGr: Float
+  qAdminexpToGr_not: Float
+  qAdminexpToGr_in: [Float!]
+  qAdminexpToGr_not_in: [Float!]
+  qAdminexpToGr_lt: Float
+  qAdminexpToGr_lte: Float
+  qAdminexpToGr_gt: Float
+  qAdminexpToGr_gte: Float
+  qFinaexpToGr: Float
+  qFinaexpToGr_not: Float
+  qFinaexpToGr_in: [Float!]
+  qFinaexpToGr_not_in: [Float!]
+  qFinaexpToGr_lt: Float
+  qFinaexpToGr_lte: Float
+  qFinaexpToGr_gt: Float
+  qFinaexpToGr_gte: Float
+  qImpairToGrTtm: Float
+  qImpairToGrTtm_not: Float
+  qImpairToGrTtm_in: [Float!]
+  qImpairToGrTtm_not_in: [Float!]
+  qImpairToGrTtm_lt: Float
+  qImpairToGrTtm_lte: Float
+  qImpairToGrTtm_gt: Float
+  qImpairToGrTtm_gte: Float
+  qGcToGr: Float
+  qGcToGr_not: Float
+  qGcToGr_in: [Float!]
+  qGcToGr_not_in: [Float!]
+  qGcToGr_lt: Float
+  qGcToGr_lte: Float
+  qGcToGr_gt: Float
+  qGcToGr_gte: Float
+  qOpToGr: Float
+  qOpToGr_not: Float
+  qOpToGr_in: [Float!]
+  qOpToGr_not_in: [Float!]
+  qOpToGr_lt: Float
+  qOpToGr_lte: Float
+  qOpToGr_gt: Float
+  qOpToGr_gte: Float
+  qRoe: Float
+  qRoe_not: Float
+  qRoe_in: [Float!]
+  qRoe_not_in: [Float!]
+  qRoe_lt: Float
+  qRoe_lte: Float
+  qRoe_gt: Float
+  qRoe_gte: Float
+  qDtRoe: Float
+  qDtRoe_not: Float
+  qDtRoe_in: [Float!]
+  qDtRoe_not_in: [Float!]
+  qDtRoe_lt: Float
+  qDtRoe_lte: Float
+  qDtRoe_gt: Float
+  qDtRoe_gte: Float
+  qNpta: Float
+  qNpta_not: Float
+  qNpta_in: [Float!]
+  qNpta_not_in: [Float!]
+  qNpta_lt: Float
+  qNpta_lte: Float
+  qNpta_gt: Float
+  qNpta_gte: Float
+  qOpincomeToEbt: Float
+  qOpincomeToEbt_not: Float
+  qOpincomeToEbt_in: [Float!]
+  qOpincomeToEbt_not_in: [Float!]
+  qOpincomeToEbt_lt: Float
+  qOpincomeToEbt_lte: Float
+  qOpincomeToEbt_gt: Float
+  qOpincomeToEbt_gte: Float
+  qInvestincomeToEbt: Float
+  qInvestincomeToEbt_not: Float
+  qInvestincomeToEbt_in: [Float!]
+  qInvestincomeToEbt_not_in: [Float!]
+  qInvestincomeToEbt_lt: Float
+  qInvestincomeToEbt_lte: Float
+  qInvestincomeToEbt_gt: Float
+  qInvestincomeToEbt_gte: Float
+  qDtprofitToProfit: Float
+  qDtprofitToProfit_not: Float
+  qDtprofitToProfit_in: [Float!]
+  qDtprofitToProfit_not_in: [Float!]
+  qDtprofitToProfit_lt: Float
+  qDtprofitToProfit_lte: Float
+  qDtprofitToProfit_gt: Float
+  qDtprofitToProfit_gte: Float
+  qSalescashToOr: Float
+  qSalescashToOr_not: Float
+  qSalescashToOr_in: [Float!]
+  qSalescashToOr_not_in: [Float!]
+  qSalescashToOr_lt: Float
+  qSalescashToOr_lte: Float
+  qSalescashToOr_gt: Float
+  qSalescashToOr_gte: Float
+  qOcfToSales: Float
+  qOcfToSales_not: Float
+  qOcfToSales_in: [Float!]
+  qOcfToSales_not_in: [Float!]
+  qOcfToSales_lt: Float
+  qOcfToSales_lte: Float
+  qOcfToSales_gt: Float
+  qOcfToSales_gte: Float
+  qOcfToOr: Float
+  qOcfToOr_not: Float
+  qOcfToOr_in: [Float!]
+  qOcfToOr_not_in: [Float!]
+  qOcfToOr_lt: Float
+  qOcfToOr_lte: Float
+  qOcfToOr_gt: Float
+  qOcfToOr_gte: Float
+  basicEpsYoy: Float
+  basicEpsYoy_not: Float
+  basicEpsYoy_in: [Float!]
+  basicEpsYoy_not_in: [Float!]
+  basicEpsYoy_lt: Float
+  basicEpsYoy_lte: Float
+  basicEpsYoy_gt: Float
+  basicEpsYoy_gte: Float
+  dtEpsYoy: Float
+  dtEpsYoy_not: Float
+  dtEpsYoy_in: [Float!]
+  dtEpsYoy_not_in: [Float!]
+  dtEpsYoy_lt: Float
+  dtEpsYoy_lte: Float
+  dtEpsYoy_gt: Float
+  dtEpsYoy_gte: Float
+  cfpsYoy: Float
+  cfpsYoy_not: Float
+  cfpsYoy_in: [Float!]
+  cfpsYoy_not_in: [Float!]
+  cfpsYoy_lt: Float
+  cfpsYoy_lte: Float
+  cfpsYoy_gt: Float
+  cfpsYoy_gte: Float
+  opYoy: Float
+  opYoy_not: Float
+  opYoy_in: [Float!]
+  opYoy_not_in: [Float!]
+  opYoy_lt: Float
+  opYoy_lte: Float
+  opYoy_gt: Float
+  opYoy_gte: Float
+  ebtYoy: Float
+  ebtYoy_not: Float
+  ebtYoy_in: [Float!]
+  ebtYoy_not_in: [Float!]
+  ebtYoy_lt: Float
+  ebtYoy_lte: Float
+  ebtYoy_gt: Float
+  ebtYoy_gte: Float
+  netprofitYoy: Float
+  netprofitYoy_not: Float
+  netprofitYoy_in: [Float!]
+  netprofitYoy_not_in: [Float!]
+  netprofitYoy_lt: Float
+  netprofitYoy_lte: Float
+  netprofitYoy_gt: Float
+  netprofitYoy_gte: Float
+  dtNetprofitYoy: Float
+  dtNetprofitYoy_not: Float
+  dtNetprofitYoy_in: [Float!]
+  dtNetprofitYoy_not_in: [Float!]
+  dtNetprofitYoy_lt: Float
+  dtNetprofitYoy_lte: Float
+  dtNetprofitYoy_gt: Float
+  dtNetprofitYoy_gte: Float
+  ocfYoy: Float
+  ocfYoy_not: Float
+  ocfYoy_in: [Float!]
+  ocfYoy_not_in: [Float!]
+  ocfYoy_lt: Float
+  ocfYoy_lte: Float
+  ocfYoy_gt: Float
+  ocfYoy_gte: Float
+  roeYoy: Float
+  roeYoy_not: Float
+  roeYoy_in: [Float!]
+  roeYoy_not_in: [Float!]
+  roeYoy_lt: Float
+  roeYoy_lte: Float
+  roeYoy_gt: Float
+  roeYoy_gte: Float
+  bpsYoy: Float
+  bpsYoy_not: Float
+  bpsYoy_in: [Float!]
+  bpsYoy_not_in: [Float!]
+  bpsYoy_lt: Float
+  bpsYoy_lte: Float
+  bpsYoy_gt: Float
+  bpsYoy_gte: Float
+  assetsYoy: Float
+  assetsYoy_not: Float
+  assetsYoy_in: [Float!]
+  assetsYoy_not_in: [Float!]
+  assetsYoy_lt: Float
+  assetsYoy_lte: Float
+  assetsYoy_gt: Float
+  assetsYoy_gte: Float
+  eqtYoy: Float
+  eqtYoy_not: Float
+  eqtYoy_in: [Float!]
+  eqtYoy_not_in: [Float!]
+  eqtYoy_lt: Float
+  eqtYoy_lte: Float
+  eqtYoy_gt: Float
+  eqtYoy_gte: Float
+  trYoy: Float
+  trYoy_not: Float
+  trYoy_in: [Float!]
+  trYoy_not_in: [Float!]
+  trYoy_lt: Float
+  trYoy_lte: Float
+  trYoy_gt: Float
+  trYoy_gte: Float
+  orYoy: Float
+  orYoy_not: Float
+  orYoy_in: [Float!]
+  orYoy_not_in: [Float!]
+  orYoy_lt: Float
+  orYoy_lte: Float
+  orYoy_gt: Float
+  orYoy_gte: Float
+  qGrYoy: Float
+  qGrYoy_not: Float
+  qGrYoy_in: [Float!]
+  qGrYoy_not_in: [Float!]
+  qGrYoy_lt: Float
+  qGrYoy_lte: Float
+  qGrYoy_gt: Float
+  qGrYoy_gte: Float
+  qGrQoq: Float
+  qGrQoq_not: Float
+  qGrQoq_in: [Float!]
+  qGrQoq_not_in: [Float!]
+  qGrQoq_lt: Float
+  qGrQoq_lte: Float
+  qGrQoq_gt: Float
+  qGrQoq_gte: Float
+  qSalesYoy: Float
+  qSalesYoy_not: Float
+  qSalesYoy_in: [Float!]
+  qSalesYoy_not_in: [Float!]
+  qSalesYoy_lt: Float
+  qSalesYoy_lte: Float
+  qSalesYoy_gt: Float
+  qSalesYoy_gte: Float
+  qSalesQoq: Float
+  qSalesQoq_not: Float
+  qSalesQoq_in: [Float!]
+  qSalesQoq_not_in: [Float!]
+  qSalesQoq_lt: Float
+  qSalesQoq_lte: Float
+  qSalesQoq_gt: Float
+  qSalesQoq_gte: Float
+  qOpYoy: Float
+  qOpYoy_not: Float
+  qOpYoy_in: [Float!]
+  qOpYoy_not_in: [Float!]
+  qOpYoy_lt: Float
+  qOpYoy_lte: Float
+  qOpYoy_gt: Float
+  qOpYoy_gte: Float
+  qOpQoq: Float
+  qOpQoq_not: Float
+  qOpQoq_in: [Float!]
+  qOpQoq_not_in: [Float!]
+  qOpQoq_lt: Float
+  qOpQoq_lte: Float
+  qOpQoq_gt: Float
+  qOpQoq_gte: Float
+  qProfitYoy: Float
+  qProfitYoy_not: Float
+  qProfitYoy_in: [Float!]
+  qProfitYoy_not_in: [Float!]
+  qProfitYoy_lt: Float
+  qProfitYoy_lte: Float
+  qProfitYoy_gt: Float
+  qProfitYoy_gte: Float
+  qProfitQoq: Float
+  qProfitQoq_not: Float
+  qProfitQoq_in: [Float!]
+  qProfitQoq_not_in: [Float!]
+  qProfitQoq_lt: Float
+  qProfitQoq_lte: Float
+  qProfitQoq_gt: Float
+  qProfitQoq_gte: Float
+  qNetprofitYoy: Float
+  qNetprofitYoy_not: Float
+  qNetprofitYoy_in: [Float!]
+  qNetprofitYoy_not_in: [Float!]
+  qNetprofitYoy_lt: Float
+  qNetprofitYoy_lte: Float
+  qNetprofitYoy_gt: Float
+  qNetprofitYoy_gte: Float
+  qNetprofitQoq: Float
+  qNetprofitQoq_not: Float
+  qNetprofitQoq_in: [Float!]
+  qNetprofitQoq_not_in: [Float!]
+  qNetprofitQoq_lt: Float
+  qNetprofitQoq_lte: Float
+  qNetprofitQoq_gt: Float
+  qNetprofitQoq_gte: Float
+  equityYoy: Float
+  equityYoy_not: Float
+  equityYoy_in: [Float!]
+  equityYoy_not_in: [Float!]
+  equityYoy_lt: Float
+  equityYoy_lte: Float
+  equityYoy_gt: Float
+  equityYoy_gte: Float
+  rdExp: Float
+  rdExp_not: Float
+  rdExp_in: [Float!]
+  rdExp_not_in: [Float!]
+  rdExp_lt: Float
+  rdExp_lte: Float
+  rdExp_gt: Float
+  rdExp_gte: Float
+  updateFlag: String
+  updateFlag_not: String
+  updateFlag_in: [String!]
+  updateFlag_not_in: [String!]
+  updateFlag_lt: String
+  updateFlag_lte: String
+  updateFlag_gt: String
+  updateFlag_gte: String
+  updateFlag_contains: String
+  updateFlag_not_contains: String
+  updateFlag_starts_with: String
+  updateFlag_not_starts_with: String
+  updateFlag_ends_with: String
+  updateFlag_not_ends_with: String
+  AND: [FinaIndicatorScalarWhereInput!]
+  OR: [FinaIndicatorScalarWhereInput!]
+  NOT: [FinaIndicatorScalarWhereInput!]
+}
+
+type FinaIndicatorSubscriptionPayload {
+  mutation: MutationType!
+  node: FinaIndicator
+  updatedFields: [String!]
+  previousValues: FinaIndicatorPreviousValues
+}
+
+input FinaIndicatorSubscriptionWhereInput {
+  mutation_in: [MutationType!]
+  updatedFields_contains: String
+  updatedFields_contains_every: [String!]
+  updatedFields_contains_some: [String!]
+  node: FinaIndicatorWhereInput
+  AND: [FinaIndicatorSubscriptionWhereInput!]
+  OR: [FinaIndicatorSubscriptionWhereInput!]
+  NOT: [FinaIndicatorSubscriptionWhereInput!]
+}
+
+input FinaIndicatorUpdateInput {
+  company: CompanyUpdateOneRequiredWithoutFinaIndicatorsInput
+  symbol: String
+  annDate: String
+  endDate: String
+  eps: Float
+  dtEps: Float
+  totalRevenuePs: Float
+  revenuePs: Float
+  capitalResePs: Float
+  surplusResePs: Float
+  undistProfitPs: Float
+  extraItem: Float
+  profitDedt: Float
+  grossMargin: Float
+  currentRatio: Float
+  quickRatio: Float
+  cashRatio: Float
+  invturnDays: Float
+  arturnDays: Float
+  invTurn: Float
+  arTurn: Float
+  caTurn: Float
+  faTurn: Float
+  assetsTurn: Float
+  opIncome: Float
+  valuechangeIncome: Float
+  interstIncome: Float
+  daa: Float
+  ebit: Float
+  ebitda: Float
+  fcff: Float
+  fcfe: Float
+  currentExint: Float
+  noncurrentExint: Float
+  interestdebt: Float
+  netdebt: Float
+  tangibleAsset: Float
+  workingCapital: Float
+  networkingCapital: Float
+  investCapital: Float
+  retainedEarnings: Float
+  diluted2Eps: Float
+  bps: Float
+  ocfps: Float
+  retainedps: Float
+  cfps: Float
+  ebitPs: Float
+  fcffPs: Float
+  fcfePs: Float
+  netprofitMargin: Float
+  grossprofitMargin: Float
+  cogsOfSales: Float
+  expenseOfSales: Float
+  profitToGr: Float
+  saleexpToGr: Float
+  adminexpOfGr: Float
+  finaexpOfGr: Float
+  impaiTtm: Float
+  gcOfGr: Float
+  opOfGr: Float
+  ebitOfGr: Float
+  roe: Float
+  roeWaa: Float
+  roeDt: Float
+  roa: Float
+  npta: Float
+  roic: Float
+  roeYearly: Float
+  roa2Yearly: Float
+  roeAvg: Float
+  opincomeOfEbt: Float
+  investincomeOfEbt: Float
+  nOpProfitOfEbt: Float
+  taxToEbt: Float
+  dtprofitToProfit: Float
+  salescashToOr: Float
+  ocfToOr: Float
+  ocfToOpincome: Float
+  capitalizedToDa: Float
+  debtToAssets: Float
+  assetsToEqt: Float
+  dpAssetsToEqt: Float
+  caToAssets: Float
+  ncaToAssets: Float
+  tbassetsToTotalassets: Float
+  intToTalcap: Float
+  eqtToTalcapital: Float
+  currentdebtToDebt: Float
+  longdebToDebt: Float
+  ocfToShortdebt: Float
+  debtToEqt: Float
+  eqtToDebt: Float
+  eqtToInterestdebt: Float
+  tangibleassetToDebt: Float
+  tangassetToIntdebt: Float
+  tangibleassetToNetdebt: Float
+  ocfToDebt: Float
+  ocfToInterestdebt: Float
+  ocfToNetdebt: Float
+  ebitToInterest: Float
+  longdebtToWorkingcapital: Float
+  ebitdaToDebt: Float
+  turnDays: Float
+  roaYearly: Float
+  roaDp: Float
+  fixedAssets: Float
+  profitPrefinExp: Float
+  nonOpProfit: Float
+  opToEbt: Float
+  nopToEbt: Float
+  ocfToProfit: Float
+  cashToLiqdebt: Float
+  cashToLiqdebtWithinterest: Float
+  opToLiqdebt: Float
+  opToDebt: Float
+  roicYearly: Float
+  totalFaTrun: Float
+  profitToOp: Float
+  qOpincome: Float
+  qInvestincome: Float
+  qDtprofit: Float
+  qEps: Float
+  qNetprofitMargin: Float
+  qGsprofitMargin: Float
+  qExpToSales: Float
+  qProfitToGr: Float
+  qSaleexpToGr: Float
+  qAdminexpToGr: Float
+  qFinaexpToGr: Float
+  qImpairToGrTtm: Float
+  qGcToGr: Float
+  qOpToGr: Float
+  qRoe: Float
+  qDtRoe: Float
+  qNpta: Float
+  qOpincomeToEbt: Float
+  qInvestincomeToEbt: Float
+  qDtprofitToProfit: Float
+  qSalescashToOr: Float
+  qOcfToSales: Float
+  qOcfToOr: Float
+  basicEpsYoy: Float
+  dtEpsYoy: Float
+  cfpsYoy: Float
+  opYoy: Float
+  ebtYoy: Float
+  netprofitYoy: Float
+  dtNetprofitYoy: Float
+  ocfYoy: Float
+  roeYoy: Float
+  bpsYoy: Float
+  assetsYoy: Float
+  eqtYoy: Float
+  trYoy: Float
+  orYoy: Float
+  qGrYoy: Float
+  qGrQoq: Float
+  qSalesYoy: Float
+  qSalesQoq: Float
+  qOpYoy: Float
+  qOpQoq: Float
+  qProfitYoy: Float
+  qProfitQoq: Float
+  qNetprofitYoy: Float
+  qNetprofitQoq: Float
+  equityYoy: Float
+  rdExp: Float
+  updateFlag: String
+}
+
+input FinaIndicatorUpdateManyDataInput {
+  symbol: String
+  annDate: String
+  endDate: String
+  eps: Float
+  dtEps: Float
+  totalRevenuePs: Float
+  revenuePs: Float
+  capitalResePs: Float
+  surplusResePs: Float
+  undistProfitPs: Float
+  extraItem: Float
+  profitDedt: Float
+  grossMargin: Float
+  currentRatio: Float
+  quickRatio: Float
+  cashRatio: Float
+  invturnDays: Float
+  arturnDays: Float
+  invTurn: Float
+  arTurn: Float
+  caTurn: Float
+  faTurn: Float
+  assetsTurn: Float
+  opIncome: Float
+  valuechangeIncome: Float
+  interstIncome: Float
+  daa: Float
+  ebit: Float
+  ebitda: Float
+  fcff: Float
+  fcfe: Float
+  currentExint: Float
+  noncurrentExint: Float
+  interestdebt: Float
+  netdebt: Float
+  tangibleAsset: Float
+  workingCapital: Float
+  networkingCapital: Float
+  investCapital: Float
+  retainedEarnings: Float
+  diluted2Eps: Float
+  bps: Float
+  ocfps: Float
+  retainedps: Float
+  cfps: Float
+  ebitPs: Float
+  fcffPs: Float
+  fcfePs: Float
+  netprofitMargin: Float
+  grossprofitMargin: Float
+  cogsOfSales: Float
+  expenseOfSales: Float
+  profitToGr: Float
+  saleexpToGr: Float
+  adminexpOfGr: Float
+  finaexpOfGr: Float
+  impaiTtm: Float
+  gcOfGr: Float
+  opOfGr: Float
+  ebitOfGr: Float
+  roe: Float
+  roeWaa: Float
+  roeDt: Float
+  roa: Float
+  npta: Float
+  roic: Float
+  roeYearly: Float
+  roa2Yearly: Float
+  roeAvg: Float
+  opincomeOfEbt: Float
+  investincomeOfEbt: Float
+  nOpProfitOfEbt: Float
+  taxToEbt: Float
+  dtprofitToProfit: Float
+  salescashToOr: Float
+  ocfToOr: Float
+  ocfToOpincome: Float
+  capitalizedToDa: Float
+  debtToAssets: Float
+  assetsToEqt: Float
+  dpAssetsToEqt: Float
+  caToAssets: Float
+  ncaToAssets: Float
+  tbassetsToTotalassets: Float
+  intToTalcap: Float
+  eqtToTalcapital: Float
+  currentdebtToDebt: Float
+  longdebToDebt: Float
+  ocfToShortdebt: Float
+  debtToEqt: Float
+  eqtToDebt: Float
+  eqtToInterestdebt: Float
+  tangibleassetToDebt: Float
+  tangassetToIntdebt: Float
+  tangibleassetToNetdebt: Float
+  ocfToDebt: Float
+  ocfToInterestdebt: Float
+  ocfToNetdebt: Float
+  ebitToInterest: Float
+  longdebtToWorkingcapital: Float
+  ebitdaToDebt: Float
+  turnDays: Float
+  roaYearly: Float
+  roaDp: Float
+  fixedAssets: Float
+  profitPrefinExp: Float
+  nonOpProfit: Float
+  opToEbt: Float
+  nopToEbt: Float
+  ocfToProfit: Float
+  cashToLiqdebt: Float
+  cashToLiqdebtWithinterest: Float
+  opToLiqdebt: Float
+  opToDebt: Float
+  roicYearly: Float
+  totalFaTrun: Float
+  profitToOp: Float
+  qOpincome: Float
+  qInvestincome: Float
+  qDtprofit: Float
+  qEps: Float
+  qNetprofitMargin: Float
+  qGsprofitMargin: Float
+  qExpToSales: Float
+  qProfitToGr: Float
+  qSaleexpToGr: Float
+  qAdminexpToGr: Float
+  qFinaexpToGr: Float
+  qImpairToGrTtm: Float
+  qGcToGr: Float
+  qOpToGr: Float
+  qRoe: Float
+  qDtRoe: Float
+  qNpta: Float
+  qOpincomeToEbt: Float
+  qInvestincomeToEbt: Float
+  qDtprofitToProfit: Float
+  qSalescashToOr: Float
+  qOcfToSales: Float
+  qOcfToOr: Float
+  basicEpsYoy: Float
+  dtEpsYoy: Float
+  cfpsYoy: Float
+  opYoy: Float
+  ebtYoy: Float
+  netprofitYoy: Float
+  dtNetprofitYoy: Float
+  ocfYoy: Float
+  roeYoy: Float
+  bpsYoy: Float
+  assetsYoy: Float
+  eqtYoy: Float
+  trYoy: Float
+  orYoy: Float
+  qGrYoy: Float
+  qGrQoq: Float
+  qSalesYoy: Float
+  qSalesQoq: Float
+  qOpYoy: Float
+  qOpQoq: Float
+  qProfitYoy: Float
+  qProfitQoq: Float
+  qNetprofitYoy: Float
+  qNetprofitQoq: Float
+  equityYoy: Float
+  rdExp: Float
+  updateFlag: String
+}
+
+input FinaIndicatorUpdateManyMutationInput {
+  symbol: String
+  annDate: String
+  endDate: String
+  eps: Float
+  dtEps: Float
+  totalRevenuePs: Float
+  revenuePs: Float
+  capitalResePs: Float
+  surplusResePs: Float
+  undistProfitPs: Float
+  extraItem: Float
+  profitDedt: Float
+  grossMargin: Float
+  currentRatio: Float
+  quickRatio: Float
+  cashRatio: Float
+  invturnDays: Float
+  arturnDays: Float
+  invTurn: Float
+  arTurn: Float
+  caTurn: Float
+  faTurn: Float
+  assetsTurn: Float
+  opIncome: Float
+  valuechangeIncome: Float
+  interstIncome: Float
+  daa: Float
+  ebit: Float
+  ebitda: Float
+  fcff: Float
+  fcfe: Float
+  currentExint: Float
+  noncurrentExint: Float
+  interestdebt: Float
+  netdebt: Float
+  tangibleAsset: Float
+  workingCapital: Float
+  networkingCapital: Float
+  investCapital: Float
+  retainedEarnings: Float
+  diluted2Eps: Float
+  bps: Float
+  ocfps: Float
+  retainedps: Float
+  cfps: Float
+  ebitPs: Float
+  fcffPs: Float
+  fcfePs: Float
+  netprofitMargin: Float
+  grossprofitMargin: Float
+  cogsOfSales: Float
+  expenseOfSales: Float
+  profitToGr: Float
+  saleexpToGr: Float
+  adminexpOfGr: Float
+  finaexpOfGr: Float
+  impaiTtm: Float
+  gcOfGr: Float
+  opOfGr: Float
+  ebitOfGr: Float
+  roe: Float
+  roeWaa: Float
+  roeDt: Float
+  roa: Float
+  npta: Float
+  roic: Float
+  roeYearly: Float
+  roa2Yearly: Float
+  roeAvg: Float
+  opincomeOfEbt: Float
+  investincomeOfEbt: Float
+  nOpProfitOfEbt: Float
+  taxToEbt: Float
+  dtprofitToProfit: Float
+  salescashToOr: Float
+  ocfToOr: Float
+  ocfToOpincome: Float
+  capitalizedToDa: Float
+  debtToAssets: Float
+  assetsToEqt: Float
+  dpAssetsToEqt: Float
+  caToAssets: Float
+  ncaToAssets: Float
+  tbassetsToTotalassets: Float
+  intToTalcap: Float
+  eqtToTalcapital: Float
+  currentdebtToDebt: Float
+  longdebToDebt: Float
+  ocfToShortdebt: Float
+  debtToEqt: Float
+  eqtToDebt: Float
+  eqtToInterestdebt: Float
+  tangibleassetToDebt: Float
+  tangassetToIntdebt: Float
+  tangibleassetToNetdebt: Float
+  ocfToDebt: Float
+  ocfToInterestdebt: Float
+  ocfToNetdebt: Float
+  ebitToInterest: Float
+  longdebtToWorkingcapital: Float
+  ebitdaToDebt: Float
+  turnDays: Float
+  roaYearly: Float
+  roaDp: Float
+  fixedAssets: Float
+  profitPrefinExp: Float
+  nonOpProfit: Float
+  opToEbt: Float
+  nopToEbt: Float
+  ocfToProfit: Float
+  cashToLiqdebt: Float
+  cashToLiqdebtWithinterest: Float
+  opToLiqdebt: Float
+  opToDebt: Float
+  roicYearly: Float
+  totalFaTrun: Float
+  profitToOp: Float
+  qOpincome: Float
+  qInvestincome: Float
+  qDtprofit: Float
+  qEps: Float
+  qNetprofitMargin: Float
+  qGsprofitMargin: Float
+  qExpToSales: Float
+  qProfitToGr: Float
+  qSaleexpToGr: Float
+  qAdminexpToGr: Float
+  qFinaexpToGr: Float
+  qImpairToGrTtm: Float
+  qGcToGr: Float
+  qOpToGr: Float
+  qRoe: Float
+  qDtRoe: Float
+  qNpta: Float
+  qOpincomeToEbt: Float
+  qInvestincomeToEbt: Float
+  qDtprofitToProfit: Float
+  qSalescashToOr: Float
+  qOcfToSales: Float
+  qOcfToOr: Float
+  basicEpsYoy: Float
+  dtEpsYoy: Float
+  cfpsYoy: Float
+  opYoy: Float
+  ebtYoy: Float
+  netprofitYoy: Float
+  dtNetprofitYoy: Float
+  ocfYoy: Float
+  roeYoy: Float
+  bpsYoy: Float
+  assetsYoy: Float
+  eqtYoy: Float
+  trYoy: Float
+  orYoy: Float
+  qGrYoy: Float
+  qGrQoq: Float
+  qSalesYoy: Float
+  qSalesQoq: Float
+  qOpYoy: Float
+  qOpQoq: Float
+  qProfitYoy: Float
+  qProfitQoq: Float
+  qNetprofitYoy: Float
+  qNetprofitQoq: Float
+  equityYoy: Float
+  rdExp: Float
+  updateFlag: String
+}
+
+input FinaIndicatorUpdateManyWithoutCompanyInput {
+  create: [FinaIndicatorCreateWithoutCompanyInput!]
+  delete: [FinaIndicatorWhereUniqueInput!]
+  connect: [FinaIndicatorWhereUniqueInput!]
+  set: [FinaIndicatorWhereUniqueInput!]
+  disconnect: [FinaIndicatorWhereUniqueInput!]
+  update: [FinaIndicatorUpdateWithWhereUniqueWithoutCompanyInput!]
+  upsert: [FinaIndicatorUpsertWithWhereUniqueWithoutCompanyInput!]
+  deleteMany: [FinaIndicatorScalarWhereInput!]
+  updateMany: [FinaIndicatorUpdateManyWithWhereNestedInput!]
+}
+
+input FinaIndicatorUpdateManyWithWhereNestedInput {
+  where: FinaIndicatorScalarWhereInput!
+  data: FinaIndicatorUpdateManyDataInput!
+}
+
+input FinaIndicatorUpdateWithoutCompanyDataInput {
+  symbol: String
+  annDate: String
+  endDate: String
+  eps: Float
+  dtEps: Float
+  totalRevenuePs: Float
+  revenuePs: Float
+  capitalResePs: Float
+  surplusResePs: Float
+  undistProfitPs: Float
+  extraItem: Float
+  profitDedt: Float
+  grossMargin: Float
+  currentRatio: Float
+  quickRatio: Float
+  cashRatio: Float
+  invturnDays: Float
+  arturnDays: Float
+  invTurn: Float
+  arTurn: Float
+  caTurn: Float
+  faTurn: Float
+  assetsTurn: Float
+  opIncome: Float
+  valuechangeIncome: Float
+  interstIncome: Float
+  daa: Float
+  ebit: Float
+  ebitda: Float
+  fcff: Float
+  fcfe: Float
+  currentExint: Float
+  noncurrentExint: Float
+  interestdebt: Float
+  netdebt: Float
+  tangibleAsset: Float
+  workingCapital: Float
+  networkingCapital: Float
+  investCapital: Float
+  retainedEarnings: Float
+  diluted2Eps: Float
+  bps: Float
+  ocfps: Float
+  retainedps: Float
+  cfps: Float
+  ebitPs: Float
+  fcffPs: Float
+  fcfePs: Float
+  netprofitMargin: Float
+  grossprofitMargin: Float
+  cogsOfSales: Float
+  expenseOfSales: Float
+  profitToGr: Float
+  saleexpToGr: Float
+  adminexpOfGr: Float
+  finaexpOfGr: Float
+  impaiTtm: Float
+  gcOfGr: Float
+  opOfGr: Float
+  ebitOfGr: Float
+  roe: Float
+  roeWaa: Float
+  roeDt: Float
+  roa: Float
+  npta: Float
+  roic: Float
+  roeYearly: Float
+  roa2Yearly: Float
+  roeAvg: Float
+  opincomeOfEbt: Float
+  investincomeOfEbt: Float
+  nOpProfitOfEbt: Float
+  taxToEbt: Float
+  dtprofitToProfit: Float
+  salescashToOr: Float
+  ocfToOr: Float
+  ocfToOpincome: Float
+  capitalizedToDa: Float
+  debtToAssets: Float
+  assetsToEqt: Float
+  dpAssetsToEqt: Float
+  caToAssets: Float
+  ncaToAssets: Float
+  tbassetsToTotalassets: Float
+  intToTalcap: Float
+  eqtToTalcapital: Float
+  currentdebtToDebt: Float
+  longdebToDebt: Float
+  ocfToShortdebt: Float
+  debtToEqt: Float
+  eqtToDebt: Float
+  eqtToInterestdebt: Float
+  tangibleassetToDebt: Float
+  tangassetToIntdebt: Float
+  tangibleassetToNetdebt: Float
+  ocfToDebt: Float
+  ocfToInterestdebt: Float
+  ocfToNetdebt: Float
+  ebitToInterest: Float
+  longdebtToWorkingcapital: Float
+  ebitdaToDebt: Float
+  turnDays: Float
+  roaYearly: Float
+  roaDp: Float
+  fixedAssets: Float
+  profitPrefinExp: Float
+  nonOpProfit: Float
+  opToEbt: Float
+  nopToEbt: Float
+  ocfToProfit: Float
+  cashToLiqdebt: Float
+  cashToLiqdebtWithinterest: Float
+  opToLiqdebt: Float
+  opToDebt: Float
+  roicYearly: Float
+  totalFaTrun: Float
+  profitToOp: Float
+  qOpincome: Float
+  qInvestincome: Float
+  qDtprofit: Float
+  qEps: Float
+  qNetprofitMargin: Float
+  qGsprofitMargin: Float
+  qExpToSales: Float
+  qProfitToGr: Float
+  qSaleexpToGr: Float
+  qAdminexpToGr: Float
+  qFinaexpToGr: Float
+  qImpairToGrTtm: Float
+  qGcToGr: Float
+  qOpToGr: Float
+  qRoe: Float
+  qDtRoe: Float
+  qNpta: Float
+  qOpincomeToEbt: Float
+  qInvestincomeToEbt: Float
+  qDtprofitToProfit: Float
+  qSalescashToOr: Float
+  qOcfToSales: Float
+  qOcfToOr: Float
+  basicEpsYoy: Float
+  dtEpsYoy: Float
+  cfpsYoy: Float
+  opYoy: Float
+  ebtYoy: Float
+  netprofitYoy: Float
+  dtNetprofitYoy: Float
+  ocfYoy: Float
+  roeYoy: Float
+  bpsYoy: Float
+  assetsYoy: Float
+  eqtYoy: Float
+  trYoy: Float
+  orYoy: Float
+  qGrYoy: Float
+  qGrQoq: Float
+  qSalesYoy: Float
+  qSalesQoq: Float
+  qOpYoy: Float
+  qOpQoq: Float
+  qProfitYoy: Float
+  qProfitQoq: Float
+  qNetprofitYoy: Float
+  qNetprofitQoq: Float
+  equityYoy: Float
+  rdExp: Float
+  updateFlag: String
+}
+
+input FinaIndicatorUpdateWithWhereUniqueWithoutCompanyInput {
+  where: FinaIndicatorWhereUniqueInput!
+  data: FinaIndicatorUpdateWithoutCompanyDataInput!
+}
+
+input FinaIndicatorUpsertWithWhereUniqueWithoutCompanyInput {
+  where: FinaIndicatorWhereUniqueInput!
+  update: FinaIndicatorUpdateWithoutCompanyDataInput!
+  create: FinaIndicatorCreateWithoutCompanyInput!
+}
+
+input FinaIndicatorWhereInput {
+  id: ID
+  id_not: ID
+  id_in: [ID!]
+  id_not_in: [ID!]
+  id_lt: ID
+  id_lte: ID
+  id_gt: ID
+  id_gte: ID
+  id_contains: ID
+  id_not_contains: ID
+  id_starts_with: ID
+  id_not_starts_with: ID
+  id_ends_with: ID
+  id_not_ends_with: ID
+  company: CompanyWhereInput
+  symbol: String
+  symbol_not: String
+  symbol_in: [String!]
+  symbol_not_in: [String!]
+  symbol_lt: String
+  symbol_lte: String
+  symbol_gt: String
+  symbol_gte: String
+  symbol_contains: String
+  symbol_not_contains: String
+  symbol_starts_with: String
+  symbol_not_starts_with: String
+  symbol_ends_with: String
+  symbol_not_ends_with: String
+  annDate: String
+  annDate_not: String
+  annDate_in: [String!]
+  annDate_not_in: [String!]
+  annDate_lt: String
+  annDate_lte: String
+  annDate_gt: String
+  annDate_gte: String
+  annDate_contains: String
+  annDate_not_contains: String
+  annDate_starts_with: String
+  annDate_not_starts_with: String
+  annDate_ends_with: String
+  annDate_not_ends_with: String
+  endDate: String
+  endDate_not: String
+  endDate_in: [String!]
+  endDate_not_in: [String!]
+  endDate_lt: String
+  endDate_lte: String
+  endDate_gt: String
+  endDate_gte: String
+  endDate_contains: String
+  endDate_not_contains: String
+  endDate_starts_with: String
+  endDate_not_starts_with: String
+  endDate_ends_with: String
+  endDate_not_ends_with: String
+  eps: Float
+  eps_not: Float
+  eps_in: [Float!]
+  eps_not_in: [Float!]
+  eps_lt: Float
+  eps_lte: Float
+  eps_gt: Float
+  eps_gte: Float
+  dtEps: Float
+  dtEps_not: Float
+  dtEps_in: [Float!]
+  dtEps_not_in: [Float!]
+  dtEps_lt: Float
+  dtEps_lte: Float
+  dtEps_gt: Float
+  dtEps_gte: Float
+  totalRevenuePs: Float
+  totalRevenuePs_not: Float
+  totalRevenuePs_in: [Float!]
+  totalRevenuePs_not_in: [Float!]
+  totalRevenuePs_lt: Float
+  totalRevenuePs_lte: Float
+  totalRevenuePs_gt: Float
+  totalRevenuePs_gte: Float
+  revenuePs: Float
+  revenuePs_not: Float
+  revenuePs_in: [Float!]
+  revenuePs_not_in: [Float!]
+  revenuePs_lt: Float
+  revenuePs_lte: Float
+  revenuePs_gt: Float
+  revenuePs_gte: Float
+  capitalResePs: Float
+  capitalResePs_not: Float
+  capitalResePs_in: [Float!]
+  capitalResePs_not_in: [Float!]
+  capitalResePs_lt: Float
+  capitalResePs_lte: Float
+  capitalResePs_gt: Float
+  capitalResePs_gte: Float
+  surplusResePs: Float
+  surplusResePs_not: Float
+  surplusResePs_in: [Float!]
+  surplusResePs_not_in: [Float!]
+  surplusResePs_lt: Float
+  surplusResePs_lte: Float
+  surplusResePs_gt: Float
+  surplusResePs_gte: Float
+  undistProfitPs: Float
+  undistProfitPs_not: Float
+  undistProfitPs_in: [Float!]
+  undistProfitPs_not_in: [Float!]
+  undistProfitPs_lt: Float
+  undistProfitPs_lte: Float
+  undistProfitPs_gt: Float
+  undistProfitPs_gte: Float
+  extraItem: Float
+  extraItem_not: Float
+  extraItem_in: [Float!]
+  extraItem_not_in: [Float!]
+  extraItem_lt: Float
+  extraItem_lte: Float
+  extraItem_gt: Float
+  extraItem_gte: Float
+  profitDedt: Float
+  profitDedt_not: Float
+  profitDedt_in: [Float!]
+  profitDedt_not_in: [Float!]
+  profitDedt_lt: Float
+  profitDedt_lte: Float
+  profitDedt_gt: Float
+  profitDedt_gte: Float
+  grossMargin: Float
+  grossMargin_not: Float
+  grossMargin_in: [Float!]
+  grossMargin_not_in: [Float!]
+  grossMargin_lt: Float
+  grossMargin_lte: Float
+  grossMargin_gt: Float
+  grossMargin_gte: Float
+  currentRatio: Float
+  currentRatio_not: Float
+  currentRatio_in: [Float!]
+  currentRatio_not_in: [Float!]
+  currentRatio_lt: Float
+  currentRatio_lte: Float
+  currentRatio_gt: Float
+  currentRatio_gte: Float
+  quickRatio: Float
+  quickRatio_not: Float
+  quickRatio_in: [Float!]
+  quickRatio_not_in: [Float!]
+  quickRatio_lt: Float
+  quickRatio_lte: Float
+  quickRatio_gt: Float
+  quickRatio_gte: Float
+  cashRatio: Float
+  cashRatio_not: Float
+  cashRatio_in: [Float!]
+  cashRatio_not_in: [Float!]
+  cashRatio_lt: Float
+  cashRatio_lte: Float
+  cashRatio_gt: Float
+  cashRatio_gte: Float
+  invturnDays: Float
+  invturnDays_not: Float
+  invturnDays_in: [Float!]
+  invturnDays_not_in: [Float!]
+  invturnDays_lt: Float
+  invturnDays_lte: Float
+  invturnDays_gt: Float
+  invturnDays_gte: Float
+  arturnDays: Float
+  arturnDays_not: Float
+  arturnDays_in: [Float!]
+  arturnDays_not_in: [Float!]
+  arturnDays_lt: Float
+  arturnDays_lte: Float
+  arturnDays_gt: Float
+  arturnDays_gte: Float
+  invTurn: Float
+  invTurn_not: Float
+  invTurn_in: [Float!]
+  invTurn_not_in: [Float!]
+  invTurn_lt: Float
+  invTurn_lte: Float
+  invTurn_gt: Float
+  invTurn_gte: Float
+  arTurn: Float
+  arTurn_not: Float
+  arTurn_in: [Float!]
+  arTurn_not_in: [Float!]
+  arTurn_lt: Float
+  arTurn_lte: Float
+  arTurn_gt: Float
+  arTurn_gte: Float
+  caTurn: Float
+  caTurn_not: Float
+  caTurn_in: [Float!]
+  caTurn_not_in: [Float!]
+  caTurn_lt: Float
+  caTurn_lte: Float
+  caTurn_gt: Float
+  caTurn_gte: Float
+  faTurn: Float
+  faTurn_not: Float
+  faTurn_in: [Float!]
+  faTurn_not_in: [Float!]
+  faTurn_lt: Float
+  faTurn_lte: Float
+  faTurn_gt: Float
+  faTurn_gte: Float
+  assetsTurn: Float
+  assetsTurn_not: Float
+  assetsTurn_in: [Float!]
+  assetsTurn_not_in: [Float!]
+  assetsTurn_lt: Float
+  assetsTurn_lte: Float
+  assetsTurn_gt: Float
+  assetsTurn_gte: Float
+  opIncome: Float
+  opIncome_not: Float
+  opIncome_in: [Float!]
+  opIncome_not_in: [Float!]
+  opIncome_lt: Float
+  opIncome_lte: Float
+  opIncome_gt: Float
+  opIncome_gte: Float
+  valuechangeIncome: Float
+  valuechangeIncome_not: Float
+  valuechangeIncome_in: [Float!]
+  valuechangeIncome_not_in: [Float!]
+  valuechangeIncome_lt: Float
+  valuechangeIncome_lte: Float
+  valuechangeIncome_gt: Float
+  valuechangeIncome_gte: Float
+  interstIncome: Float
+  interstIncome_not: Float
+  interstIncome_in: [Float!]
+  interstIncome_not_in: [Float!]
+  interstIncome_lt: Float
+  interstIncome_lte: Float
+  interstIncome_gt: Float
+  interstIncome_gte: Float
+  daa: Float
+  daa_not: Float
+  daa_in: [Float!]
+  daa_not_in: [Float!]
+  daa_lt: Float
+  daa_lte: Float
+  daa_gt: Float
+  daa_gte: Float
+  ebit: Float
+  ebit_not: Float
+  ebit_in: [Float!]
+  ebit_not_in: [Float!]
+  ebit_lt: Float
+  ebit_lte: Float
+  ebit_gt: Float
+  ebit_gte: Float
+  ebitda: Float
+  ebitda_not: Float
+  ebitda_in: [Float!]
+  ebitda_not_in: [Float!]
+  ebitda_lt: Float
+  ebitda_lte: Float
+  ebitda_gt: Float
+  ebitda_gte: Float
+  fcff: Float
+  fcff_not: Float
+  fcff_in: [Float!]
+  fcff_not_in: [Float!]
+  fcff_lt: Float
+  fcff_lte: Float
+  fcff_gt: Float
+  fcff_gte: Float
+  fcfe: Float
+  fcfe_not: Float
+  fcfe_in: [Float!]
+  fcfe_not_in: [Float!]
+  fcfe_lt: Float
+  fcfe_lte: Float
+  fcfe_gt: Float
+  fcfe_gte: Float
+  currentExint: Float
+  currentExint_not: Float
+  currentExint_in: [Float!]
+  currentExint_not_in: [Float!]
+  currentExint_lt: Float
+  currentExint_lte: Float
+  currentExint_gt: Float
+  currentExint_gte: Float
+  noncurrentExint: Float
+  noncurrentExint_not: Float
+  noncurrentExint_in: [Float!]
+  noncurrentExint_not_in: [Float!]
+  noncurrentExint_lt: Float
+  noncurrentExint_lte: Float
+  noncurrentExint_gt: Float
+  noncurrentExint_gte: Float
+  interestdebt: Float
+  interestdebt_not: Float
+  interestdebt_in: [Float!]
+  interestdebt_not_in: [Float!]
+  interestdebt_lt: Float
+  interestdebt_lte: Float
+  interestdebt_gt: Float
+  interestdebt_gte: Float
+  netdebt: Float
+  netdebt_not: Float
+  netdebt_in: [Float!]
+  netdebt_not_in: [Float!]
+  netdebt_lt: Float
+  netdebt_lte: Float
+  netdebt_gt: Float
+  netdebt_gte: Float
+  tangibleAsset: Float
+  tangibleAsset_not: Float
+  tangibleAsset_in: [Float!]
+  tangibleAsset_not_in: [Float!]
+  tangibleAsset_lt: Float
+  tangibleAsset_lte: Float
+  tangibleAsset_gt: Float
+  tangibleAsset_gte: Float
+  workingCapital: Float
+  workingCapital_not: Float
+  workingCapital_in: [Float!]
+  workingCapital_not_in: [Float!]
+  workingCapital_lt: Float
+  workingCapital_lte: Float
+  workingCapital_gt: Float
+  workingCapital_gte: Float
+  networkingCapital: Float
+  networkingCapital_not: Float
+  networkingCapital_in: [Float!]
+  networkingCapital_not_in: [Float!]
+  networkingCapital_lt: Float
+  networkingCapital_lte: Float
+  networkingCapital_gt: Float
+  networkingCapital_gte: Float
+  investCapital: Float
+  investCapital_not: Float
+  investCapital_in: [Float!]
+  investCapital_not_in: [Float!]
+  investCapital_lt: Float
+  investCapital_lte: Float
+  investCapital_gt: Float
+  investCapital_gte: Float
+  retainedEarnings: Float
+  retainedEarnings_not: Float
+  retainedEarnings_in: [Float!]
+  retainedEarnings_not_in: [Float!]
+  retainedEarnings_lt: Float
+  retainedEarnings_lte: Float
+  retainedEarnings_gt: Float
+  retainedEarnings_gte: Float
+  diluted2Eps: Float
+  diluted2Eps_not: Float
+  diluted2Eps_in: [Float!]
+  diluted2Eps_not_in: [Float!]
+  diluted2Eps_lt: Float
+  diluted2Eps_lte: Float
+  diluted2Eps_gt: Float
+  diluted2Eps_gte: Float
+  bps: Float
+  bps_not: Float
+  bps_in: [Float!]
+  bps_not_in: [Float!]
+  bps_lt: Float
+  bps_lte: Float
+  bps_gt: Float
+  bps_gte: Float
+  ocfps: Float
+  ocfps_not: Float
+  ocfps_in: [Float!]
+  ocfps_not_in: [Float!]
+  ocfps_lt: Float
+  ocfps_lte: Float
+  ocfps_gt: Float
+  ocfps_gte: Float
+  retainedps: Float
+  retainedps_not: Float
+  retainedps_in: [Float!]
+  retainedps_not_in: [Float!]
+  retainedps_lt: Float
+  retainedps_lte: Float
+  retainedps_gt: Float
+  retainedps_gte: Float
+  cfps: Float
+  cfps_not: Float
+  cfps_in: [Float!]
+  cfps_not_in: [Float!]
+  cfps_lt: Float
+  cfps_lte: Float
+  cfps_gt: Float
+  cfps_gte: Float
+  ebitPs: Float
+  ebitPs_not: Float
+  ebitPs_in: [Float!]
+  ebitPs_not_in: [Float!]
+  ebitPs_lt: Float
+  ebitPs_lte: Float
+  ebitPs_gt: Float
+  ebitPs_gte: Float
+  fcffPs: Float
+  fcffPs_not: Float
+  fcffPs_in: [Float!]
+  fcffPs_not_in: [Float!]
+  fcffPs_lt: Float
+  fcffPs_lte: Float
+  fcffPs_gt: Float
+  fcffPs_gte: Float
+  fcfePs: Float
+  fcfePs_not: Float
+  fcfePs_in: [Float!]
+  fcfePs_not_in: [Float!]
+  fcfePs_lt: Float
+  fcfePs_lte: Float
+  fcfePs_gt: Float
+  fcfePs_gte: Float
+  netprofitMargin: Float
+  netprofitMargin_not: Float
+  netprofitMargin_in: [Float!]
+  netprofitMargin_not_in: [Float!]
+  netprofitMargin_lt: Float
+  netprofitMargin_lte: Float
+  netprofitMargin_gt: Float
+  netprofitMargin_gte: Float
+  grossprofitMargin: Float
+  grossprofitMargin_not: Float
+  grossprofitMargin_in: [Float!]
+  grossprofitMargin_not_in: [Float!]
+  grossprofitMargin_lt: Float
+  grossprofitMargin_lte: Float
+  grossprofitMargin_gt: Float
+  grossprofitMargin_gte: Float
+  cogsOfSales: Float
+  cogsOfSales_not: Float
+  cogsOfSales_in: [Float!]
+  cogsOfSales_not_in: [Float!]
+  cogsOfSales_lt: Float
+  cogsOfSales_lte: Float
+  cogsOfSales_gt: Float
+  cogsOfSales_gte: Float
+  expenseOfSales: Float
+  expenseOfSales_not: Float
+  expenseOfSales_in: [Float!]
+  expenseOfSales_not_in: [Float!]
+  expenseOfSales_lt: Float
+  expenseOfSales_lte: Float
+  expenseOfSales_gt: Float
+  expenseOfSales_gte: Float
+  profitToGr: Float
+  profitToGr_not: Float
+  profitToGr_in: [Float!]
+  profitToGr_not_in: [Float!]
+  profitToGr_lt: Float
+  profitToGr_lte: Float
+  profitToGr_gt: Float
+  profitToGr_gte: Float
+  saleexpToGr: Float
+  saleexpToGr_not: Float
+  saleexpToGr_in: [Float!]
+  saleexpToGr_not_in: [Float!]
+  saleexpToGr_lt: Float
+  saleexpToGr_lte: Float
+  saleexpToGr_gt: Float
+  saleexpToGr_gte: Float
+  adminexpOfGr: Float
+  adminexpOfGr_not: Float
+  adminexpOfGr_in: [Float!]
+  adminexpOfGr_not_in: [Float!]
+  adminexpOfGr_lt: Float
+  adminexpOfGr_lte: Float
+  adminexpOfGr_gt: Float
+  adminexpOfGr_gte: Float
+  finaexpOfGr: Float
+  finaexpOfGr_not: Float
+  finaexpOfGr_in: [Float!]
+  finaexpOfGr_not_in: [Float!]
+  finaexpOfGr_lt: Float
+  finaexpOfGr_lte: Float
+  finaexpOfGr_gt: Float
+  finaexpOfGr_gte: Float
+  impaiTtm: Float
+  impaiTtm_not: Float
+  impaiTtm_in: [Float!]
+  impaiTtm_not_in: [Float!]
+  impaiTtm_lt: Float
+  impaiTtm_lte: Float
+  impaiTtm_gt: Float
+  impaiTtm_gte: Float
+  gcOfGr: Float
+  gcOfGr_not: Float
+  gcOfGr_in: [Float!]
+  gcOfGr_not_in: [Float!]
+  gcOfGr_lt: Float
+  gcOfGr_lte: Float
+  gcOfGr_gt: Float
+  gcOfGr_gte: Float
+  opOfGr: Float
+  opOfGr_not: Float
+  opOfGr_in: [Float!]
+  opOfGr_not_in: [Float!]
+  opOfGr_lt: Float
+  opOfGr_lte: Float
+  opOfGr_gt: Float
+  opOfGr_gte: Float
+  ebitOfGr: Float
+  ebitOfGr_not: Float
+  ebitOfGr_in: [Float!]
+  ebitOfGr_not_in: [Float!]
+  ebitOfGr_lt: Float
+  ebitOfGr_lte: Float
+  ebitOfGr_gt: Float
+  ebitOfGr_gte: Float
+  roe: Float
+  roe_not: Float
+  roe_in: [Float!]
+  roe_not_in: [Float!]
+  roe_lt: Float
+  roe_lte: Float
+  roe_gt: Float
+  roe_gte: Float
+  roeWaa: Float
+  roeWaa_not: Float
+  roeWaa_in: [Float!]
+  roeWaa_not_in: [Float!]
+  roeWaa_lt: Float
+  roeWaa_lte: Float
+  roeWaa_gt: Float
+  roeWaa_gte: Float
+  roeDt: Float
+  roeDt_not: Float
+  roeDt_in: [Float!]
+  roeDt_not_in: [Float!]
+  roeDt_lt: Float
+  roeDt_lte: Float
+  roeDt_gt: Float
+  roeDt_gte: Float
+  roa: Float
+  roa_not: Float
+  roa_in: [Float!]
+  roa_not_in: [Float!]
+  roa_lt: Float
+  roa_lte: Float
+  roa_gt: Float
+  roa_gte: Float
+  npta: Float
+  npta_not: Float
+  npta_in: [Float!]
+  npta_not_in: [Float!]
+  npta_lt: Float
+  npta_lte: Float
+  npta_gt: Float
+  npta_gte: Float
+  roic: Float
+  roic_not: Float
+  roic_in: [Float!]
+  roic_not_in: [Float!]
+  roic_lt: Float
+  roic_lte: Float
+  roic_gt: Float
+  roic_gte: Float
+  roeYearly: Float
+  roeYearly_not: Float
+  roeYearly_in: [Float!]
+  roeYearly_not_in: [Float!]
+  roeYearly_lt: Float
+  roeYearly_lte: Float
+  roeYearly_gt: Float
+  roeYearly_gte: Float
+  roa2Yearly: Float
+  roa2Yearly_not: Float
+  roa2Yearly_in: [Float!]
+  roa2Yearly_not_in: [Float!]
+  roa2Yearly_lt: Float
+  roa2Yearly_lte: Float
+  roa2Yearly_gt: Float
+  roa2Yearly_gte: Float
+  roeAvg: Float
+  roeAvg_not: Float
+  roeAvg_in: [Float!]
+  roeAvg_not_in: [Float!]
+  roeAvg_lt: Float
+  roeAvg_lte: Float
+  roeAvg_gt: Float
+  roeAvg_gte: Float
+  opincomeOfEbt: Float
+  opincomeOfEbt_not: Float
+  opincomeOfEbt_in: [Float!]
+  opincomeOfEbt_not_in: [Float!]
+  opincomeOfEbt_lt: Float
+  opincomeOfEbt_lte: Float
+  opincomeOfEbt_gt: Float
+  opincomeOfEbt_gte: Float
+  investincomeOfEbt: Float
+  investincomeOfEbt_not: Float
+  investincomeOfEbt_in: [Float!]
+  investincomeOfEbt_not_in: [Float!]
+  investincomeOfEbt_lt: Float
+  investincomeOfEbt_lte: Float
+  investincomeOfEbt_gt: Float
+  investincomeOfEbt_gte: Float
+  nOpProfitOfEbt: Float
+  nOpProfitOfEbt_not: Float
+  nOpProfitOfEbt_in: [Float!]
+  nOpProfitOfEbt_not_in: [Float!]
+  nOpProfitOfEbt_lt: Float
+  nOpProfitOfEbt_lte: Float
+  nOpProfitOfEbt_gt: Float
+  nOpProfitOfEbt_gte: Float
+  taxToEbt: Float
+  taxToEbt_not: Float
+  taxToEbt_in: [Float!]
+  taxToEbt_not_in: [Float!]
+  taxToEbt_lt: Float
+  taxToEbt_lte: Float
+  taxToEbt_gt: Float
+  taxToEbt_gte: Float
+  dtprofitToProfit: Float
+  dtprofitToProfit_not: Float
+  dtprofitToProfit_in: [Float!]
+  dtprofitToProfit_not_in: [Float!]
+  dtprofitToProfit_lt: Float
+  dtprofitToProfit_lte: Float
+  dtprofitToProfit_gt: Float
+  dtprofitToProfit_gte: Float
+  salescashToOr: Float
+  salescashToOr_not: Float
+  salescashToOr_in: [Float!]
+  salescashToOr_not_in: [Float!]
+  salescashToOr_lt: Float
+  salescashToOr_lte: Float
+  salescashToOr_gt: Float
+  salescashToOr_gte: Float
+  ocfToOr: Float
+  ocfToOr_not: Float
+  ocfToOr_in: [Float!]
+  ocfToOr_not_in: [Float!]
+  ocfToOr_lt: Float
+  ocfToOr_lte: Float
+  ocfToOr_gt: Float
+  ocfToOr_gte: Float
+  ocfToOpincome: Float
+  ocfToOpincome_not: Float
+  ocfToOpincome_in: [Float!]
+  ocfToOpincome_not_in: [Float!]
+  ocfToOpincome_lt: Float
+  ocfToOpincome_lte: Float
+  ocfToOpincome_gt: Float
+  ocfToOpincome_gte: Float
+  capitalizedToDa: Float
+  capitalizedToDa_not: Float
+  capitalizedToDa_in: [Float!]
+  capitalizedToDa_not_in: [Float!]
+  capitalizedToDa_lt: Float
+  capitalizedToDa_lte: Float
+  capitalizedToDa_gt: Float
+  capitalizedToDa_gte: Float
+  debtToAssets: Float
+  debtToAssets_not: Float
+  debtToAssets_in: [Float!]
+  debtToAssets_not_in: [Float!]
+  debtToAssets_lt: Float
+  debtToAssets_lte: Float
+  debtToAssets_gt: Float
+  debtToAssets_gte: Float
+  assetsToEqt: Float
+  assetsToEqt_not: Float
+  assetsToEqt_in: [Float!]
+  assetsToEqt_not_in: [Float!]
+  assetsToEqt_lt: Float
+  assetsToEqt_lte: Float
+  assetsToEqt_gt: Float
+  assetsToEqt_gte: Float
+  dpAssetsToEqt: Float
+  dpAssetsToEqt_not: Float
+  dpAssetsToEqt_in: [Float!]
+  dpAssetsToEqt_not_in: [Float!]
+  dpAssetsToEqt_lt: Float
+  dpAssetsToEqt_lte: Float
+  dpAssetsToEqt_gt: Float
+  dpAssetsToEqt_gte: Float
+  caToAssets: Float
+  caToAssets_not: Float
+  caToAssets_in: [Float!]
+  caToAssets_not_in: [Float!]
+  caToAssets_lt: Float
+  caToAssets_lte: Float
+  caToAssets_gt: Float
+  caToAssets_gte: Float
+  ncaToAssets: Float
+  ncaToAssets_not: Float
+  ncaToAssets_in: [Float!]
+  ncaToAssets_not_in: [Float!]
+  ncaToAssets_lt: Float
+  ncaToAssets_lte: Float
+  ncaToAssets_gt: Float
+  ncaToAssets_gte: Float
+  tbassetsToTotalassets: Float
+  tbassetsToTotalassets_not: Float
+  tbassetsToTotalassets_in: [Float!]
+  tbassetsToTotalassets_not_in: [Float!]
+  tbassetsToTotalassets_lt: Float
+  tbassetsToTotalassets_lte: Float
+  tbassetsToTotalassets_gt: Float
+  tbassetsToTotalassets_gte: Float
+  intToTalcap: Float
+  intToTalcap_not: Float
+  intToTalcap_in: [Float!]
+  intToTalcap_not_in: [Float!]
+  intToTalcap_lt: Float
+  intToTalcap_lte: Float
+  intToTalcap_gt: Float
+  intToTalcap_gte: Float
+  eqtToTalcapital: Float
+  eqtToTalcapital_not: Float
+  eqtToTalcapital_in: [Float!]
+  eqtToTalcapital_not_in: [Float!]
+  eqtToTalcapital_lt: Float
+  eqtToTalcapital_lte: Float
+  eqtToTalcapital_gt: Float
+  eqtToTalcapital_gte: Float
+  currentdebtToDebt: Float
+  currentdebtToDebt_not: Float
+  currentdebtToDebt_in: [Float!]
+  currentdebtToDebt_not_in: [Float!]
+  currentdebtToDebt_lt: Float
+  currentdebtToDebt_lte: Float
+  currentdebtToDebt_gt: Float
+  currentdebtToDebt_gte: Float
+  longdebToDebt: Float
+  longdebToDebt_not: Float
+  longdebToDebt_in: [Float!]
+  longdebToDebt_not_in: [Float!]
+  longdebToDebt_lt: Float
+  longdebToDebt_lte: Float
+  longdebToDebt_gt: Float
+  longdebToDebt_gte: Float
+  ocfToShortdebt: Float
+  ocfToShortdebt_not: Float
+  ocfToShortdebt_in: [Float!]
+  ocfToShortdebt_not_in: [Float!]
+  ocfToShortdebt_lt: Float
+  ocfToShortdebt_lte: Float
+  ocfToShortdebt_gt: Float
+  ocfToShortdebt_gte: Float
+  debtToEqt: Float
+  debtToEqt_not: Float
+  debtToEqt_in: [Float!]
+  debtToEqt_not_in: [Float!]
+  debtToEqt_lt: Float
+  debtToEqt_lte: Float
+  debtToEqt_gt: Float
+  debtToEqt_gte: Float
+  eqtToDebt: Float
+  eqtToDebt_not: Float
+  eqtToDebt_in: [Float!]
+  eqtToDebt_not_in: [Float!]
+  eqtToDebt_lt: Float
+  eqtToDebt_lte: Float
+  eqtToDebt_gt: Float
+  eqtToDebt_gte: Float
+  eqtToInterestdebt: Float
+  eqtToInterestdebt_not: Float
+  eqtToInterestdebt_in: [Float!]
+  eqtToInterestdebt_not_in: [Float!]
+  eqtToInterestdebt_lt: Float
+  eqtToInterestdebt_lte: Float
+  eqtToInterestdebt_gt: Float
+  eqtToInterestdebt_gte: Float
+  tangibleassetToDebt: Float
+  tangibleassetToDebt_not: Float
+  tangibleassetToDebt_in: [Float!]
+  tangibleassetToDebt_not_in: [Float!]
+  tangibleassetToDebt_lt: Float
+  tangibleassetToDebt_lte: Float
+  tangibleassetToDebt_gt: Float
+  tangibleassetToDebt_gte: Float
+  tangassetToIntdebt: Float
+  tangassetToIntdebt_not: Float
+  tangassetToIntdebt_in: [Float!]
+  tangassetToIntdebt_not_in: [Float!]
+  tangassetToIntdebt_lt: Float
+  tangassetToIntdebt_lte: Float
+  tangassetToIntdebt_gt: Float
+  tangassetToIntdebt_gte: Float
+  tangibleassetToNetdebt: Float
+  tangibleassetToNetdebt_not: Float
+  tangibleassetToNetdebt_in: [Float!]
+  tangibleassetToNetdebt_not_in: [Float!]
+  tangibleassetToNetdebt_lt: Float
+  tangibleassetToNetdebt_lte: Float
+  tangibleassetToNetdebt_gt: Float
+  tangibleassetToNetdebt_gte: Float
+  ocfToDebt: Float
+  ocfToDebt_not: Float
+  ocfToDebt_in: [Float!]
+  ocfToDebt_not_in: [Float!]
+  ocfToDebt_lt: Float
+  ocfToDebt_lte: Float
+  ocfToDebt_gt: Float
+  ocfToDebt_gte: Float
+  ocfToInterestdebt: Float
+  ocfToInterestdebt_not: Float
+  ocfToInterestdebt_in: [Float!]
+  ocfToInterestdebt_not_in: [Float!]
+  ocfToInterestdebt_lt: Float
+  ocfToInterestdebt_lte: Float
+  ocfToInterestdebt_gt: Float
+  ocfToInterestdebt_gte: Float
+  ocfToNetdebt: Float
+  ocfToNetdebt_not: Float
+  ocfToNetdebt_in: [Float!]
+  ocfToNetdebt_not_in: [Float!]
+  ocfToNetdebt_lt: Float
+  ocfToNetdebt_lte: Float
+  ocfToNetdebt_gt: Float
+  ocfToNetdebt_gte: Float
+  ebitToInterest: Float
+  ebitToInterest_not: Float
+  ebitToInterest_in: [Float!]
+  ebitToInterest_not_in: [Float!]
+  ebitToInterest_lt: Float
+  ebitToInterest_lte: Float
+  ebitToInterest_gt: Float
+  ebitToInterest_gte: Float
+  longdebtToWorkingcapital: Float
+  longdebtToWorkingcapital_not: Float
+  longdebtToWorkingcapital_in: [Float!]
+  longdebtToWorkingcapital_not_in: [Float!]
+  longdebtToWorkingcapital_lt: Float
+  longdebtToWorkingcapital_lte: Float
+  longdebtToWorkingcapital_gt: Float
+  longdebtToWorkingcapital_gte: Float
+  ebitdaToDebt: Float
+  ebitdaToDebt_not: Float
+  ebitdaToDebt_in: [Float!]
+  ebitdaToDebt_not_in: [Float!]
+  ebitdaToDebt_lt: Float
+  ebitdaToDebt_lte: Float
+  ebitdaToDebt_gt: Float
+  ebitdaToDebt_gte: Float
+  turnDays: Float
+  turnDays_not: Float
+  turnDays_in: [Float!]
+  turnDays_not_in: [Float!]
+  turnDays_lt: Float
+  turnDays_lte: Float
+  turnDays_gt: Float
+  turnDays_gte: Float
+  roaYearly: Float
+  roaYearly_not: Float
+  roaYearly_in: [Float!]
+  roaYearly_not_in: [Float!]
+  roaYearly_lt: Float
+  roaYearly_lte: Float
+  roaYearly_gt: Float
+  roaYearly_gte: Float
+  roaDp: Float
+  roaDp_not: Float
+  roaDp_in: [Float!]
+  roaDp_not_in: [Float!]
+  roaDp_lt: Float
+  roaDp_lte: Float
+  roaDp_gt: Float
+  roaDp_gte: Float
+  fixedAssets: Float
+  fixedAssets_not: Float
+  fixedAssets_in: [Float!]
+  fixedAssets_not_in: [Float!]
+  fixedAssets_lt: Float
+  fixedAssets_lte: Float
+  fixedAssets_gt: Float
+  fixedAssets_gte: Float
+  profitPrefinExp: Float
+  profitPrefinExp_not: Float
+  profitPrefinExp_in: [Float!]
+  profitPrefinExp_not_in: [Float!]
+  profitPrefinExp_lt: Float
+  profitPrefinExp_lte: Float
+  profitPrefinExp_gt: Float
+  profitPrefinExp_gte: Float
+  nonOpProfit: Float
+  nonOpProfit_not: Float
+  nonOpProfit_in: [Float!]
+  nonOpProfit_not_in: [Float!]
+  nonOpProfit_lt: Float
+  nonOpProfit_lte: Float
+  nonOpProfit_gt: Float
+  nonOpProfit_gte: Float
+  opToEbt: Float
+  opToEbt_not: Float
+  opToEbt_in: [Float!]
+  opToEbt_not_in: [Float!]
+  opToEbt_lt: Float
+  opToEbt_lte: Float
+  opToEbt_gt: Float
+  opToEbt_gte: Float
+  nopToEbt: Float
+  nopToEbt_not: Float
+  nopToEbt_in: [Float!]
+  nopToEbt_not_in: [Float!]
+  nopToEbt_lt: Float
+  nopToEbt_lte: Float
+  nopToEbt_gt: Float
+  nopToEbt_gte: Float
+  ocfToProfit: Float
+  ocfToProfit_not: Float
+  ocfToProfit_in: [Float!]
+  ocfToProfit_not_in: [Float!]
+  ocfToProfit_lt: Float
+  ocfToProfit_lte: Float
+  ocfToProfit_gt: Float
+  ocfToProfit_gte: Float
+  cashToLiqdebt: Float
+  cashToLiqdebt_not: Float
+  cashToLiqdebt_in: [Float!]
+  cashToLiqdebt_not_in: [Float!]
+  cashToLiqdebt_lt: Float
+  cashToLiqdebt_lte: Float
+  cashToLiqdebt_gt: Float
+  cashToLiqdebt_gte: Float
+  cashToLiqdebtWithinterest: Float
+  cashToLiqdebtWithinterest_not: Float
+  cashToLiqdebtWithinterest_in: [Float!]
+  cashToLiqdebtWithinterest_not_in: [Float!]
+  cashToLiqdebtWithinterest_lt: Float
+  cashToLiqdebtWithinterest_lte: Float
+  cashToLiqdebtWithinterest_gt: Float
+  cashToLiqdebtWithinterest_gte: Float
+  opToLiqdebt: Float
+  opToLiqdebt_not: Float
+  opToLiqdebt_in: [Float!]
+  opToLiqdebt_not_in: [Float!]
+  opToLiqdebt_lt: Float
+  opToLiqdebt_lte: Float
+  opToLiqdebt_gt: Float
+  opToLiqdebt_gte: Float
+  opToDebt: Float
+  opToDebt_not: Float
+  opToDebt_in: [Float!]
+  opToDebt_not_in: [Float!]
+  opToDebt_lt: Float
+  opToDebt_lte: Float
+  opToDebt_gt: Float
+  opToDebt_gte: Float
+  roicYearly: Float
+  roicYearly_not: Float
+  roicYearly_in: [Float!]
+  roicYearly_not_in: [Float!]
+  roicYearly_lt: Float
+  roicYearly_lte: Float
+  roicYearly_gt: Float
+  roicYearly_gte: Float
+  totalFaTrun: Float
+  totalFaTrun_not: Float
+  totalFaTrun_in: [Float!]
+  totalFaTrun_not_in: [Float!]
+  totalFaTrun_lt: Float
+  totalFaTrun_lte: Float
+  totalFaTrun_gt: Float
+  totalFaTrun_gte: Float
+  profitToOp: Float
+  profitToOp_not: Float
+  profitToOp_in: [Float!]
+  profitToOp_not_in: [Float!]
+  profitToOp_lt: Float
+  profitToOp_lte: Float
+  profitToOp_gt: Float
+  profitToOp_gte: Float
+  qOpincome: Float
+  qOpincome_not: Float
+  qOpincome_in: [Float!]
+  qOpincome_not_in: [Float!]
+  qOpincome_lt: Float
+  qOpincome_lte: Float
+  qOpincome_gt: Float
+  qOpincome_gte: Float
+  qInvestincome: Float
+  qInvestincome_not: Float
+  qInvestincome_in: [Float!]
+  qInvestincome_not_in: [Float!]
+  qInvestincome_lt: Float
+  qInvestincome_lte: Float
+  qInvestincome_gt: Float
+  qInvestincome_gte: Float
+  qDtprofit: Float
+  qDtprofit_not: Float
+  qDtprofit_in: [Float!]
+  qDtprofit_not_in: [Float!]
+  qDtprofit_lt: Float
+  qDtprofit_lte: Float
+  qDtprofit_gt: Float
+  qDtprofit_gte: Float
+  qEps: Float
+  qEps_not: Float
+  qEps_in: [Float!]
+  qEps_not_in: [Float!]
+  qEps_lt: Float
+  qEps_lte: Float
+  qEps_gt: Float
+  qEps_gte: Float
+  qNetprofitMargin: Float
+  qNetprofitMargin_not: Float
+  qNetprofitMargin_in: [Float!]
+  qNetprofitMargin_not_in: [Float!]
+  qNetprofitMargin_lt: Float
+  qNetprofitMargin_lte: Float
+  qNetprofitMargin_gt: Float
+  qNetprofitMargin_gte: Float
+  qGsprofitMargin: Float
+  qGsprofitMargin_not: Float
+  qGsprofitMargin_in: [Float!]
+  qGsprofitMargin_not_in: [Float!]
+  qGsprofitMargin_lt: Float
+  qGsprofitMargin_lte: Float
+  qGsprofitMargin_gt: Float
+  qGsprofitMargin_gte: Float
+  qExpToSales: Float
+  qExpToSales_not: Float
+  qExpToSales_in: [Float!]
+  qExpToSales_not_in: [Float!]
+  qExpToSales_lt: Float
+  qExpToSales_lte: Float
+  qExpToSales_gt: Float
+  qExpToSales_gte: Float
+  qProfitToGr: Float
+  qProfitToGr_not: Float
+  qProfitToGr_in: [Float!]
+  qProfitToGr_not_in: [Float!]
+  qProfitToGr_lt: Float
+  qProfitToGr_lte: Float
+  qProfitToGr_gt: Float
+  qProfitToGr_gte: Float
+  qSaleexpToGr: Float
+  qSaleexpToGr_not: Float
+  qSaleexpToGr_in: [Float!]
+  qSaleexpToGr_not_in: [Float!]
+  qSaleexpToGr_lt: Float
+  qSaleexpToGr_lte: Float
+  qSaleexpToGr_gt: Float
+  qSaleexpToGr_gte: Float
+  qAdminexpToGr: Float
+  qAdminexpToGr_not: Float
+  qAdminexpToGr_in: [Float!]
+  qAdminexpToGr_not_in: [Float!]
+  qAdminexpToGr_lt: Float
+  qAdminexpToGr_lte: Float
+  qAdminexpToGr_gt: Float
+  qAdminexpToGr_gte: Float
+  qFinaexpToGr: Float
+  qFinaexpToGr_not: Float
+  qFinaexpToGr_in: [Float!]
+  qFinaexpToGr_not_in: [Float!]
+  qFinaexpToGr_lt: Float
+  qFinaexpToGr_lte: Float
+  qFinaexpToGr_gt: Float
+  qFinaexpToGr_gte: Float
+  qImpairToGrTtm: Float
+  qImpairToGrTtm_not: Float
+  qImpairToGrTtm_in: [Float!]
+  qImpairToGrTtm_not_in: [Float!]
+  qImpairToGrTtm_lt: Float
+  qImpairToGrTtm_lte: Float
+  qImpairToGrTtm_gt: Float
+  qImpairToGrTtm_gte: Float
+  qGcToGr: Float
+  qGcToGr_not: Float
+  qGcToGr_in: [Float!]
+  qGcToGr_not_in: [Float!]
+  qGcToGr_lt: Float
+  qGcToGr_lte: Float
+  qGcToGr_gt: Float
+  qGcToGr_gte: Float
+  qOpToGr: Float
+  qOpToGr_not: Float
+  qOpToGr_in: [Float!]
+  qOpToGr_not_in: [Float!]
+  qOpToGr_lt: Float
+  qOpToGr_lte: Float
+  qOpToGr_gt: Float
+  qOpToGr_gte: Float
+  qRoe: Float
+  qRoe_not: Float
+  qRoe_in: [Float!]
+  qRoe_not_in: [Float!]
+  qRoe_lt: Float
+  qRoe_lte: Float
+  qRoe_gt: Float
+  qRoe_gte: Float
+  qDtRoe: Float
+  qDtRoe_not: Float
+  qDtRoe_in: [Float!]
+  qDtRoe_not_in: [Float!]
+  qDtRoe_lt: Float
+  qDtRoe_lte: Float
+  qDtRoe_gt: Float
+  qDtRoe_gte: Float
+  qNpta: Float
+  qNpta_not: Float
+  qNpta_in: [Float!]
+  qNpta_not_in: [Float!]
+  qNpta_lt: Float
+  qNpta_lte: Float
+  qNpta_gt: Float
+  qNpta_gte: Float
+  qOpincomeToEbt: Float
+  qOpincomeToEbt_not: Float
+  qOpincomeToEbt_in: [Float!]
+  qOpincomeToEbt_not_in: [Float!]
+  qOpincomeToEbt_lt: Float
+  qOpincomeToEbt_lte: Float
+  qOpincomeToEbt_gt: Float
+  qOpincomeToEbt_gte: Float
+  qInvestincomeToEbt: Float
+  qInvestincomeToEbt_not: Float
+  qInvestincomeToEbt_in: [Float!]
+  qInvestincomeToEbt_not_in: [Float!]
+  qInvestincomeToEbt_lt: Float
+  qInvestincomeToEbt_lte: Float
+  qInvestincomeToEbt_gt: Float
+  qInvestincomeToEbt_gte: Float
+  qDtprofitToProfit: Float
+  qDtprofitToProfit_not: Float
+  qDtprofitToProfit_in: [Float!]
+  qDtprofitToProfit_not_in: [Float!]
+  qDtprofitToProfit_lt: Float
+  qDtprofitToProfit_lte: Float
+  qDtprofitToProfit_gt: Float
+  qDtprofitToProfit_gte: Float
+  qSalescashToOr: Float
+  qSalescashToOr_not: Float
+  qSalescashToOr_in: [Float!]
+  qSalescashToOr_not_in: [Float!]
+  qSalescashToOr_lt: Float
+  qSalescashToOr_lte: Float
+  qSalescashToOr_gt: Float
+  qSalescashToOr_gte: Float
+  qOcfToSales: Float
+  qOcfToSales_not: Float
+  qOcfToSales_in: [Float!]
+  qOcfToSales_not_in: [Float!]
+  qOcfToSales_lt: Float
+  qOcfToSales_lte: Float
+  qOcfToSales_gt: Float
+  qOcfToSales_gte: Float
+  qOcfToOr: Float
+  qOcfToOr_not: Float
+  qOcfToOr_in: [Float!]
+  qOcfToOr_not_in: [Float!]
+  qOcfToOr_lt: Float
+  qOcfToOr_lte: Float
+  qOcfToOr_gt: Float
+  qOcfToOr_gte: Float
+  basicEpsYoy: Float
+  basicEpsYoy_not: Float
+  basicEpsYoy_in: [Float!]
+  basicEpsYoy_not_in: [Float!]
+  basicEpsYoy_lt: Float
+  basicEpsYoy_lte: Float
+  basicEpsYoy_gt: Float
+  basicEpsYoy_gte: Float
+  dtEpsYoy: Float
+  dtEpsYoy_not: Float
+  dtEpsYoy_in: [Float!]
+  dtEpsYoy_not_in: [Float!]
+  dtEpsYoy_lt: Float
+  dtEpsYoy_lte: Float
+  dtEpsYoy_gt: Float
+  dtEpsYoy_gte: Float
+  cfpsYoy: Float
+  cfpsYoy_not: Float
+  cfpsYoy_in: [Float!]
+  cfpsYoy_not_in: [Float!]
+  cfpsYoy_lt: Float
+  cfpsYoy_lte: Float
+  cfpsYoy_gt: Float
+  cfpsYoy_gte: Float
+  opYoy: Float
+  opYoy_not: Float
+  opYoy_in: [Float!]
+  opYoy_not_in: [Float!]
+  opYoy_lt: Float
+  opYoy_lte: Float
+  opYoy_gt: Float
+  opYoy_gte: Float
+  ebtYoy: Float
+  ebtYoy_not: Float
+  ebtYoy_in: [Float!]
+  ebtYoy_not_in: [Float!]
+  ebtYoy_lt: Float
+  ebtYoy_lte: Float
+  ebtYoy_gt: Float
+  ebtYoy_gte: Float
+  netprofitYoy: Float
+  netprofitYoy_not: Float
+  netprofitYoy_in: [Float!]
+  netprofitYoy_not_in: [Float!]
+  netprofitYoy_lt: Float
+  netprofitYoy_lte: Float
+  netprofitYoy_gt: Float
+  netprofitYoy_gte: Float
+  dtNetprofitYoy: Float
+  dtNetprofitYoy_not: Float
+  dtNetprofitYoy_in: [Float!]
+  dtNetprofitYoy_not_in: [Float!]
+  dtNetprofitYoy_lt: Float
+  dtNetprofitYoy_lte: Float
+  dtNetprofitYoy_gt: Float
+  dtNetprofitYoy_gte: Float
+  ocfYoy: Float
+  ocfYoy_not: Float
+  ocfYoy_in: [Float!]
+  ocfYoy_not_in: [Float!]
+  ocfYoy_lt: Float
+  ocfYoy_lte: Float
+  ocfYoy_gt: Float
+  ocfYoy_gte: Float
+  roeYoy: Float
+  roeYoy_not: Float
+  roeYoy_in: [Float!]
+  roeYoy_not_in: [Float!]
+  roeYoy_lt: Float
+  roeYoy_lte: Float
+  roeYoy_gt: Float
+  roeYoy_gte: Float
+  bpsYoy: Float
+  bpsYoy_not: Float
+  bpsYoy_in: [Float!]
+  bpsYoy_not_in: [Float!]
+  bpsYoy_lt: Float
+  bpsYoy_lte: Float
+  bpsYoy_gt: Float
+  bpsYoy_gte: Float
+  assetsYoy: Float
+  assetsYoy_not: Float
+  assetsYoy_in: [Float!]
+  assetsYoy_not_in: [Float!]
+  assetsYoy_lt: Float
+  assetsYoy_lte: Float
+  assetsYoy_gt: Float
+  assetsYoy_gte: Float
+  eqtYoy: Float
+  eqtYoy_not: Float
+  eqtYoy_in: [Float!]
+  eqtYoy_not_in: [Float!]
+  eqtYoy_lt: Float
+  eqtYoy_lte: Float
+  eqtYoy_gt: Float
+  eqtYoy_gte: Float
+  trYoy: Float
+  trYoy_not: Float
+  trYoy_in: [Float!]
+  trYoy_not_in: [Float!]
+  trYoy_lt: Float
+  trYoy_lte: Float
+  trYoy_gt: Float
+  trYoy_gte: Float
+  orYoy: Float
+  orYoy_not: Float
+  orYoy_in: [Float!]
+  orYoy_not_in: [Float!]
+  orYoy_lt: Float
+  orYoy_lte: Float
+  orYoy_gt: Float
+  orYoy_gte: Float
+  qGrYoy: Float
+  qGrYoy_not: Float
+  qGrYoy_in: [Float!]
+  qGrYoy_not_in: [Float!]
+  qGrYoy_lt: Float
+  qGrYoy_lte: Float
+  qGrYoy_gt: Float
+  qGrYoy_gte: Float
+  qGrQoq: Float
+  qGrQoq_not: Float
+  qGrQoq_in: [Float!]
+  qGrQoq_not_in: [Float!]
+  qGrQoq_lt: Float
+  qGrQoq_lte: Float
+  qGrQoq_gt: Float
+  qGrQoq_gte: Float
+  qSalesYoy: Float
+  qSalesYoy_not: Float
+  qSalesYoy_in: [Float!]
+  qSalesYoy_not_in: [Float!]
+  qSalesYoy_lt: Float
+  qSalesYoy_lte: Float
+  qSalesYoy_gt: Float
+  qSalesYoy_gte: Float
+  qSalesQoq: Float
+  qSalesQoq_not: Float
+  qSalesQoq_in: [Float!]
+  qSalesQoq_not_in: [Float!]
+  qSalesQoq_lt: Float
+  qSalesQoq_lte: Float
+  qSalesQoq_gt: Float
+  qSalesQoq_gte: Float
+  qOpYoy: Float
+  qOpYoy_not: Float
+  qOpYoy_in: [Float!]
+  qOpYoy_not_in: [Float!]
+  qOpYoy_lt: Float
+  qOpYoy_lte: Float
+  qOpYoy_gt: Float
+  qOpYoy_gte: Float
+  qOpQoq: Float
+  qOpQoq_not: Float
+  qOpQoq_in: [Float!]
+  qOpQoq_not_in: [Float!]
+  qOpQoq_lt: Float
+  qOpQoq_lte: Float
+  qOpQoq_gt: Float
+  qOpQoq_gte: Float
+  qProfitYoy: Float
+  qProfitYoy_not: Float
+  qProfitYoy_in: [Float!]
+  qProfitYoy_not_in: [Float!]
+  qProfitYoy_lt: Float
+  qProfitYoy_lte: Float
+  qProfitYoy_gt: Float
+  qProfitYoy_gte: Float
+  qProfitQoq: Float
+  qProfitQoq_not: Float
+  qProfitQoq_in: [Float!]
+  qProfitQoq_not_in: [Float!]
+  qProfitQoq_lt: Float
+  qProfitQoq_lte: Float
+  qProfitQoq_gt: Float
+  qProfitQoq_gte: Float
+  qNetprofitYoy: Float
+  qNetprofitYoy_not: Float
+  qNetprofitYoy_in: [Float!]
+  qNetprofitYoy_not_in: [Float!]
+  qNetprofitYoy_lt: Float
+  qNetprofitYoy_lte: Float
+  qNetprofitYoy_gt: Float
+  qNetprofitYoy_gte: Float
+  qNetprofitQoq: Float
+  qNetprofitQoq_not: Float
+  qNetprofitQoq_in: [Float!]
+  qNetprofitQoq_not_in: [Float!]
+  qNetprofitQoq_lt: Float
+  qNetprofitQoq_lte: Float
+  qNetprofitQoq_gt: Float
+  qNetprofitQoq_gte: Float
+  equityYoy: Float
+  equityYoy_not: Float
+  equityYoy_in: [Float!]
+  equityYoy_not_in: [Float!]
+  equityYoy_lt: Float
+  equityYoy_lte: Float
+  equityYoy_gt: Float
+  equityYoy_gte: Float
+  rdExp: Float
+  rdExp_not: Float
+  rdExp_in: [Float!]
+  rdExp_not_in: [Float!]
+  rdExp_lt: Float
+  rdExp_lte: Float
+  rdExp_gt: Float
+  rdExp_gte: Float
+  updateFlag: String
+  updateFlag_not: String
+  updateFlag_in: [String!]
+  updateFlag_not_in: [String!]
+  updateFlag_lt: String
+  updateFlag_lte: String
+  updateFlag_gt: String
+  updateFlag_gte: String
+  updateFlag_contains: String
+  updateFlag_not_contains: String
+  updateFlag_starts_with: String
+  updateFlag_not_starts_with: String
+  updateFlag_ends_with: String
+  updateFlag_not_ends_with: String
+  AND: [FinaIndicatorWhereInput!]
+  OR: [FinaIndicatorWhereInput!]
+  NOT: [FinaIndicatorWhereInput!]
+}
+
+input FinaIndicatorWhereUniqueInput {
+  id: ID
 }
 
 type Industry {
@@ -3553,6 +8176,12 @@ type Mutation {
   upsertDaily(where: DailyWhereUniqueInput!, create: DailyCreateInput!, update: DailyUpdateInput!): Daily!
   deleteDaily(where: DailyWhereUniqueInput!): Daily
   deleteManyDailies(where: DailyWhereInput): BatchPayload!
+  createFinaIndicator(data: FinaIndicatorCreateInput!): FinaIndicator!
+  updateFinaIndicator(data: FinaIndicatorUpdateInput!, where: FinaIndicatorWhereUniqueInput!): FinaIndicator
+  updateManyFinaIndicators(data: FinaIndicatorUpdateManyMutationInput!, where: FinaIndicatorWhereInput): BatchPayload!
+  upsertFinaIndicator(where: FinaIndicatorWhereUniqueInput!, create: FinaIndicatorCreateInput!, update: FinaIndicatorUpdateInput!): FinaIndicator!
+  deleteFinaIndicator(where: FinaIndicatorWhereUniqueInput!): FinaIndicator
+  deleteManyFinaIndicators(where: FinaIndicatorWhereInput): BatchPayload!
   createIndustry(data: IndustryCreateInput!): Industry!
   updateIndustry(data: IndustryUpdateInput!, where: IndustryWhereUniqueInput!): Industry
   updateManyIndustries(data: IndustryUpdateManyMutationInput!, where: IndustryWhereInput): BatchPayload!
@@ -3901,6 +8530,9 @@ type Query {
   daily(where: DailyWhereUniqueInput!): Daily
   dailies(where: DailyWhereInput, orderBy: DailyOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Daily]!
   dailiesConnection(where: DailyWhereInput, orderBy: DailyOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): DailyConnection!
+  finaIndicator(where: FinaIndicatorWhereUniqueInput!): FinaIndicator
+  finaIndicators(where: FinaIndicatorWhereInput, orderBy: FinaIndicatorOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [FinaIndicator]!
+  finaIndicatorsConnection(where: FinaIndicatorWhereInput, orderBy: FinaIndicatorOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): FinaIndicatorConnection!
   industry(where: IndustryWhereUniqueInput!): Industry
   industries(where: IndustryWhereInput, orderBy: IndustryOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Industry]!
   industriesConnection(where: IndustryWhereInput, orderBy: IndustryOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): IndustryConnection!
@@ -4108,6 +8740,7 @@ type Subscription {
   companyEvent(where: CompanyEventSubscriptionWhereInput): CompanyEventSubscriptionPayload
   companyProduct(where: CompanyProductSubscriptionWhereInput): CompanyProductSubscriptionPayload
   daily(where: DailySubscriptionWhereInput): DailySubscriptionPayload
+  finaIndicator(where: FinaIndicatorSubscriptionWhereInput): FinaIndicatorSubscriptionPayload
   industry(where: IndustrySubscriptionWhereInput): IndustrySubscriptionPayload
   industryEvent(where: IndustryEventSubscriptionWhereInput): IndustryEventSubscriptionPayload
   industryInfluence(where: IndustryInfluenceSubscriptionWhereInput): IndustryInfluenceSubscriptionPayload

@@ -67,6 +67,10 @@ var models = [
   {
     name: "Daily",
     embedded: false
+  },
+  {
+    name: "FinaIndicator",
+    embedded: false
   }
 ];
 exports.Prisma = prisma_lib_1.makePrismaClientClass({

@@ -21,6 +21,7 @@ export interface Exists {
   companyEvent: (where?: CompanyEventWhereInput) => Promise<boolean>;
   companyProduct: (where?: CompanyProductWhereInput) => Promise<boolean>;
   daily: (where?: DailyWhereInput) => Promise<boolean>;
+  finaIndicator: (where?: FinaIndicatorWhereInput) => Promise<boolean>;
   industry: (where?: IndustryWhereInput) => Promise<boolean>;
   industryEvent: (where?: IndustryEventWhereInput) => Promise<boolean>;
   industryInfluence: (where?: IndustryInfluenceWhereInput) => Promise<boolean>;
@@ -148,6 +149,27 @@ export interface Prisma {
     first?: Int;
     last?: Int;
   }) => DailyConnectionPromise;
+  finaIndicator: (
+    where: FinaIndicatorWhereUniqueInput
+  ) => FinaIndicatorNullablePromise;
+  finaIndicators: (args?: {
+    where?: FinaIndicatorWhereInput;
+    orderBy?: FinaIndicatorOrderByInput;
+    skip?: Int;
+    after?: String;
+    before?: String;
+    first?: Int;
+    last?: Int;
+  }) => FragmentableArray<FinaIndicator>;
+  finaIndicatorsConnection: (args?: {
+    where?: FinaIndicatorWhereInput;
+    orderBy?: FinaIndicatorOrderByInput;
+    skip?: Int;
+    after?: String;
+    before?: String;
+    first?: Int;
+    last?: Int;
+  }) => FinaIndicatorConnectionPromise;
   industry: (where: IndustryWhereUniqueInput) => IndustryNullablePromise;
   industries: (args?: {
     where?: IndustryWhereInput;
@@ -381,6 +403,26 @@ export interface Prisma {
   }) => DailyPromise;
   deleteDaily: (where: DailyWhereUniqueInput) => DailyPromise;
   deleteManyDailies: (where?: DailyWhereInput) => BatchPayloadPromise;
+  createFinaIndicator: (data: FinaIndicatorCreateInput) => FinaIndicatorPromise;
+  updateFinaIndicator: (args: {
+    data: FinaIndicatorUpdateInput;
+    where: FinaIndicatorWhereUniqueInput;
+  }) => FinaIndicatorPromise;
+  updateManyFinaIndicators: (args: {
+    data: FinaIndicatorUpdateManyMutationInput;
+    where?: FinaIndicatorWhereInput;
+  }) => BatchPayloadPromise;
+  upsertFinaIndicator: (args: {
+    where: FinaIndicatorWhereUniqueInput;
+    create: FinaIndicatorCreateInput;
+    update: FinaIndicatorUpdateInput;
+  }) => FinaIndicatorPromise;
+  deleteFinaIndicator: (
+    where: FinaIndicatorWhereUniqueInput
+  ) => FinaIndicatorPromise;
+  deleteManyFinaIndicators: (
+    where?: FinaIndicatorWhereInput
+  ) => BatchPayloadPromise;
   createIndustry: (data: IndustryCreateInput) => IndustryPromise;
   updateIndustry: (args: {
     data: IndustryUpdateInput;
@@ -527,6 +569,9 @@ export interface Subscription {
   daily: (
     where?: DailySubscriptionWhereInput
   ) => DailySubscriptionPayloadSubscription;
+  finaIndicator: (
+    where?: FinaIndicatorSubscriptionWhereInput
+  ) => FinaIndicatorSubscriptionPayloadSubscription;
   industry: (
     where?: IndustrySubscriptionWhereInput
   ) => IndustrySubscriptionPayloadSubscription;
@@ -558,6 +603,22 @@ export interface ClientConstructor<T> {
  * Types
  */
 
+export type ProductOrderByInput =
+  | "id_ASC"
+  | "id_DESC"
+  | "name_ASC"
+  | "name_DESC"
+  | "introduce_ASC"
+  | "introduce_DESC";
+
+export type CompanyProductOrderByInput =
+  | "id_ASC"
+  | "id_DESC"
+  | "name_ASC"
+  | "name_DESC"
+  | "introduce_ASC"
+  | "introduce_DESC";
+
 export type IndustryInfluenceOrderByInput =
   | "id_ASC"
   | "id_DESC"
@@ -570,14 +631,6 @@ export type IndustryInfluenceOrderByInput =
   | "direction_ASC"
   | "direction_DESC";
 
-export type TimeKind = "PAST" | "FUTRUE";
-
-export type ResearchOrderByInput =
-  | "id_ASC"
-  | "id_DESC"
-  | "desc_ASC"
-  | "desc_DESC";
-
 export type UserOrderByInput =
   | "id_ASC"
   | "id_DESC"
@@ -588,13 +641,9 @@ export type UserOrderByInput =
   | "role_ASC"
   | "role_DESC";
 
-export type IndustryOrderByInput =
+export type ResearchOrderByInput =
   | "id_ASC"
   | "id_DESC"
-  | "code_ASC"
-  | "code_DESC"
-  | "name_ASC"
-  | "name_DESC"
   | "desc_ASC"
   | "desc_DESC";
 
@@ -614,47 +663,377 @@ export type IndustryEventOrderByInput =
   | "content_ASC"
   | "content_DESC";
 
-export type CommentOrderByInput =
+export type IndustryOrderByInput =
   | "id_ASC"
   | "id_DESC"
-  | "createTime_ASC"
-  | "createTime_DESC"
+  | "code_ASC"
+  | "code_DESC"
+  | "name_ASC"
+  | "name_DESC"
   | "desc_ASC"
   | "desc_DESC";
 
-export type DailyOrderByInput =
+export type FinaIndicatorOrderByInput =
   | "id_ASC"
   | "id_DESC"
   | "symbol_ASC"
   | "symbol_DESC"
-  | "tradeDate_ASC"
-  | "tradeDate_DESC"
-  | "open_ASC"
-  | "open_DESC"
-  | "high_ASC"
-  | "high_DESC"
-  | "low_ASC"
-  | "low_DESC"
-  | "close_ASC"
-  | "close_DESC"
-  | "preClose_ASC"
-  | "preClose_DESC"
-  | "change_ASC"
-  | "change_DESC"
-  | "pctChg_ASC"
-  | "pctChg_DESC"
-  | "vol_ASC"
-  | "vol_DESC"
-  | "amount_ASC"
-  | "amount_DESC";
+  | "annDate_ASC"
+  | "annDate_DESC"
+  | "endDate_ASC"
+  | "endDate_DESC"
+  | "eps_ASC"
+  | "eps_DESC"
+  | "dtEps_ASC"
+  | "dtEps_DESC"
+  | "totalRevenuePs_ASC"
+  | "totalRevenuePs_DESC"
+  | "revenuePs_ASC"
+  | "revenuePs_DESC"
+  | "capitalResePs_ASC"
+  | "capitalResePs_DESC"
+  | "surplusResePs_ASC"
+  | "surplusResePs_DESC"
+  | "undistProfitPs_ASC"
+  | "undistProfitPs_DESC"
+  | "extraItem_ASC"
+  | "extraItem_DESC"
+  | "profitDedt_ASC"
+  | "profitDedt_DESC"
+  | "grossMargin_ASC"
+  | "grossMargin_DESC"
+  | "currentRatio_ASC"
+  | "currentRatio_DESC"
+  | "quickRatio_ASC"
+  | "quickRatio_DESC"
+  | "cashRatio_ASC"
+  | "cashRatio_DESC"
+  | "invturnDays_ASC"
+  | "invturnDays_DESC"
+  | "arturnDays_ASC"
+  | "arturnDays_DESC"
+  | "invTurn_ASC"
+  | "invTurn_DESC"
+  | "arTurn_ASC"
+  | "arTurn_DESC"
+  | "caTurn_ASC"
+  | "caTurn_DESC"
+  | "faTurn_ASC"
+  | "faTurn_DESC"
+  | "assetsTurn_ASC"
+  | "assetsTurn_DESC"
+  | "opIncome_ASC"
+  | "opIncome_DESC"
+  | "valuechangeIncome_ASC"
+  | "valuechangeIncome_DESC"
+  | "interstIncome_ASC"
+  | "interstIncome_DESC"
+  | "daa_ASC"
+  | "daa_DESC"
+  | "ebit_ASC"
+  | "ebit_DESC"
+  | "ebitda_ASC"
+  | "ebitda_DESC"
+  | "fcff_ASC"
+  | "fcff_DESC"
+  | "fcfe_ASC"
+  | "fcfe_DESC"
+  | "currentExint_ASC"
+  | "currentExint_DESC"
+  | "noncurrentExint_ASC"
+  | "noncurrentExint_DESC"
+  | "interestdebt_ASC"
+  | "interestdebt_DESC"
+  | "netdebt_ASC"
+  | "netdebt_DESC"
+  | "tangibleAsset_ASC"
+  | "tangibleAsset_DESC"
+  | "workingCapital_ASC"
+  | "workingCapital_DESC"
+  | "networkingCapital_ASC"
+  | "networkingCapital_DESC"
+  | "investCapital_ASC"
+  | "investCapital_DESC"
+  | "retainedEarnings_ASC"
+  | "retainedEarnings_DESC"
+  | "diluted2Eps_ASC"
+  | "diluted2Eps_DESC"
+  | "bps_ASC"
+  | "bps_DESC"
+  | "ocfps_ASC"
+  | "ocfps_DESC"
+  | "retainedps_ASC"
+  | "retainedps_DESC"
+  | "cfps_ASC"
+  | "cfps_DESC"
+  | "ebitPs_ASC"
+  | "ebitPs_DESC"
+  | "fcffPs_ASC"
+  | "fcffPs_DESC"
+  | "fcfePs_ASC"
+  | "fcfePs_DESC"
+  | "netprofitMargin_ASC"
+  | "netprofitMargin_DESC"
+  | "grossprofitMargin_ASC"
+  | "grossprofitMargin_DESC"
+  | "cogsOfSales_ASC"
+  | "cogsOfSales_DESC"
+  | "expenseOfSales_ASC"
+  | "expenseOfSales_DESC"
+  | "profitToGr_ASC"
+  | "profitToGr_DESC"
+  | "saleexpToGr_ASC"
+  | "saleexpToGr_DESC"
+  | "adminexpOfGr_ASC"
+  | "adminexpOfGr_DESC"
+  | "finaexpOfGr_ASC"
+  | "finaexpOfGr_DESC"
+  | "impaiTtm_ASC"
+  | "impaiTtm_DESC"
+  | "gcOfGr_ASC"
+  | "gcOfGr_DESC"
+  | "opOfGr_ASC"
+  | "opOfGr_DESC"
+  | "ebitOfGr_ASC"
+  | "ebitOfGr_DESC"
+  | "roe_ASC"
+  | "roe_DESC"
+  | "roeWaa_ASC"
+  | "roeWaa_DESC"
+  | "roeDt_ASC"
+  | "roeDt_DESC"
+  | "roa_ASC"
+  | "roa_DESC"
+  | "npta_ASC"
+  | "npta_DESC"
+  | "roic_ASC"
+  | "roic_DESC"
+  | "roeYearly_ASC"
+  | "roeYearly_DESC"
+  | "roa2Yearly_ASC"
+  | "roa2Yearly_DESC"
+  | "roeAvg_ASC"
+  | "roeAvg_DESC"
+  | "opincomeOfEbt_ASC"
+  | "opincomeOfEbt_DESC"
+  | "investincomeOfEbt_ASC"
+  | "investincomeOfEbt_DESC"
+  | "nOpProfitOfEbt_ASC"
+  | "nOpProfitOfEbt_DESC"
+  | "taxToEbt_ASC"
+  | "taxToEbt_DESC"
+  | "dtprofitToProfit_ASC"
+  | "dtprofitToProfit_DESC"
+  | "salescashToOr_ASC"
+  | "salescashToOr_DESC"
+  | "ocfToOr_ASC"
+  | "ocfToOr_DESC"
+  | "ocfToOpincome_ASC"
+  | "ocfToOpincome_DESC"
+  | "capitalizedToDa_ASC"
+  | "capitalizedToDa_DESC"
+  | "debtToAssets_ASC"
+  | "debtToAssets_DESC"
+  | "assetsToEqt_ASC"
+  | "assetsToEqt_DESC"
+  | "dpAssetsToEqt_ASC"
+  | "dpAssetsToEqt_DESC"
+  | "caToAssets_ASC"
+  | "caToAssets_DESC"
+  | "ncaToAssets_ASC"
+  | "ncaToAssets_DESC"
+  | "tbassetsToTotalassets_ASC"
+  | "tbassetsToTotalassets_DESC"
+  | "intToTalcap_ASC"
+  | "intToTalcap_DESC"
+  | "eqtToTalcapital_ASC"
+  | "eqtToTalcapital_DESC"
+  | "currentdebtToDebt_ASC"
+  | "currentdebtToDebt_DESC"
+  | "longdebToDebt_ASC"
+  | "longdebToDebt_DESC"
+  | "ocfToShortdebt_ASC"
+  | "ocfToShortdebt_DESC"
+  | "debtToEqt_ASC"
+  | "debtToEqt_DESC"
+  | "eqtToDebt_ASC"
+  | "eqtToDebt_DESC"
+  | "eqtToInterestdebt_ASC"
+  | "eqtToInterestdebt_DESC"
+  | "tangibleassetToDebt_ASC"
+  | "tangibleassetToDebt_DESC"
+  | "tangassetToIntdebt_ASC"
+  | "tangassetToIntdebt_DESC"
+  | "tangibleassetToNetdebt_ASC"
+  | "tangibleassetToNetdebt_DESC"
+  | "ocfToDebt_ASC"
+  | "ocfToDebt_DESC"
+  | "ocfToInterestdebt_ASC"
+  | "ocfToInterestdebt_DESC"
+  | "ocfToNetdebt_ASC"
+  | "ocfToNetdebt_DESC"
+  | "ebitToInterest_ASC"
+  | "ebitToInterest_DESC"
+  | "longdebtToWorkingcapital_ASC"
+  | "longdebtToWorkingcapital_DESC"
+  | "ebitdaToDebt_ASC"
+  | "ebitdaToDebt_DESC"
+  | "turnDays_ASC"
+  | "turnDays_DESC"
+  | "roaYearly_ASC"
+  | "roaYearly_DESC"
+  | "roaDp_ASC"
+  | "roaDp_DESC"
+  | "fixedAssets_ASC"
+  | "fixedAssets_DESC"
+  | "profitPrefinExp_ASC"
+  | "profitPrefinExp_DESC"
+  | "nonOpProfit_ASC"
+  | "nonOpProfit_DESC"
+  | "opToEbt_ASC"
+  | "opToEbt_DESC"
+  | "nopToEbt_ASC"
+  | "nopToEbt_DESC"
+  | "ocfToProfit_ASC"
+  | "ocfToProfit_DESC"
+  | "cashToLiqdebt_ASC"
+  | "cashToLiqdebt_DESC"
+  | "cashToLiqdebtWithinterest_ASC"
+  | "cashToLiqdebtWithinterest_DESC"
+  | "opToLiqdebt_ASC"
+  | "opToLiqdebt_DESC"
+  | "opToDebt_ASC"
+  | "opToDebt_DESC"
+  | "roicYearly_ASC"
+  | "roicYearly_DESC"
+  | "totalFaTrun_ASC"
+  | "totalFaTrun_DESC"
+  | "profitToOp_ASC"
+  | "profitToOp_DESC"
+  | "qOpincome_ASC"
+  | "qOpincome_DESC"
+  | "qInvestincome_ASC"
+  | "qInvestincome_DESC"
+  | "qDtprofit_ASC"
+  | "qDtprofit_DESC"
+  | "qEps_ASC"
+  | "qEps_DESC"
+  | "qNetprofitMargin_ASC"
+  | "qNetprofitMargin_DESC"
+  | "qGsprofitMargin_ASC"
+  | "qGsprofitMargin_DESC"
+  | "qExpToSales_ASC"
+  | "qExpToSales_DESC"
+  | "qProfitToGr_ASC"
+  | "qProfitToGr_DESC"
+  | "qSaleexpToGr_ASC"
+  | "qSaleexpToGr_DESC"
+  | "qAdminexpToGr_ASC"
+  | "qAdminexpToGr_DESC"
+  | "qFinaexpToGr_ASC"
+  | "qFinaexpToGr_DESC"
+  | "qImpairToGrTtm_ASC"
+  | "qImpairToGrTtm_DESC"
+  | "qGcToGr_ASC"
+  | "qGcToGr_DESC"
+  | "qOpToGr_ASC"
+  | "qOpToGr_DESC"
+  | "qRoe_ASC"
+  | "qRoe_DESC"
+  | "qDtRoe_ASC"
+  | "qDtRoe_DESC"
+  | "qNpta_ASC"
+  | "qNpta_DESC"
+  | "qOpincomeToEbt_ASC"
+  | "qOpincomeToEbt_DESC"
+  | "qInvestincomeToEbt_ASC"
+  | "qInvestincomeToEbt_DESC"
+  | "qDtprofitToProfit_ASC"
+  | "qDtprofitToProfit_DESC"
+  | "qSalescashToOr_ASC"
+  | "qSalescashToOr_DESC"
+  | "qOcfToSales_ASC"
+  | "qOcfToSales_DESC"
+  | "qOcfToOr_ASC"
+  | "qOcfToOr_DESC"
+  | "basicEpsYoy_ASC"
+  | "basicEpsYoy_DESC"
+  | "dtEpsYoy_ASC"
+  | "dtEpsYoy_DESC"
+  | "cfpsYoy_ASC"
+  | "cfpsYoy_DESC"
+  | "opYoy_ASC"
+  | "opYoy_DESC"
+  | "ebtYoy_ASC"
+  | "ebtYoy_DESC"
+  | "netprofitYoy_ASC"
+  | "netprofitYoy_DESC"
+  | "dtNetprofitYoy_ASC"
+  | "dtNetprofitYoy_DESC"
+  | "ocfYoy_ASC"
+  | "ocfYoy_DESC"
+  | "roeYoy_ASC"
+  | "roeYoy_DESC"
+  | "bpsYoy_ASC"
+  | "bpsYoy_DESC"
+  | "assetsYoy_ASC"
+  | "assetsYoy_DESC"
+  | "eqtYoy_ASC"
+  | "eqtYoy_DESC"
+  | "trYoy_ASC"
+  | "trYoy_DESC"
+  | "orYoy_ASC"
+  | "orYoy_DESC"
+  | "qGrYoy_ASC"
+  | "qGrYoy_DESC"
+  | "qGrQoq_ASC"
+  | "qGrQoq_DESC"
+  | "qSalesYoy_ASC"
+  | "qSalesYoy_DESC"
+  | "qSalesQoq_ASC"
+  | "qSalesQoq_DESC"
+  | "qOpYoy_ASC"
+  | "qOpYoy_DESC"
+  | "qOpQoq_ASC"
+  | "qOpQoq_DESC"
+  | "qProfitYoy_ASC"
+  | "qProfitYoy_DESC"
+  | "qProfitQoq_ASC"
+  | "qProfitQoq_DESC"
+  | "qNetprofitYoy_ASC"
+  | "qNetprofitYoy_DESC"
+  | "qNetprofitQoq_ASC"
+  | "qNetprofitQoq_DESC"
+  | "equityYoy_ASC"
+  | "equityYoy_DESC"
+  | "rdExp_ASC"
+  | "rdExp_DESC"
+  | "updateFlag_ASC"
+  | "updateFlag_DESC";
 
-export type CompanyProductOrderByInput =
+export type Direction = "GOOD" | "BAD";
+
+export type CompanyEventOrderByInput =
   | "id_ASC"
   | "id_DESC"
-  | "name_ASC"
-  | "name_DESC"
-  | "introduce_ASC"
-  | "introduce_DESC";
+  | "title_ASC"
+  | "title_DESC"
+  | "content_ASC"
+  | "content_DESC"
+  | "reportTime_ASC"
+  | "reportTime_DESC"
+  | "happen_ASC"
+  | "happen_DESC"
+  | "happenTime_ASC"
+  | "happenTime_DESC"
+  | "influence_ASC"
+  | "influence_DESC"
+  | "kind_ASC"
+  | "kind_DESC"
+  | "dierction_ASC"
+  | "dierction_DESC";
+
+export type TimeKind = "PAST" | "FUTRUE";
 
 export type CompanyOrderByInput =
   | "id_ASC"
@@ -692,6 +1071,14 @@ export type CompanyOrderByInput =
   | "pool_ASC"
   | "pool_DESC";
 
+export type CommentOrderByInput =
+  | "id_ASC"
+  | "id_DESC"
+  | "createTime_ASC"
+  | "createTime_DESC"
+  | "desc_ASC"
+  | "desc_DESC";
+
 export type FactorKind =
   | "ASSET"
   | "DEBT"
@@ -701,27 +1088,33 @@ export type FactorKind =
   | "FEE"
   | "BRAND";
 
-export type Direction = "GOOD" | "BAD";
+export type MutationType = "CREATED" | "UPDATED" | "DELETED";
 
-export type CompanyEventOrderByInput =
+export type DailyOrderByInput =
   | "id_ASC"
   | "id_DESC"
-  | "title_ASC"
-  | "title_DESC"
-  | "content_ASC"
-  | "content_DESC"
-  | "reportTime_ASC"
-  | "reportTime_DESC"
-  | "happen_ASC"
-  | "happen_DESC"
-  | "happenTime_ASC"
-  | "happenTime_DESC"
-  | "influence_ASC"
-  | "influence_DESC"
-  | "kind_ASC"
-  | "kind_DESC"
-  | "dierction_ASC"
-  | "dierction_DESC";
+  | "symbol_ASC"
+  | "symbol_DESC"
+  | "tradeDate_ASC"
+  | "tradeDate_DESC"
+  | "open_ASC"
+  | "open_DESC"
+  | "high_ASC"
+  | "high_DESC"
+  | "low_ASC"
+  | "low_DESC"
+  | "close_ASC"
+  | "close_DESC"
+  | "preClose_ASC"
+  | "preClose_DESC"
+  | "change_ASC"
+  | "change_DESC"
+  | "pctChg_ASC"
+  | "pctChg_DESC"
+  | "vol_ASC"
+  | "vol_DESC"
+  | "amount_ASC"
+  | "amount_DESC";
 
 export type KeywordOrderByInput =
   | "id_ASC"
@@ -731,152 +1124,137 @@ export type KeywordOrderByInput =
 
 export type Role = "ADMIN" | "CUSTOMER";
 
-export type MutationType = "CREATED" | "UPDATED" | "DELETED";
-
-export type ProductOrderByInput =
-  | "id_ASC"
-  | "id_DESC"
-  | "name_ASC"
-  | "name_DESC"
-  | "introduce_ASC"
-  | "introduce_DESC";
-
-export interface IndustryInfluenceUpdateWithoutIndustryDataInput {
-  keyword?: Maybe<KeywordUpdateOneInput>;
-  keywordDirection?: Maybe<Direction>;
-  kind?: Maybe<FactorKind>;
-  desc?: Maybe<String>;
-  direction?: Maybe<Direction>;
+export interface IndustryInfluenceUpsertWithWhereUniqueWithoutIndustryInput {
+  where: IndustryInfluenceWhereUniqueInput;
+  update: IndustryInfluenceUpdateWithoutIndustryDataInput;
+  create: IndustryInfluenceCreateWithoutIndustryInput;
 }
 
 export type CommentWhereUniqueInput = AtLeastOne<{
   id: Maybe<ID_Input>;
 }>;
 
-export interface ProductUpdateWithWhereUniqueWithoutInputsInput {
-  where: ProductWhereUniqueInput;
-  data: ProductUpdateWithoutInputsDataInput;
+export interface CommentUpdateInput {
+  desc?: Maybe<String>;
+  company?: Maybe<CompanyUpdateOneWithoutCommentsInput>;
 }
 
-export interface DailyWhereInput {
+export interface DailyCreateInput {
   id?: Maybe<ID_Input>;
-  id_not?: Maybe<ID_Input>;
-  id_in?: Maybe<ID_Input[] | ID_Input>;
-  id_not_in?: Maybe<ID_Input[] | ID_Input>;
-  id_lt?: Maybe<ID_Input>;
-  id_lte?: Maybe<ID_Input>;
-  id_gt?: Maybe<ID_Input>;
-  id_gte?: Maybe<ID_Input>;
-  id_contains?: Maybe<ID_Input>;
-  id_not_contains?: Maybe<ID_Input>;
-  id_starts_with?: Maybe<ID_Input>;
-  id_not_starts_with?: Maybe<ID_Input>;
-  id_ends_with?: Maybe<ID_Input>;
-  id_not_ends_with?: Maybe<ID_Input>;
-  company?: Maybe<CompanyWhereInput>;
+  company: CompanyCreateOneWithoutDailiesInput;
   symbol?: Maybe<String>;
-  symbol_not?: Maybe<String>;
-  symbol_in?: Maybe<String[] | String>;
-  symbol_not_in?: Maybe<String[] | String>;
-  symbol_lt?: Maybe<String>;
-  symbol_lte?: Maybe<String>;
-  symbol_gt?: Maybe<String>;
-  symbol_gte?: Maybe<String>;
-  symbol_contains?: Maybe<String>;
-  symbol_not_contains?: Maybe<String>;
-  symbol_starts_with?: Maybe<String>;
-  symbol_not_starts_with?: Maybe<String>;
-  symbol_ends_with?: Maybe<String>;
-  symbol_not_ends_with?: Maybe<String>;
-  tradeDate?: Maybe<DateTimeInput>;
-  tradeDate_not?: Maybe<DateTimeInput>;
-  tradeDate_in?: Maybe<DateTimeInput[] | DateTimeInput>;
-  tradeDate_not_in?: Maybe<DateTimeInput[] | DateTimeInput>;
-  tradeDate_lt?: Maybe<DateTimeInput>;
-  tradeDate_lte?: Maybe<DateTimeInput>;
-  tradeDate_gt?: Maybe<DateTimeInput>;
-  tradeDate_gte?: Maybe<DateTimeInput>;
+  tradeDate: DateTimeInput;
   open?: Maybe<Float>;
-  open_not?: Maybe<Float>;
-  open_in?: Maybe<Float[] | Float>;
-  open_not_in?: Maybe<Float[] | Float>;
-  open_lt?: Maybe<Float>;
-  open_lte?: Maybe<Float>;
-  open_gt?: Maybe<Float>;
-  open_gte?: Maybe<Float>;
   high?: Maybe<Float>;
-  high_not?: Maybe<Float>;
-  high_in?: Maybe<Float[] | Float>;
-  high_not_in?: Maybe<Float[] | Float>;
-  high_lt?: Maybe<Float>;
-  high_lte?: Maybe<Float>;
-  high_gt?: Maybe<Float>;
-  high_gte?: Maybe<Float>;
   low?: Maybe<Float>;
-  low_not?: Maybe<Float>;
-  low_in?: Maybe<Float[] | Float>;
-  low_not_in?: Maybe<Float[] | Float>;
-  low_lt?: Maybe<Float>;
-  low_lte?: Maybe<Float>;
-  low_gt?: Maybe<Float>;
-  low_gte?: Maybe<Float>;
   close?: Maybe<Float>;
-  close_not?: Maybe<Float>;
-  close_in?: Maybe<Float[] | Float>;
-  close_not_in?: Maybe<Float[] | Float>;
-  close_lt?: Maybe<Float>;
-  close_lte?: Maybe<Float>;
-  close_gt?: Maybe<Float>;
-  close_gte?: Maybe<Float>;
   preClose?: Maybe<Float>;
-  preClose_not?: Maybe<Float>;
-  preClose_in?: Maybe<Float[] | Float>;
-  preClose_not_in?: Maybe<Float[] | Float>;
-  preClose_lt?: Maybe<Float>;
-  preClose_lte?: Maybe<Float>;
-  preClose_gt?: Maybe<Float>;
-  preClose_gte?: Maybe<Float>;
   change?: Maybe<Float>;
-  change_not?: Maybe<Float>;
-  change_in?: Maybe<Float[] | Float>;
-  change_not_in?: Maybe<Float[] | Float>;
-  change_lt?: Maybe<Float>;
-  change_lte?: Maybe<Float>;
-  change_gt?: Maybe<Float>;
-  change_gte?: Maybe<Float>;
   pctChg?: Maybe<Float>;
-  pctChg_not?: Maybe<Float>;
-  pctChg_in?: Maybe<Float[] | Float>;
-  pctChg_not_in?: Maybe<Float[] | Float>;
-  pctChg_lt?: Maybe<Float>;
-  pctChg_lte?: Maybe<Float>;
-  pctChg_gt?: Maybe<Float>;
-  pctChg_gte?: Maybe<Float>;
   vol?: Maybe<Float>;
-  vol_not?: Maybe<Float>;
-  vol_in?: Maybe<Float[] | Float>;
-  vol_not_in?: Maybe<Float[] | Float>;
-  vol_lt?: Maybe<Float>;
-  vol_lte?: Maybe<Float>;
-  vol_gt?: Maybe<Float>;
-  vol_gte?: Maybe<Float>;
   amount?: Maybe<Float>;
-  amount_not?: Maybe<Float>;
-  amount_in?: Maybe<Float[] | Float>;
-  amount_not_in?: Maybe<Float[] | Float>;
-  amount_lt?: Maybe<Float>;
-  amount_lte?: Maybe<Float>;
-  amount_gt?: Maybe<Float>;
-  amount_gte?: Maybe<Float>;
-  AND?: Maybe<DailyWhereInput[] | DailyWhereInput>;
-  OR?: Maybe<DailyWhereInput[] | DailyWhereInput>;
-  NOT?: Maybe<DailyWhereInput[] | DailyWhereInput>;
 }
 
-export interface ProductUpdateWithoutInputsDataInput {
+export interface CompanyUpdateOneWithoutCommentsInput {
+  create?: Maybe<CompanyCreateWithoutCommentsInput>;
+  update?: Maybe<CompanyUpdateWithoutCommentsDataInput>;
+  upsert?: Maybe<CompanyUpsertWithoutCommentsInput>;
+  delete?: Maybe<Boolean>;
+  disconnect?: Maybe<Boolean>;
+  connect?: Maybe<CompanyWhereUniqueInput>;
+}
+
+export interface CompanyUpdateManyWithoutTradesInput {
+  create?: Maybe<
+    CompanyCreateWithoutTradesInput[] | CompanyCreateWithoutTradesInput
+  >;
+  delete?: Maybe<CompanyWhereUniqueInput[] | CompanyWhereUniqueInput>;
+  connect?: Maybe<CompanyWhereUniqueInput[] | CompanyWhereUniqueInput>;
+  set?: Maybe<CompanyWhereUniqueInput[] | CompanyWhereUniqueInput>;
+  disconnect?: Maybe<CompanyWhereUniqueInput[] | CompanyWhereUniqueInput>;
+  update?: Maybe<
+    | CompanyUpdateWithWhereUniqueWithoutTradesInput[]
+    | CompanyUpdateWithWhereUniqueWithoutTradesInput
+  >;
+  upsert?: Maybe<
+    | CompanyUpsertWithWhereUniqueWithoutTradesInput[]
+    | CompanyUpsertWithWhereUniqueWithoutTradesInput
+  >;
+  deleteMany?: Maybe<CompanyScalarWhereInput[] | CompanyScalarWhereInput>;
+  updateMany?: Maybe<
+    | CompanyUpdateManyWithWhereNestedInput[]
+    | CompanyUpdateManyWithWhereNestedInput
+  >;
+}
+
+export interface CompanyUpdateWithoutCommentsDataInput {
+  symbol?: Maybe<String>;
   name?: Maybe<String>;
-  introduce?: Maybe<String>;
-  outputs?: Maybe<IndustryUpdateManyWithoutSellesInput>;
+  area?: Maybe<String>;
+  industry?: Maybe<String>;
+  fullname?: Maybe<String>;
+  enname?: Maybe<String>;
+  market?: Maybe<String>;
+  exchange?: Maybe<String>;
+  currType?: Maybe<String>;
+  listStatus?: Maybe<String>;
+  listDate?: Maybe<String>;
+  delistDate?: Maybe<String>;
+  isHS?: Maybe<String>;
+  scope?: Maybe<String>;
+  desc?: Maybe<String>;
+  purchases?: Maybe<CompanyProductUpdateManyWithoutInputsInput>;
+  selles?: Maybe<CompanyProductUpdateManyWithoutOutputsInput>;
+  pool?: Maybe<Boolean>;
+  trades?: Maybe<IndustryUpdateManyWithoutCompaniesInput>;
+  events?: Maybe<CompanyEventUpdateManyWithoutCompanyInput>;
+  dailies?: Maybe<DailyUpdateManyWithoutCompanyInput>;
+  finaIndicators?: Maybe<FinaIndicatorUpdateManyWithoutCompanyInput>;
+}
+
+export interface UserSubscriptionWhereInput {
+  mutation_in?: Maybe<MutationType[] | MutationType>;
+  updatedFields_contains?: Maybe<String>;
+  updatedFields_contains_every?: Maybe<String[] | String>;
+  updatedFields_contains_some?: Maybe<String[] | String>;
+  node?: Maybe<UserWhereInput>;
+  AND?: Maybe<UserSubscriptionWhereInput[] | UserSubscriptionWhereInput>;
+  OR?: Maybe<UserSubscriptionWhereInput[] | UserSubscriptionWhereInput>;
+  NOT?: Maybe<UserSubscriptionWhereInput[] | UserSubscriptionWhereInput>;
+}
+
+export interface CompanyProductUpdateManyWithoutInputsInput {
+  create?: Maybe<
+    | CompanyProductCreateWithoutInputsInput[]
+    | CompanyProductCreateWithoutInputsInput
+  >;
+  delete?: Maybe<
+    CompanyProductWhereUniqueInput[] | CompanyProductWhereUniqueInput
+  >;
+  connect?: Maybe<
+    CompanyProductWhereUniqueInput[] | CompanyProductWhereUniqueInput
+  >;
+  set?: Maybe<
+    CompanyProductWhereUniqueInput[] | CompanyProductWhereUniqueInput
+  >;
+  disconnect?: Maybe<
+    CompanyProductWhereUniqueInput[] | CompanyProductWhereUniqueInput
+  >;
+  update?: Maybe<
+    | CompanyProductUpdateWithWhereUniqueWithoutInputsInput[]
+    | CompanyProductUpdateWithWhereUniqueWithoutInputsInput
+  >;
+  upsert?: Maybe<
+    | CompanyProductUpsertWithWhereUniqueWithoutInputsInput[]
+    | CompanyProductUpsertWithWhereUniqueWithoutInputsInput
+  >;
+  deleteMany?: Maybe<
+    CompanyProductScalarWhereInput[] | CompanyProductScalarWhereInput
+  >;
+  updateMany?: Maybe<
+    | CompanyProductUpdateManyWithWhereNestedInput[]
+    | CompanyProductUpdateManyWithWhereNestedInput
+  >;
 }
 
 export interface CompanyEventWhereInput {
@@ -970,70 +1348,49 @@ export interface CompanyEventWhereInput {
   NOT?: Maybe<CompanyEventWhereInput[] | CompanyEventWhereInput>;
 }
 
-export interface CommentUpdateInput {
-  desc?: Maybe<String>;
-  company?: Maybe<CompanyUpdateOneWithoutCommentsInput>;
+export interface CompanyProductUpdateWithWhereUniqueWithoutInputsInput {
+  where: CompanyProductWhereUniqueInput;
+  data: CompanyProductUpdateWithoutInputsDataInput;
 }
 
-export interface CompanyUpsertWithoutEventsInput {
-  update: CompanyUpdateWithoutEventsDataInput;
-  create: CompanyCreateWithoutEventsInput;
-}
-
-export interface CompanyUpdateOneWithoutCommentsInput {
-  create?: Maybe<CompanyCreateWithoutCommentsInput>;
-  update?: Maybe<CompanyUpdateWithoutCommentsDataInput>;
-  upsert?: Maybe<CompanyUpsertWithoutCommentsInput>;
-  delete?: Maybe<Boolean>;
-  disconnect?: Maybe<Boolean>;
-  connect?: Maybe<CompanyWhereUniqueInput>;
-}
-
-export interface IndustryUpdateManyWithoutSellesInput {
-  create?: Maybe<
-    IndustryCreateWithoutSellesInput[] | IndustryCreateWithoutSellesInput
-  >;
-  delete?: Maybe<IndustryWhereUniqueInput[] | IndustryWhereUniqueInput>;
-  connect?: Maybe<IndustryWhereUniqueInput[] | IndustryWhereUniqueInput>;
-  set?: Maybe<IndustryWhereUniqueInput[] | IndustryWhereUniqueInput>;
-  disconnect?: Maybe<IndustryWhereUniqueInput[] | IndustryWhereUniqueInput>;
-  update?: Maybe<
-    | IndustryUpdateWithWhereUniqueWithoutSellesInput[]
-    | IndustryUpdateWithWhereUniqueWithoutSellesInput
-  >;
-  upsert?: Maybe<
-    | IndustryUpsertWithWhereUniqueWithoutSellesInput[]
-    | IndustryUpsertWithWhereUniqueWithoutSellesInput
-  >;
-  deleteMany?: Maybe<IndustryScalarWhereInput[] | IndustryScalarWhereInput>;
-  updateMany?: Maybe<
-    | IndustryUpdateManyWithWhereNestedInput[]
-    | IndustryUpdateManyWithWhereNestedInput
-  >;
-}
-
-export interface CompanyUpdateWithoutCommentsDataInput {
-  symbol?: Maybe<String>;
+export interface KeywordWhereInput {
+  id?: Maybe<ID_Input>;
+  id_not?: Maybe<ID_Input>;
+  id_in?: Maybe<ID_Input[] | ID_Input>;
+  id_not_in?: Maybe<ID_Input[] | ID_Input>;
+  id_lt?: Maybe<ID_Input>;
+  id_lte?: Maybe<ID_Input>;
+  id_gt?: Maybe<ID_Input>;
+  id_gte?: Maybe<ID_Input>;
+  id_contains?: Maybe<ID_Input>;
+  id_not_contains?: Maybe<ID_Input>;
+  id_starts_with?: Maybe<ID_Input>;
+  id_not_starts_with?: Maybe<ID_Input>;
+  id_ends_with?: Maybe<ID_Input>;
+  id_not_ends_with?: Maybe<ID_Input>;
   name?: Maybe<String>;
-  area?: Maybe<String>;
-  industry?: Maybe<String>;
-  fullname?: Maybe<String>;
-  enname?: Maybe<String>;
-  market?: Maybe<String>;
-  exchange?: Maybe<String>;
-  currType?: Maybe<String>;
-  listStatus?: Maybe<String>;
-  listDate?: Maybe<String>;
-  delistDate?: Maybe<String>;
-  isHS?: Maybe<String>;
-  scope?: Maybe<String>;
-  desc?: Maybe<String>;
-  purchases?: Maybe<CompanyProductUpdateManyWithoutInputsInput>;
-  selles?: Maybe<CompanyProductUpdateManyWithoutOutputsInput>;
-  pool?: Maybe<Boolean>;
-  trades?: Maybe<IndustryUpdateManyWithoutCompaniesInput>;
-  events?: Maybe<CompanyEventUpdateManyWithoutCompanyInput>;
-  dailies?: Maybe<DailyUpdateManyWithoutCompanyInput>;
+  name_not?: Maybe<String>;
+  name_in?: Maybe<String[] | String>;
+  name_not_in?: Maybe<String[] | String>;
+  name_lt?: Maybe<String>;
+  name_lte?: Maybe<String>;
+  name_gt?: Maybe<String>;
+  name_gte?: Maybe<String>;
+  name_contains?: Maybe<String>;
+  name_not_contains?: Maybe<String>;
+  name_starts_with?: Maybe<String>;
+  name_not_starts_with?: Maybe<String>;
+  name_ends_with?: Maybe<String>;
+  name_not_ends_with?: Maybe<String>;
+  AND?: Maybe<KeywordWhereInput[] | KeywordWhereInput>;
+  OR?: Maybe<KeywordWhereInput[] | KeywordWhereInput>;
+  NOT?: Maybe<KeywordWhereInput[] | KeywordWhereInput>;
+}
+
+export interface CompanyProductUpdateWithoutInputsDataInput {
+  name?: Maybe<String>;
+  introduce?: Maybe<String>;
+  outputs?: Maybe<CompanyUpdateManyWithoutSellesInput>;
 }
 
 export interface IndustryInfluenceWhereInput {
@@ -1084,37 +1441,26 @@ export interface IndustryInfluenceWhereInput {
   NOT?: Maybe<IndustryInfluenceWhereInput[] | IndustryInfluenceWhereInput>;
 }
 
-export interface CompanyProductUpdateManyWithoutInputsInput {
+export interface CompanyUpdateManyWithoutSellesInput {
   create?: Maybe<
-    | CompanyProductCreateWithoutInputsInput[]
-    | CompanyProductCreateWithoutInputsInput
+    CompanyCreateWithoutSellesInput[] | CompanyCreateWithoutSellesInput
   >;
-  delete?: Maybe<
-    CompanyProductWhereUniqueInput[] | CompanyProductWhereUniqueInput
-  >;
-  connect?: Maybe<
-    CompanyProductWhereUniqueInput[] | CompanyProductWhereUniqueInput
-  >;
-  set?: Maybe<
-    CompanyProductWhereUniqueInput[] | CompanyProductWhereUniqueInput
-  >;
-  disconnect?: Maybe<
-    CompanyProductWhereUniqueInput[] | CompanyProductWhereUniqueInput
-  >;
+  delete?: Maybe<CompanyWhereUniqueInput[] | CompanyWhereUniqueInput>;
+  connect?: Maybe<CompanyWhereUniqueInput[] | CompanyWhereUniqueInput>;
+  set?: Maybe<CompanyWhereUniqueInput[] | CompanyWhereUniqueInput>;
+  disconnect?: Maybe<CompanyWhereUniqueInput[] | CompanyWhereUniqueInput>;
   update?: Maybe<
-    | CompanyProductUpdateWithWhereUniqueWithoutInputsInput[]
-    | CompanyProductUpdateWithWhereUniqueWithoutInputsInput
+    | CompanyUpdateWithWhereUniqueWithoutSellesInput[]
+    | CompanyUpdateWithWhereUniqueWithoutSellesInput
   >;
   upsert?: Maybe<
-    | CompanyProductUpsertWithWhereUniqueWithoutInputsInput[]
-    | CompanyProductUpsertWithWhereUniqueWithoutInputsInput
+    | CompanyUpsertWithWhereUniqueWithoutSellesInput[]
+    | CompanyUpsertWithWhereUniqueWithoutSellesInput
   >;
-  deleteMany?: Maybe<
-    CompanyProductScalarWhereInput[] | CompanyProductScalarWhereInput
-  >;
+  deleteMany?: Maybe<CompanyScalarWhereInput[] | CompanyScalarWhereInput>;
   updateMany?: Maybe<
-    | CompanyProductUpdateManyWithWhereNestedInput[]
-    | CompanyProductUpdateManyWithWhereNestedInput
+    | CompanyUpdateManyWithWhereNestedInput[]
+    | CompanyUpdateManyWithWhereNestedInput
   >;
 }
 
@@ -1152,126 +1498,9 @@ export interface ResearchWhereInput {
   NOT?: Maybe<ResearchWhereInput[] | ResearchWhereInput>;
 }
 
-export interface CompanyProductUpdateWithWhereUniqueWithoutInputsInput {
-  where: CompanyProductWhereUniqueInput;
-  data: CompanyProductUpdateWithoutInputsDataInput;
-}
-
-export interface IndustryWhereInput {
-  id?: Maybe<ID_Input>;
-  id_not?: Maybe<ID_Input>;
-  id_in?: Maybe<ID_Input[] | ID_Input>;
-  id_not_in?: Maybe<ID_Input[] | ID_Input>;
-  id_lt?: Maybe<ID_Input>;
-  id_lte?: Maybe<ID_Input>;
-  id_gt?: Maybe<ID_Input>;
-  id_gte?: Maybe<ID_Input>;
-  id_contains?: Maybe<ID_Input>;
-  id_not_contains?: Maybe<ID_Input>;
-  id_starts_with?: Maybe<ID_Input>;
-  id_not_starts_with?: Maybe<ID_Input>;
-  id_ends_with?: Maybe<ID_Input>;
-  id_not_ends_with?: Maybe<ID_Input>;
-  code?: Maybe<String>;
-  code_not?: Maybe<String>;
-  code_in?: Maybe<String[] | String>;
-  code_not_in?: Maybe<String[] | String>;
-  code_lt?: Maybe<String>;
-  code_lte?: Maybe<String>;
-  code_gt?: Maybe<String>;
-  code_gte?: Maybe<String>;
-  code_contains?: Maybe<String>;
-  code_not_contains?: Maybe<String>;
-  code_starts_with?: Maybe<String>;
-  code_not_starts_with?: Maybe<String>;
-  code_ends_with?: Maybe<String>;
-  code_not_ends_with?: Maybe<String>;
-  name?: Maybe<String>;
-  name_not?: Maybe<String>;
-  name_in?: Maybe<String[] | String>;
-  name_not_in?: Maybe<String[] | String>;
-  name_lt?: Maybe<String>;
-  name_lte?: Maybe<String>;
-  name_gt?: Maybe<String>;
-  name_gte?: Maybe<String>;
-  name_contains?: Maybe<String>;
-  name_not_contains?: Maybe<String>;
-  name_starts_with?: Maybe<String>;
-  name_not_starts_with?: Maybe<String>;
-  name_ends_with?: Maybe<String>;
-  name_not_ends_with?: Maybe<String>;
-  desc?: Maybe<String>;
-  desc_not?: Maybe<String>;
-  desc_in?: Maybe<String[] | String>;
-  desc_not_in?: Maybe<String[] | String>;
-  desc_lt?: Maybe<String>;
-  desc_lte?: Maybe<String>;
-  desc_gt?: Maybe<String>;
-  desc_gte?: Maybe<String>;
-  desc_contains?: Maybe<String>;
-  desc_not_contains?: Maybe<String>;
-  desc_starts_with?: Maybe<String>;
-  desc_not_starts_with?: Maybe<String>;
-  desc_ends_with?: Maybe<String>;
-  desc_not_ends_with?: Maybe<String>;
-  researches_every?: Maybe<ResearchWhereInput>;
-  researches_some?: Maybe<ResearchWhereInput>;
-  researches_none?: Maybe<ResearchWhereInput>;
-  companies_every?: Maybe<CompanyWhereInput>;
-  companies_some?: Maybe<CompanyWhereInput>;
-  companies_none?: Maybe<CompanyWhereInput>;
-  influences_every?: Maybe<IndustryInfluenceWhereInput>;
-  influences_some?: Maybe<IndustryInfluenceWhereInput>;
-  influences_none?: Maybe<IndustryInfluenceWhereInput>;
-  purchases_every?: Maybe<ProductWhereInput>;
-  purchases_some?: Maybe<ProductWhereInput>;
-  purchases_none?: Maybe<ProductWhereInput>;
-  selles_every?: Maybe<ProductWhereInput>;
-  selles_some?: Maybe<ProductWhereInput>;
-  selles_none?: Maybe<ProductWhereInput>;
-  AND?: Maybe<IndustryWhereInput[] | IndustryWhereInput>;
-  OR?: Maybe<IndustryWhereInput[] | IndustryWhereInput>;
-  NOT?: Maybe<IndustryWhereInput[] | IndustryWhereInput>;
-}
-
-export interface CompanyProductUpdateWithoutInputsDataInput {
-  name?: Maybe<String>;
-  introduce?: Maybe<String>;
-  outputs?: Maybe<CompanyUpdateManyWithoutSellesInput>;
-}
-
-export interface KeywordSubscriptionWhereInput {
-  mutation_in?: Maybe<MutationType[] | MutationType>;
-  updatedFields_contains?: Maybe<String>;
-  updatedFields_contains_every?: Maybe<String[] | String>;
-  updatedFields_contains_some?: Maybe<String[] | String>;
-  node?: Maybe<KeywordWhereInput>;
-  AND?: Maybe<KeywordSubscriptionWhereInput[] | KeywordSubscriptionWhereInput>;
-  OR?: Maybe<KeywordSubscriptionWhereInput[] | KeywordSubscriptionWhereInput>;
-  NOT?: Maybe<KeywordSubscriptionWhereInput[] | KeywordSubscriptionWhereInput>;
-}
-
-export interface CompanyUpdateManyWithoutSellesInput {
-  create?: Maybe<
-    CompanyCreateWithoutSellesInput[] | CompanyCreateWithoutSellesInput
-  >;
-  delete?: Maybe<CompanyWhereUniqueInput[] | CompanyWhereUniqueInput>;
-  connect?: Maybe<CompanyWhereUniqueInput[] | CompanyWhereUniqueInput>;
-  set?: Maybe<CompanyWhereUniqueInput[] | CompanyWhereUniqueInput>;
-  disconnect?: Maybe<CompanyWhereUniqueInput[] | CompanyWhereUniqueInput>;
-  update?: Maybe<
-    | CompanyUpdateWithWhereUniqueWithoutSellesInput[]
-    | CompanyUpdateWithWhereUniqueWithoutSellesInput
-  >;
-  upsert?: Maybe<
-    | CompanyUpsertWithWhereUniqueWithoutSellesInput[]
-    | CompanyUpsertWithWhereUniqueWithoutSellesInput
-  >;
-  deleteMany?: Maybe<CompanyScalarWhereInput[] | CompanyScalarWhereInput>;
-  updateMany?: Maybe<
-    | CompanyUpdateManyWithWhereNestedInput[]
-    | CompanyUpdateManyWithWhereNestedInput
-  >;
+export interface CompanyUpdateWithWhereUniqueWithoutSellesInput {
+  where: CompanyWhereUniqueInput;
+  data: CompanyUpdateWithoutSellesDataInput;
 }
 
 export interface IndustryEventSubscriptionWhereInput {
@@ -1288,26 +1517,6 @@ export interface IndustryEventSubscriptionWhereInput {
   >;
   NOT?: Maybe<
     IndustryEventSubscriptionWhereInput[] | IndustryEventSubscriptionWhereInput
-  >;
-}
-
-export interface CompanyUpdateWithWhereUniqueWithoutSellesInput {
-  where: CompanyWhereUniqueInput;
-  data: CompanyUpdateWithoutSellesDataInput;
-}
-
-export interface IndustrySubscriptionWhereInput {
-  mutation_in?: Maybe<MutationType[] | MutationType>;
-  updatedFields_contains?: Maybe<String>;
-  updatedFields_contains_every?: Maybe<String[] | String>;
-  updatedFields_contains_some?: Maybe<String[] | String>;
-  node?: Maybe<IndustryWhereInput>;
-  AND?: Maybe<
-    IndustrySubscriptionWhereInput[] | IndustrySubscriptionWhereInput
-  >;
-  OR?: Maybe<IndustrySubscriptionWhereInput[] | IndustrySubscriptionWhereInput>;
-  NOT?: Maybe<
-    IndustrySubscriptionWhereInput[] | IndustrySubscriptionWhereInput
   >;
 }
 
@@ -1333,17 +1542,22 @@ export interface CompanyUpdateWithoutSellesDataInput {
   trades?: Maybe<IndustryUpdateManyWithoutCompaniesInput>;
   events?: Maybe<CompanyEventUpdateManyWithoutCompanyInput>;
   dailies?: Maybe<DailyUpdateManyWithoutCompanyInput>;
+  finaIndicators?: Maybe<FinaIndicatorUpdateManyWithoutCompanyInput>;
 }
 
-export interface DailySubscriptionWhereInput {
+export interface IndustrySubscriptionWhereInput {
   mutation_in?: Maybe<MutationType[] | MutationType>;
   updatedFields_contains?: Maybe<String>;
   updatedFields_contains_every?: Maybe<String[] | String>;
   updatedFields_contains_some?: Maybe<String[] | String>;
-  node?: Maybe<DailyWhereInput>;
-  AND?: Maybe<DailySubscriptionWhereInput[] | DailySubscriptionWhereInput>;
-  OR?: Maybe<DailySubscriptionWhereInput[] | DailySubscriptionWhereInput>;
-  NOT?: Maybe<DailySubscriptionWhereInput[] | DailySubscriptionWhereInput>;
+  node?: Maybe<IndustryWhereInput>;
+  AND?: Maybe<
+    IndustrySubscriptionWhereInput[] | IndustrySubscriptionWhereInput
+  >;
+  OR?: Maybe<IndustrySubscriptionWhereInput[] | IndustrySubscriptionWhereInput>;
+  NOT?: Maybe<
+    IndustrySubscriptionWhereInput[] | IndustrySubscriptionWhereInput
+  >;
 }
 
 export interface CommentUpdateManyWithoutCompanyInput {
@@ -1369,6 +1583,46 @@ export interface CommentUpdateManyWithoutCompanyInput {
   >;
 }
 
+export interface DailySubscriptionWhereInput {
+  mutation_in?: Maybe<MutationType[] | MutationType>;
+  updatedFields_contains?: Maybe<String>;
+  updatedFields_contains_every?: Maybe<String[] | String>;
+  updatedFields_contains_some?: Maybe<String[] | String>;
+  node?: Maybe<DailyWhereInput>;
+  AND?: Maybe<DailySubscriptionWhereInput[] | DailySubscriptionWhereInput>;
+  OR?: Maybe<DailySubscriptionWhereInput[] | DailySubscriptionWhereInput>;
+  NOT?: Maybe<DailySubscriptionWhereInput[] | DailySubscriptionWhereInput>;
+}
+
+export interface CommentUpdateWithWhereUniqueWithoutCompanyInput {
+  where: CommentWhereUniqueInput;
+  data: CommentUpdateWithoutCompanyDataInput;
+}
+
+export interface CompanyProductSubscriptionWhereInput {
+  mutation_in?: Maybe<MutationType[] | MutationType>;
+  updatedFields_contains?: Maybe<String>;
+  updatedFields_contains_every?: Maybe<String[] | String>;
+  updatedFields_contains_some?: Maybe<String[] | String>;
+  node?: Maybe<CompanyProductWhereInput>;
+  AND?: Maybe<
+    | CompanyProductSubscriptionWhereInput[]
+    | CompanyProductSubscriptionWhereInput
+  >;
+  OR?: Maybe<
+    | CompanyProductSubscriptionWhereInput[]
+    | CompanyProductSubscriptionWhereInput
+  >;
+  NOT?: Maybe<
+    | CompanyProductSubscriptionWhereInput[]
+    | CompanyProductSubscriptionWhereInput
+  >;
+}
+
+export interface CommentUpdateWithoutCompanyDataInput {
+  desc?: Maybe<String>;
+}
+
 export interface CompanyEventSubscriptionWhereInput {
   mutation_in?: Maybe<MutationType[] | MutationType>;
   updatedFields_contains?: Maybe<String>;
@@ -1386,9 +1640,10 @@ export interface CompanyEventSubscriptionWhereInput {
   >;
 }
 
-export interface CommentUpdateWithWhereUniqueWithoutCompanyInput {
+export interface CommentUpsertWithWhereUniqueWithoutCompanyInput {
   where: CommentWhereUniqueInput;
-  data: CommentUpdateWithoutCompanyDataInput;
+  update: CommentUpdateWithoutCompanyDataInput;
+  create: CommentCreateWithoutCompanyInput;
 }
 
 export interface CommentSubscriptionWhereInput {
@@ -1400,29 +1655,6 @@ export interface CommentSubscriptionWhereInput {
   AND?: Maybe<CommentSubscriptionWhereInput[] | CommentSubscriptionWhereInput>;
   OR?: Maybe<CommentSubscriptionWhereInput[] | CommentSubscriptionWhereInput>;
   NOT?: Maybe<CommentSubscriptionWhereInput[] | CommentSubscriptionWhereInput>;
-}
-
-export interface CommentUpdateWithoutCompanyDataInput {
-  desc?: Maybe<String>;
-}
-
-export interface UserUpdateManyMutationInput {
-  username?: Maybe<String>;
-  password?: Maybe<String>;
-  role?: Maybe<Role>;
-}
-
-export interface CommentUpsertWithWhereUniqueWithoutCompanyInput {
-  where: CommentWhereUniqueInput;
-  update: CommentUpdateWithoutCompanyDataInput;
-  create: CommentCreateWithoutCompanyInput;
-}
-
-export interface UserCreateInput {
-  id?: Maybe<ID_Input>;
-  username: String;
-  password: String;
-  role?: Maybe<Role>;
 }
 
 export interface CommentScalarWhereInput {
@@ -1467,8 +1699,10 @@ export interface CommentScalarWhereInput {
   NOT?: Maybe<CommentScalarWhereInput[] | CommentScalarWhereInput>;
 }
 
-export interface ResearchUpdateManyMutationInput {
-  desc?: Maybe<String>;
+export interface UserUpdateInput {
+  username?: Maybe<String>;
+  password?: Maybe<String>;
+  role?: Maybe<Role>;
 }
 
 export interface CommentUpdateManyWithWhereNestedInput {
@@ -1476,20 +1710,19 @@ export interface CommentUpdateManyWithWhereNestedInput {
   data: CommentUpdateManyDataInput;
 }
 
-export interface ProductUpdateManyMutationInput {
-  name?: Maybe<String>;
-  introduce?: Maybe<String>;
+export interface UserCreateInput {
+  id?: Maybe<ID_Input>;
+  username: String;
+  password: String;
+  role?: Maybe<Role>;
 }
 
 export interface CommentUpdateManyDataInput {
   desc?: Maybe<String>;
 }
 
-export interface ProductUpdateInput {
-  name?: Maybe<String>;
-  introduce?: Maybe<String>;
-  inputs?: Maybe<IndustryUpdateManyWithoutPurchasesInput>;
-  outputs?: Maybe<IndustryUpdateManyWithoutSellesInput>;
+export interface ResearchUpdateInput {
+  desc?: Maybe<String>;
 }
 
 export interface IndustryUpdateManyWithoutCompaniesInput {
@@ -1515,8 +1748,9 @@ export interface IndustryUpdateManyWithoutCompaniesInput {
   >;
 }
 
-export interface KeywordUpdateManyMutationInput {
+export interface ProductUpdateManyMutationInput {
   name?: Maybe<String>;
+  introduce?: Maybe<String>;
 }
 
 export interface IndustryUpdateWithWhereUniqueWithoutCompaniesInput {
@@ -1524,8 +1758,12 @@ export interface IndustryUpdateWithWhereUniqueWithoutCompaniesInput {
   data: IndustryUpdateWithoutCompaniesDataInput;
 }
 
-export interface KeywordUpdateInput {
-  name?: Maybe<String>;
+export interface ProductCreateInput {
+  id?: Maybe<ID_Input>;
+  name: String;
+  introduce: String;
+  inputs?: Maybe<IndustryCreateManyWithoutPurchasesInput>;
+  outputs?: Maybe<IndustryCreateManyWithoutSellesInput>;
 }
 
 export interface IndustryUpdateWithoutCompaniesDataInput {
@@ -1538,9 +1776,8 @@ export interface IndustryUpdateWithoutCompaniesDataInput {
   selles?: Maybe<ProductUpdateManyWithoutOutputsInput>;
 }
 
-export interface IndustryUpsertWithoutInfluencesInput {
-  update: IndustryUpdateWithoutInfluencesDataInput;
-  create: IndustryCreateWithoutInfluencesInput;
+export interface KeywordUpdateManyMutationInput {
+  name?: Maybe<String>;
 }
 
 export interface ResearchUpdateManyInput {
@@ -1564,19 +1801,38 @@ export interface ResearchUpdateManyInput {
   >;
 }
 
-export interface IndustryUpdateWithoutInfluencesDataInput {
-  code?: Maybe<String>;
-  name?: Maybe<String>;
+export interface IndustryInfluenceUpdateManyMutationInput {
+  keywordDirection?: Maybe<Direction>;
+  kind?: Maybe<FactorKind>;
   desc?: Maybe<String>;
-  researches?: Maybe<ResearchUpdateManyInput>;
-  companies?: Maybe<CompanyUpdateManyWithoutTradesInput>;
-  purchases?: Maybe<ProductUpdateManyWithoutInputsInput>;
-  selles?: Maybe<ProductUpdateManyWithoutOutputsInput>;
+  direction?: Maybe<Direction>;
 }
 
 export interface ResearchUpdateWithWhereUniqueNestedInput {
   where: ResearchWhereUniqueInput;
   data: ResearchUpdateDataInput;
+}
+
+export interface IndustryUpsertWithoutInfluencesInput {
+  update: IndustryUpdateWithoutInfluencesDataInput;
+  create: IndustryCreateWithoutInfluencesInput;
+}
+
+export interface ResearchUpdateDataInput {
+  desc?: Maybe<String>;
+}
+
+export interface IndustryUpdateOneRequiredWithoutInfluencesInput {
+  create?: Maybe<IndustryCreateWithoutInfluencesInput>;
+  update?: Maybe<IndustryUpdateWithoutInfluencesDataInput>;
+  upsert?: Maybe<IndustryUpsertWithoutInfluencesInput>;
+  connect?: Maybe<IndustryWhereUniqueInput>;
+}
+
+export interface ResearchUpsertWithWhereUniqueNestedInput {
+  where: ResearchWhereUniqueInput;
+  update: ResearchUpdateDataInput;
+  create: ResearchCreateInput;
 }
 
 export interface IndustryInfluenceUpdateInput {
@@ -1588,25 +1844,110 @@ export interface IndustryInfluenceUpdateInput {
   direction?: Maybe<Direction>;
 }
 
-export interface ResearchUpdateDataInput {
+export interface ResearchScalarWhereInput {
+  id?: Maybe<ID_Input>;
+  id_not?: Maybe<ID_Input>;
+  id_in?: Maybe<ID_Input[] | ID_Input>;
+  id_not_in?: Maybe<ID_Input[] | ID_Input>;
+  id_lt?: Maybe<ID_Input>;
+  id_lte?: Maybe<ID_Input>;
+  id_gt?: Maybe<ID_Input>;
+  id_gte?: Maybe<ID_Input>;
+  id_contains?: Maybe<ID_Input>;
+  id_not_contains?: Maybe<ID_Input>;
+  id_starts_with?: Maybe<ID_Input>;
+  id_not_starts_with?: Maybe<ID_Input>;
+  id_ends_with?: Maybe<ID_Input>;
+  id_not_ends_with?: Maybe<ID_Input>;
+  desc?: Maybe<String>;
+  desc_not?: Maybe<String>;
+  desc_in?: Maybe<String[] | String>;
+  desc_not_in?: Maybe<String[] | String>;
+  desc_lt?: Maybe<String>;
+  desc_lte?: Maybe<String>;
+  desc_gt?: Maybe<String>;
+  desc_gte?: Maybe<String>;
+  desc_contains?: Maybe<String>;
+  desc_not_contains?: Maybe<String>;
+  desc_starts_with?: Maybe<String>;
+  desc_not_starts_with?: Maybe<String>;
+  desc_ends_with?: Maybe<String>;
+  desc_not_ends_with?: Maybe<String>;
+  AND?: Maybe<ResearchScalarWhereInput[] | ResearchScalarWhereInput>;
+  OR?: Maybe<ResearchScalarWhereInput[] | ResearchScalarWhereInput>;
+  NOT?: Maybe<ResearchScalarWhereInput[] | ResearchScalarWhereInput>;
+}
+
+export interface IndustryCreateOneWithoutInfluencesInput {
+  create?: Maybe<IndustryCreateWithoutInfluencesInput>;
+  connect?: Maybe<IndustryWhereUniqueInput>;
+}
+
+export interface ResearchUpdateManyWithWhereNestedInput {
+  where: ResearchScalarWhereInput;
+  data: ResearchUpdateManyDataInput;
+}
+
+export interface IndustryInfluenceCreateInput {
+  id?: Maybe<ID_Input>;
+  keyword?: Maybe<KeywordCreateOneInput>;
+  keywordDirection: Direction;
+  kind: FactorKind;
+  desc: String;
+  industry: IndustryCreateOneWithoutInfluencesInput;
+  direction: Direction;
+}
+
+export interface ResearchUpdateManyDataInput {
   desc?: Maybe<String>;
 }
 
-export interface IndustryCreateWithoutInfluencesInput {
-  id?: Maybe<ID_Input>;
-  code?: Maybe<String>;
-  name: String;
-  desc: String;
-  researches?: Maybe<ResearchCreateManyInput>;
-  companies?: Maybe<CompanyCreateManyWithoutTradesInput>;
-  purchases?: Maybe<ProductCreateManyWithoutInputsInput>;
-  selles?: Maybe<ProductCreateManyWithoutOutputsInput>;
+export interface KeywordUpdateManyDataInput {
+  name?: Maybe<String>;
 }
 
-export interface ResearchUpsertWithWhereUniqueNestedInput {
-  where: ResearchWhereUniqueInput;
-  update: ResearchUpdateDataInput;
-  create: ResearchCreateInput;
+export interface IndustryInfluenceUpdateManyWithoutIndustryInput {
+  create?: Maybe<
+    | IndustryInfluenceCreateWithoutIndustryInput[]
+    | IndustryInfluenceCreateWithoutIndustryInput
+  >;
+  delete?: Maybe<
+    IndustryInfluenceWhereUniqueInput[] | IndustryInfluenceWhereUniqueInput
+  >;
+  connect?: Maybe<
+    IndustryInfluenceWhereUniqueInput[] | IndustryInfluenceWhereUniqueInput
+  >;
+  set?: Maybe<
+    IndustryInfluenceWhereUniqueInput[] | IndustryInfluenceWhereUniqueInput
+  >;
+  disconnect?: Maybe<
+    IndustryInfluenceWhereUniqueInput[] | IndustryInfluenceWhereUniqueInput
+  >;
+  update?: Maybe<
+    | IndustryInfluenceUpdateWithWhereUniqueWithoutIndustryInput[]
+    | IndustryInfluenceUpdateWithWhereUniqueWithoutIndustryInput
+  >;
+  upsert?: Maybe<
+    | IndustryInfluenceUpsertWithWhereUniqueWithoutIndustryInput[]
+    | IndustryInfluenceUpsertWithWhereUniqueWithoutIndustryInput
+  >;
+  deleteMany?: Maybe<
+    IndustryInfluenceScalarWhereInput[] | IndustryInfluenceScalarWhereInput
+  >;
+  updateMany?: Maybe<
+    | IndustryInfluenceUpdateManyWithWhereNestedInput[]
+    | IndustryInfluenceUpdateManyWithWhereNestedInput
+  >;
+}
+
+export interface KeywordUpdateManyWithWhereNestedInput {
+  where: KeywordScalarWhereInput;
+  data: KeywordUpdateManyDataInput;
+}
+
+export interface IndustryInfluenceUpdateWithWhereUniqueWithoutIndustryInput {
+  where: IndustryInfluenceWhereUniqueInput;
+  data: IndustryInfluenceUpdateWithoutIndustryDataInput;
 }
 
 export interface IndustryEventWhereInput {
@@ -1694,100 +2035,12 @@ export interface IndustryEventWhereInput {
   NOT?: Maybe<IndustryEventWhereInput[] | IndustryEventWhereInput>;
 }
 
-export interface ResearchScalarWhereInput {
-  id?: Maybe<ID_Input>;
-  id_not?: Maybe<ID_Input>;
-  id_in?: Maybe<ID_Input[] | ID_Input>;
-  id_not_in?: Maybe<ID_Input[] | ID_Input>;
-  id_lt?: Maybe<ID_Input>;
-  id_lte?: Maybe<ID_Input>;
-  id_gt?: Maybe<ID_Input>;
-  id_gte?: Maybe<ID_Input>;
-  id_contains?: Maybe<ID_Input>;
-  id_not_contains?: Maybe<ID_Input>;
-  id_starts_with?: Maybe<ID_Input>;
-  id_not_starts_with?: Maybe<ID_Input>;
-  id_ends_with?: Maybe<ID_Input>;
-  id_not_ends_with?: Maybe<ID_Input>;
+export interface IndustryInfluenceUpdateWithoutIndustryDataInput {
+  keyword?: Maybe<KeywordUpdateOneInput>;
+  keywordDirection?: Maybe<Direction>;
+  kind?: Maybe<FactorKind>;
   desc?: Maybe<String>;
-  desc_not?: Maybe<String>;
-  desc_in?: Maybe<String[] | String>;
-  desc_not_in?: Maybe<String[] | String>;
-  desc_lt?: Maybe<String>;
-  desc_lte?: Maybe<String>;
-  desc_gt?: Maybe<String>;
-  desc_gte?: Maybe<String>;
-  desc_contains?: Maybe<String>;
-  desc_not_contains?: Maybe<String>;
-  desc_starts_with?: Maybe<String>;
-  desc_not_starts_with?: Maybe<String>;
-  desc_ends_with?: Maybe<String>;
-  desc_not_ends_with?: Maybe<String>;
-  AND?: Maybe<ResearchScalarWhereInput[] | ResearchScalarWhereInput>;
-  OR?: Maybe<ResearchScalarWhereInput[] | ResearchScalarWhereInput>;
-  NOT?: Maybe<ResearchScalarWhereInput[] | ResearchScalarWhereInput>;
-}
-
-export interface IndustryInfluenceCreateInput {
-  id?: Maybe<ID_Input>;
-  keyword?: Maybe<KeywordCreateOneInput>;
-  keywordDirection: Direction;
-  kind: FactorKind;
-  desc: String;
-  industry: IndustryCreateOneWithoutInfluencesInput;
-  direction: Direction;
-}
-
-export interface ResearchUpdateManyWithWhereNestedInput {
-  where: ResearchScalarWhereInput;
-  data: ResearchUpdateManyDataInput;
-}
-
-export interface KeywordUpdateManyDataInput {
-  name?: Maybe<String>;
-}
-
-export interface ResearchUpdateManyDataInput {
-  desc?: Maybe<String>;
-}
-
-export interface KeywordUpdateManyWithWhereNestedInput {
-  where: KeywordScalarWhereInput;
-  data: KeywordUpdateManyDataInput;
-}
-
-export interface IndustryInfluenceUpdateManyWithoutIndustryInput {
-  create?: Maybe<
-    | IndustryInfluenceCreateWithoutIndustryInput[]
-    | IndustryInfluenceCreateWithoutIndustryInput
-  >;
-  delete?: Maybe<
-    IndustryInfluenceWhereUniqueInput[] | IndustryInfluenceWhereUniqueInput
-  >;
-  connect?: Maybe<
-    IndustryInfluenceWhereUniqueInput[] | IndustryInfluenceWhereUniqueInput
-  >;
-  set?: Maybe<
-    IndustryInfluenceWhereUniqueInput[] | IndustryInfluenceWhereUniqueInput
-  >;
-  disconnect?: Maybe<
-    IndustryInfluenceWhereUniqueInput[] | IndustryInfluenceWhereUniqueInput
-  >;
-  update?: Maybe<
-    | IndustryInfluenceUpdateWithWhereUniqueWithoutIndustryInput[]
-    | IndustryInfluenceUpdateWithWhereUniqueWithoutIndustryInput
-  >;
-  upsert?: Maybe<
-    | IndustryInfluenceUpsertWithWhereUniqueWithoutIndustryInput[]
-    | IndustryInfluenceUpsertWithWhereUniqueWithoutIndustryInput
-  >;
-  deleteMany?: Maybe<
-    IndustryInfluenceScalarWhereInput[] | IndustryInfluenceScalarWhereInput
-  >;
-  updateMany?: Maybe<
-    | IndustryInfluenceUpdateManyWithWhereNestedInput[]
-    | IndustryInfluenceUpdateManyWithWhereNestedInput
-  >;
+  direction?: Maybe<Direction>;
 }
 
 export interface KeywordUpsertWithWhereUniqueNestedInput {
@@ -1796,30 +2049,38 @@ export interface KeywordUpsertWithWhereUniqueNestedInput {
   create: KeywordCreateInput;
 }
 
-export interface IndustryInfluenceUpdateWithWhereUniqueWithoutIndustryInput {
-  where: IndustryInfluenceWhereUniqueInput;
-  data: IndustryInfluenceUpdateWithoutIndustryDataInput;
+export interface KeywordUpdateOneInput {
+  create?: Maybe<KeywordCreateInput>;
+  update?: Maybe<KeywordUpdateDataInput>;
+  upsert?: Maybe<KeywordUpsertNestedInput>;
+  delete?: Maybe<Boolean>;
+  disconnect?: Maybe<Boolean>;
+  connect?: Maybe<KeywordWhereUniqueInput>;
 }
 
-export interface KeywordUpdateWithWhereUniqueNestedInput {
-  where: KeywordWhereUniqueInput;
-  data: KeywordUpdateDataInput;
+export interface KeywordUpdateManyInput {
+  create?: Maybe<KeywordCreateInput[] | KeywordCreateInput>;
+  update?: Maybe<
+    | KeywordUpdateWithWhereUniqueNestedInput[]
+    | KeywordUpdateWithWhereUniqueNestedInput
+  >;
+  upsert?: Maybe<
+    | KeywordUpsertWithWhereUniqueNestedInput[]
+    | KeywordUpsertWithWhereUniqueNestedInput
+  >;
+  delete?: Maybe<KeywordWhereUniqueInput[] | KeywordWhereUniqueInput>;
+  connect?: Maybe<KeywordWhereUniqueInput[] | KeywordWhereUniqueInput>;
+  set?: Maybe<KeywordWhereUniqueInput[] | KeywordWhereUniqueInput>;
+  disconnect?: Maybe<KeywordWhereUniqueInput[] | KeywordWhereUniqueInput>;
+  deleteMany?: Maybe<KeywordScalarWhereInput[] | KeywordScalarWhereInput>;
+  updateMany?: Maybe<
+    | KeywordUpdateManyWithWhereNestedInput[]
+    | KeywordUpdateManyWithWhereNestedInput
+  >;
 }
 
-export interface DailyCreateInput {
-  id?: Maybe<ID_Input>;
-  company: CompanyCreateOneWithoutDailiesInput;
-  symbol?: Maybe<String>;
-  tradeDate: DateTimeInput;
-  open?: Maybe<Float>;
-  high?: Maybe<Float>;
-  low?: Maybe<Float>;
-  close?: Maybe<Float>;
-  preClose?: Maybe<Float>;
-  change?: Maybe<Float>;
-  pctChg?: Maybe<Float>;
-  vol?: Maybe<Float>;
-  amount?: Maybe<Float>;
+export interface KeywordUpdateDataInput {
+  name?: Maybe<String>;
 }
 
 export interface IndustryEventUpdateInput {
@@ -1832,53 +2093,24 @@ export interface IndustryEventUpdateInput {
   Keywords?: Maybe<KeywordUpdateManyInput>;
 }
 
-export interface KeywordUpdateOneInput {
-  create?: Maybe<KeywordCreateInput>;
-  update?: Maybe<KeywordUpdateDataInput>;
-  upsert?: Maybe<KeywordUpsertNestedInput>;
-  delete?: Maybe<Boolean>;
-  disconnect?: Maybe<Boolean>;
-  connect?: Maybe<KeywordWhereUniqueInput>;
-}
-
-export interface KeywordCreateManyInput {
-  create?: Maybe<KeywordCreateInput[] | KeywordCreateInput>;
-  connect?: Maybe<KeywordWhereUniqueInput[] | KeywordWhereUniqueInput>;
-}
-
-export interface KeywordUpdateDataInput {
-  name?: Maybe<String>;
-}
-
-export interface IndustryUpdateManyMutationInput {
-  code?: Maybe<String>;
-  name?: Maybe<String>;
-  desc?: Maybe<String>;
-}
-
 export interface KeywordUpsertNestedInput {
   update: KeywordUpdateDataInput;
   create: KeywordCreateInput;
 }
 
-export interface IndustryUpdateInput {
-  code?: Maybe<String>;
-  name?: Maybe<String>;
-  desc?: Maybe<String>;
-  researches?: Maybe<ResearchUpdateManyInput>;
-  companies?: Maybe<CompanyUpdateManyWithoutTradesInput>;
-  influences?: Maybe<IndustryInfluenceUpdateManyWithoutIndustryInput>;
-  purchases?: Maybe<ProductUpdateManyWithoutInputsInput>;
-  selles?: Maybe<ProductUpdateManyWithoutOutputsInput>;
+export interface IndustryEventCreateInput {
+  id?: Maybe<ID_Input>;
+  title: String;
+  src: String;
+  reportTime: DateTimeInput;
+  happen: TimeKind;
+  happenTime: DateTimeInput;
+  content: String;
+  Keywords?: Maybe<KeywordCreateManyInput>;
 }
 
-export interface IndustryInfluenceUpsertWithWhereUniqueWithoutIndustryInput {
-  where: IndustryInfluenceWhereUniqueInput;
-  update: IndustryInfluenceUpdateWithoutIndustryDataInput;
-  create: IndustryInfluenceCreateWithoutIndustryInput;
-}
-
-export interface DailyUpdateManyMutationInput {
+export interface DailyUpdateInput {
+  company?: Maybe<CompanyUpdateOneRequiredWithoutDailiesInput>;
   symbol?: Maybe<String>;
   tradeDate?: Maybe<DateTimeInput>;
   open?: Maybe<Float>;
@@ -1890,6 +2122,12 @@ export interface DailyUpdateManyMutationInput {
   pctChg?: Maybe<Float>;
   vol?: Maybe<Float>;
   amount?: Maybe<Float>;
+}
+
+export interface IndustryUpdateManyMutationInput {
+  code?: Maybe<String>;
+  name?: Maybe<String>;
+  desc?: Maybe<String>;
 }
 
 export interface IndustryInfluenceScalarWhereInput {
@@ -1944,14 +2182,318 @@ export interface IndustryInfluenceScalarWhereInput {
   >;
 }
 
-export interface CompanyUpsertWithoutDailiesInput {
-  update: CompanyUpdateWithoutDailiesDataInput;
-  create: CompanyCreateWithoutDailiesInput;
+export interface IndustryCreateInput {
+  id?: Maybe<ID_Input>;
+  code?: Maybe<String>;
+  name: String;
+  desc: String;
+  researches?: Maybe<ResearchCreateManyInput>;
+  companies?: Maybe<CompanyCreateManyWithoutTradesInput>;
+  influences?: Maybe<IndustryInfluenceCreateManyWithoutIndustryInput>;
+  purchases?: Maybe<ProductCreateManyWithoutInputsInput>;
+  selles?: Maybe<ProductCreateManyWithoutOutputsInput>;
 }
 
 export interface IndustryInfluenceUpdateManyWithWhereNestedInput {
   where: IndustryInfluenceScalarWhereInput;
   data: IndustryInfluenceUpdateManyDataInput;
+}
+
+export interface FinaIndicatorUpdateManyMutationInput {
+  symbol?: Maybe<String>;
+  annDate?: Maybe<String>;
+  endDate?: Maybe<String>;
+  eps?: Maybe<Float>;
+  dtEps?: Maybe<Float>;
+  totalRevenuePs?: Maybe<Float>;
+  revenuePs?: Maybe<Float>;
+  capitalResePs?: Maybe<Float>;
+  surplusResePs?: Maybe<Float>;
+  undistProfitPs?: Maybe<Float>;
+  extraItem?: Maybe<Float>;
+  profitDedt?: Maybe<Float>;
+  grossMargin?: Maybe<Float>;
+  currentRatio?: Maybe<Float>;
+  quickRatio?: Maybe<Float>;
+  cashRatio?: Maybe<Float>;
+  invturnDays?: Maybe<Float>;
+  arturnDays?: Maybe<Float>;
+  invTurn?: Maybe<Float>;
+  arTurn?: Maybe<Float>;
+  caTurn?: Maybe<Float>;
+  faTurn?: Maybe<Float>;
+  assetsTurn?: Maybe<Float>;
+  opIncome?: Maybe<Float>;
+  valuechangeIncome?: Maybe<Float>;
+  interstIncome?: Maybe<Float>;
+  daa?: Maybe<Float>;
+  ebit?: Maybe<Float>;
+  ebitda?: Maybe<Float>;
+  fcff?: Maybe<Float>;
+  fcfe?: Maybe<Float>;
+  currentExint?: Maybe<Float>;
+  noncurrentExint?: Maybe<Float>;
+  interestdebt?: Maybe<Float>;
+  netdebt?: Maybe<Float>;
+  tangibleAsset?: Maybe<Float>;
+  workingCapital?: Maybe<Float>;
+  networkingCapital?: Maybe<Float>;
+  investCapital?: Maybe<Float>;
+  retainedEarnings?: Maybe<Float>;
+  diluted2Eps?: Maybe<Float>;
+  bps?: Maybe<Float>;
+  ocfps?: Maybe<Float>;
+  retainedps?: Maybe<Float>;
+  cfps?: Maybe<Float>;
+  ebitPs?: Maybe<Float>;
+  fcffPs?: Maybe<Float>;
+  fcfePs?: Maybe<Float>;
+  netprofitMargin?: Maybe<Float>;
+  grossprofitMargin?: Maybe<Float>;
+  cogsOfSales?: Maybe<Float>;
+  expenseOfSales?: Maybe<Float>;
+  profitToGr?: Maybe<Float>;
+  saleexpToGr?: Maybe<Float>;
+  adminexpOfGr?: Maybe<Float>;
+  finaexpOfGr?: Maybe<Float>;
+  impaiTtm?: Maybe<Float>;
+  gcOfGr?: Maybe<Float>;
+  opOfGr?: Maybe<Float>;
+  ebitOfGr?: Maybe<Float>;
+  roe?: Maybe<Float>;
+  roeWaa?: Maybe<Float>;
+  roeDt?: Maybe<Float>;
+  roa?: Maybe<Float>;
+  npta?: Maybe<Float>;
+  roic?: Maybe<Float>;
+  roeYearly?: Maybe<Float>;
+  roa2Yearly?: Maybe<Float>;
+  roeAvg?: Maybe<Float>;
+  opincomeOfEbt?: Maybe<Float>;
+  investincomeOfEbt?: Maybe<Float>;
+  nOpProfitOfEbt?: Maybe<Float>;
+  taxToEbt?: Maybe<Float>;
+  dtprofitToProfit?: Maybe<Float>;
+  salescashToOr?: Maybe<Float>;
+  ocfToOr?: Maybe<Float>;
+  ocfToOpincome?: Maybe<Float>;
+  capitalizedToDa?: Maybe<Float>;
+  debtToAssets?: Maybe<Float>;
+  assetsToEqt?: Maybe<Float>;
+  dpAssetsToEqt?: Maybe<Float>;
+  caToAssets?: Maybe<Float>;
+  ncaToAssets?: Maybe<Float>;
+  tbassetsToTotalassets?: Maybe<Float>;
+  intToTalcap?: Maybe<Float>;
+  eqtToTalcapital?: Maybe<Float>;
+  currentdebtToDebt?: Maybe<Float>;
+  longdebToDebt?: Maybe<Float>;
+  ocfToShortdebt?: Maybe<Float>;
+  debtToEqt?: Maybe<Float>;
+  eqtToDebt?: Maybe<Float>;
+  eqtToInterestdebt?: Maybe<Float>;
+  tangibleassetToDebt?: Maybe<Float>;
+  tangassetToIntdebt?: Maybe<Float>;
+  tangibleassetToNetdebt?: Maybe<Float>;
+  ocfToDebt?: Maybe<Float>;
+  ocfToInterestdebt?: Maybe<Float>;
+  ocfToNetdebt?: Maybe<Float>;
+  ebitToInterest?: Maybe<Float>;
+  longdebtToWorkingcapital?: Maybe<Float>;
+  ebitdaToDebt?: Maybe<Float>;
+  turnDays?: Maybe<Float>;
+  roaYearly?: Maybe<Float>;
+  roaDp?: Maybe<Float>;
+  fixedAssets?: Maybe<Float>;
+  profitPrefinExp?: Maybe<Float>;
+  nonOpProfit?: Maybe<Float>;
+  opToEbt?: Maybe<Float>;
+  nopToEbt?: Maybe<Float>;
+  ocfToProfit?: Maybe<Float>;
+  cashToLiqdebt?: Maybe<Float>;
+  cashToLiqdebtWithinterest?: Maybe<Float>;
+  opToLiqdebt?: Maybe<Float>;
+  opToDebt?: Maybe<Float>;
+  roicYearly?: Maybe<Float>;
+  totalFaTrun?: Maybe<Float>;
+  profitToOp?: Maybe<Float>;
+  qOpincome?: Maybe<Float>;
+  qInvestincome?: Maybe<Float>;
+  qDtprofit?: Maybe<Float>;
+  qEps?: Maybe<Float>;
+  qNetprofitMargin?: Maybe<Float>;
+  qGsprofitMargin?: Maybe<Float>;
+  qExpToSales?: Maybe<Float>;
+  qProfitToGr?: Maybe<Float>;
+  qSaleexpToGr?: Maybe<Float>;
+  qAdminexpToGr?: Maybe<Float>;
+  qFinaexpToGr?: Maybe<Float>;
+  qImpairToGrTtm?: Maybe<Float>;
+  qGcToGr?: Maybe<Float>;
+  qOpToGr?: Maybe<Float>;
+  qRoe?: Maybe<Float>;
+  qDtRoe?: Maybe<Float>;
+  qNpta?: Maybe<Float>;
+  qOpincomeToEbt?: Maybe<Float>;
+  qInvestincomeToEbt?: Maybe<Float>;
+  qDtprofitToProfit?: Maybe<Float>;
+  qSalescashToOr?: Maybe<Float>;
+  qOcfToSales?: Maybe<Float>;
+  qOcfToOr?: Maybe<Float>;
+  basicEpsYoy?: Maybe<Float>;
+  dtEpsYoy?: Maybe<Float>;
+  cfpsYoy?: Maybe<Float>;
+  opYoy?: Maybe<Float>;
+  ebtYoy?: Maybe<Float>;
+  netprofitYoy?: Maybe<Float>;
+  dtNetprofitYoy?: Maybe<Float>;
+  ocfYoy?: Maybe<Float>;
+  roeYoy?: Maybe<Float>;
+  bpsYoy?: Maybe<Float>;
+  assetsYoy?: Maybe<Float>;
+  eqtYoy?: Maybe<Float>;
+  trYoy?: Maybe<Float>;
+  orYoy?: Maybe<Float>;
+  qGrYoy?: Maybe<Float>;
+  qGrQoq?: Maybe<Float>;
+  qSalesYoy?: Maybe<Float>;
+  qSalesQoq?: Maybe<Float>;
+  qOpYoy?: Maybe<Float>;
+  qOpQoq?: Maybe<Float>;
+  qProfitYoy?: Maybe<Float>;
+  qProfitQoq?: Maybe<Float>;
+  qNetprofitYoy?: Maybe<Float>;
+  qNetprofitQoq?: Maybe<Float>;
+  equityYoy?: Maybe<Float>;
+  rdExp?: Maybe<Float>;
+  updateFlag?: Maybe<String>;
+}
+
+export interface IndustryInfluenceUpdateManyDataInput {
+  keywordDirection?: Maybe<Direction>;
+  kind?: Maybe<FactorKind>;
+  desc?: Maybe<String>;
+  direction?: Maybe<Direction>;
+}
+
+export interface CompanyUpdateWithoutFinaIndicatorsDataInput {
+  symbol?: Maybe<String>;
+  name?: Maybe<String>;
+  area?: Maybe<String>;
+  industry?: Maybe<String>;
+  fullname?: Maybe<String>;
+  enname?: Maybe<String>;
+  market?: Maybe<String>;
+  exchange?: Maybe<String>;
+  currType?: Maybe<String>;
+  listStatus?: Maybe<String>;
+  listDate?: Maybe<String>;
+  delistDate?: Maybe<String>;
+  isHS?: Maybe<String>;
+  scope?: Maybe<String>;
+  desc?: Maybe<String>;
+  purchases?: Maybe<CompanyProductUpdateManyWithoutInputsInput>;
+  selles?: Maybe<CompanyProductUpdateManyWithoutOutputsInput>;
+  comments?: Maybe<CommentUpdateManyWithoutCompanyInput>;
+  pool?: Maybe<Boolean>;
+  trades?: Maybe<IndustryUpdateManyWithoutCompaniesInput>;
+  events?: Maybe<CompanyEventUpdateManyWithoutCompanyInput>;
+  dailies?: Maybe<DailyUpdateManyWithoutCompanyInput>;
+}
+
+export interface ProductUpdateManyWithoutInputsInput {
+  create?: Maybe<
+    ProductCreateWithoutInputsInput[] | ProductCreateWithoutInputsInput
+  >;
+  delete?: Maybe<ProductWhereUniqueInput[] | ProductWhereUniqueInput>;
+  connect?: Maybe<ProductWhereUniqueInput[] | ProductWhereUniqueInput>;
+  set?: Maybe<ProductWhereUniqueInput[] | ProductWhereUniqueInput>;
+  disconnect?: Maybe<ProductWhereUniqueInput[] | ProductWhereUniqueInput>;
+  update?: Maybe<
+    | ProductUpdateWithWhereUniqueWithoutInputsInput[]
+    | ProductUpdateWithWhereUniqueWithoutInputsInput
+  >;
+  upsert?: Maybe<
+    | ProductUpsertWithWhereUniqueWithoutInputsInput[]
+    | ProductUpsertWithWhereUniqueWithoutInputsInput
+  >;
+  deleteMany?: Maybe<ProductScalarWhereInput[] | ProductScalarWhereInput>;
+  updateMany?: Maybe<
+    | ProductUpdateManyWithWhereNestedInput[]
+    | ProductUpdateManyWithWhereNestedInput
+  >;
+}
+
+export interface CompanyUpdateOneRequiredWithoutFinaIndicatorsInput {
+  create?: Maybe<CompanyCreateWithoutFinaIndicatorsInput>;
+  update?: Maybe<CompanyUpdateWithoutFinaIndicatorsDataInput>;
+  upsert?: Maybe<CompanyUpsertWithoutFinaIndicatorsInput>;
+  connect?: Maybe<CompanyWhereUniqueInput>;
+}
+
+export interface ProductUpdateWithWhereUniqueWithoutInputsInput {
+  where: ProductWhereUniqueInput;
+  data: ProductUpdateWithoutInputsDataInput;
+}
+
+export interface CompanyCreateWithoutFinaIndicatorsInput {
+  id?: Maybe<ID_Input>;
+  symbol: String;
+  name: String;
+  area?: Maybe<String>;
+  industry?: Maybe<String>;
+  fullname?: Maybe<String>;
+  enname?: Maybe<String>;
+  market?: Maybe<String>;
+  exchange?: Maybe<String>;
+  currType?: Maybe<String>;
+  listStatus?: Maybe<String>;
+  listDate?: Maybe<String>;
+  delistDate?: Maybe<String>;
+  isHS?: Maybe<String>;
+  scope?: Maybe<String>;
+  desc?: Maybe<String>;
+  purchases?: Maybe<CompanyProductCreateManyWithoutInputsInput>;
+  selles?: Maybe<CompanyProductCreateManyWithoutOutputsInput>;
+  comments?: Maybe<CommentCreateManyWithoutCompanyInput>;
+  pool?: Maybe<Boolean>;
+  trades?: Maybe<IndustryCreateManyWithoutCompaniesInput>;
+  events?: Maybe<CompanyEventCreateManyWithoutCompanyInput>;
+  dailies?: Maybe<DailyCreateManyWithoutCompanyInput>;
+}
+
+export interface ProductUpdateWithoutInputsDataInput {
+  name?: Maybe<String>;
+  introduce?: Maybe<String>;
+  outputs?: Maybe<IndustryUpdateManyWithoutSellesInput>;
+}
+
+export interface CompanyCreateOneWithoutFinaIndicatorsInput {
+  create?: Maybe<CompanyCreateWithoutFinaIndicatorsInput>;
+  connect?: Maybe<CompanyWhereUniqueInput>;
+}
+
+export interface IndustryUpdateManyWithoutSellesInput {
+  create?: Maybe<
+    IndustryCreateWithoutSellesInput[] | IndustryCreateWithoutSellesInput
+  >;
+  delete?: Maybe<IndustryWhereUniqueInput[] | IndustryWhereUniqueInput>;
+  connect?: Maybe<IndustryWhereUniqueInput[] | IndustryWhereUniqueInput>;
+  set?: Maybe<IndustryWhereUniqueInput[] | IndustryWhereUniqueInput>;
+  disconnect?: Maybe<IndustryWhereUniqueInput[] | IndustryWhereUniqueInput>;
+  update?: Maybe<
+    | IndustryUpdateWithWhereUniqueWithoutSellesInput[]
+    | IndustryUpdateWithWhereUniqueWithoutSellesInput
+  >;
+  upsert?: Maybe<
+    | IndustryUpsertWithWhereUniqueWithoutSellesInput[]
+    | IndustryUpsertWithWhereUniqueWithoutSellesInput
+  >;
+  deleteMany?: Maybe<IndustryScalarWhereInput[] | IndustryScalarWhereInput>;
+  updateMany?: Maybe<
+    | IndustryUpdateManyWithWhereNestedInput[]
+    | IndustryUpdateManyWithWhereNestedInput
+  >;
 }
 
 export interface UserWhereInput {
@@ -2006,59 +2548,1412 @@ export interface UserWhereInput {
   NOT?: Maybe<UserWhereInput[] | UserWhereInput>;
 }
 
-export interface IndustryInfluenceUpdateManyDataInput {
-  keywordDirection?: Maybe<Direction>;
-  kind?: Maybe<FactorKind>;
+export interface IndustryUpdateWithWhereUniqueWithoutSellesInput {
+  where: IndustryWhereUniqueInput;
+  data: IndustryUpdateWithoutSellesDataInput;
+}
+
+export interface CompanyUpsertWithoutDailiesInput {
+  update: CompanyUpdateWithoutDailiesDataInput;
+  create: CompanyCreateWithoutDailiesInput;
+}
+
+export interface IndustryUpdateWithoutSellesDataInput {
+  code?: Maybe<String>;
+  name?: Maybe<String>;
   desc?: Maybe<String>;
-  direction?: Maybe<Direction>;
+  researches?: Maybe<ResearchUpdateManyInput>;
+  companies?: Maybe<CompanyUpdateManyWithoutTradesInput>;
+  influences?: Maybe<IndustryInfluenceUpdateManyWithoutIndustryInput>;
+  purchases?: Maybe<ProductUpdateManyWithoutInputsInput>;
 }
 
-export interface DailyUpdateInput {
-  company?: Maybe<CompanyUpdateOneRequiredWithoutDailiesInput>;
-  symbol?: Maybe<String>;
-  tradeDate?: Maybe<DateTimeInput>;
-  open?: Maybe<Float>;
-  high?: Maybe<Float>;
-  low?: Maybe<Float>;
-  close?: Maybe<Float>;
-  preClose?: Maybe<Float>;
-  change?: Maybe<Float>;
-  pctChg?: Maybe<Float>;
-  vol?: Maybe<Float>;
-  amount?: Maybe<Float>;
-}
-
-export interface ProductUpdateManyWithoutInputsInput {
-  create?: Maybe<
-    ProductCreateWithoutInputsInput[] | ProductCreateWithoutInputsInput
-  >;
-  delete?: Maybe<ProductWhereUniqueInput[] | ProductWhereUniqueInput>;
-  connect?: Maybe<ProductWhereUniqueInput[] | ProductWhereUniqueInput>;
-  set?: Maybe<ProductWhereUniqueInput[] | ProductWhereUniqueInput>;
-  disconnect?: Maybe<ProductWhereUniqueInput[] | ProductWhereUniqueInput>;
-  update?: Maybe<
-    | ProductUpdateWithWhereUniqueWithoutInputsInput[]
-    | ProductUpdateWithWhereUniqueWithoutInputsInput
-  >;
-  upsert?: Maybe<
-    | ProductUpsertWithWhereUniqueWithoutInputsInput[]
-    | ProductUpsertWithWhereUniqueWithoutInputsInput
-  >;
-  deleteMany?: Maybe<ProductScalarWhereInput[] | ProductScalarWhereInput>;
-  updateMany?: Maybe<
-    | ProductUpdateManyWithWhereNestedInput[]
-    | ProductUpdateManyWithWhereNestedInput
-  >;
-}
-
-export interface CompanyCreateOneWithoutDailiesInput {
+export interface CompanyUpdateOneRequiredWithoutDailiesInput {
   create?: Maybe<CompanyCreateWithoutDailiesInput>;
+  update?: Maybe<CompanyUpdateWithoutDailiesDataInput>;
+  upsert?: Maybe<CompanyUpsertWithoutDailiesInput>;
   connect?: Maybe<CompanyWhereUniqueInput>;
 }
 
-export interface CompanyProductUpdateManyMutationInput {
-  name?: Maybe<String>;
-  introduce?: Maybe<String>;
+export interface FinaIndicatorWhereInput {
+  id?: Maybe<ID_Input>;
+  id_not?: Maybe<ID_Input>;
+  id_in?: Maybe<ID_Input[] | ID_Input>;
+  id_not_in?: Maybe<ID_Input[] | ID_Input>;
+  id_lt?: Maybe<ID_Input>;
+  id_lte?: Maybe<ID_Input>;
+  id_gt?: Maybe<ID_Input>;
+  id_gte?: Maybe<ID_Input>;
+  id_contains?: Maybe<ID_Input>;
+  id_not_contains?: Maybe<ID_Input>;
+  id_starts_with?: Maybe<ID_Input>;
+  id_not_starts_with?: Maybe<ID_Input>;
+  id_ends_with?: Maybe<ID_Input>;
+  id_not_ends_with?: Maybe<ID_Input>;
+  company?: Maybe<CompanyWhereInput>;
+  symbol?: Maybe<String>;
+  symbol_not?: Maybe<String>;
+  symbol_in?: Maybe<String[] | String>;
+  symbol_not_in?: Maybe<String[] | String>;
+  symbol_lt?: Maybe<String>;
+  symbol_lte?: Maybe<String>;
+  symbol_gt?: Maybe<String>;
+  symbol_gte?: Maybe<String>;
+  symbol_contains?: Maybe<String>;
+  symbol_not_contains?: Maybe<String>;
+  symbol_starts_with?: Maybe<String>;
+  symbol_not_starts_with?: Maybe<String>;
+  symbol_ends_with?: Maybe<String>;
+  symbol_not_ends_with?: Maybe<String>;
+  annDate?: Maybe<String>;
+  annDate_not?: Maybe<String>;
+  annDate_in?: Maybe<String[] | String>;
+  annDate_not_in?: Maybe<String[] | String>;
+  annDate_lt?: Maybe<String>;
+  annDate_lte?: Maybe<String>;
+  annDate_gt?: Maybe<String>;
+  annDate_gte?: Maybe<String>;
+  annDate_contains?: Maybe<String>;
+  annDate_not_contains?: Maybe<String>;
+  annDate_starts_with?: Maybe<String>;
+  annDate_not_starts_with?: Maybe<String>;
+  annDate_ends_with?: Maybe<String>;
+  annDate_not_ends_with?: Maybe<String>;
+  endDate?: Maybe<String>;
+  endDate_not?: Maybe<String>;
+  endDate_in?: Maybe<String[] | String>;
+  endDate_not_in?: Maybe<String[] | String>;
+  endDate_lt?: Maybe<String>;
+  endDate_lte?: Maybe<String>;
+  endDate_gt?: Maybe<String>;
+  endDate_gte?: Maybe<String>;
+  endDate_contains?: Maybe<String>;
+  endDate_not_contains?: Maybe<String>;
+  endDate_starts_with?: Maybe<String>;
+  endDate_not_starts_with?: Maybe<String>;
+  endDate_ends_with?: Maybe<String>;
+  endDate_not_ends_with?: Maybe<String>;
+  eps?: Maybe<Float>;
+  eps_not?: Maybe<Float>;
+  eps_in?: Maybe<Float[] | Float>;
+  eps_not_in?: Maybe<Float[] | Float>;
+  eps_lt?: Maybe<Float>;
+  eps_lte?: Maybe<Float>;
+  eps_gt?: Maybe<Float>;
+  eps_gte?: Maybe<Float>;
+  dtEps?: Maybe<Float>;
+  dtEps_not?: Maybe<Float>;
+  dtEps_in?: Maybe<Float[] | Float>;
+  dtEps_not_in?: Maybe<Float[] | Float>;
+  dtEps_lt?: Maybe<Float>;
+  dtEps_lte?: Maybe<Float>;
+  dtEps_gt?: Maybe<Float>;
+  dtEps_gte?: Maybe<Float>;
+  totalRevenuePs?: Maybe<Float>;
+  totalRevenuePs_not?: Maybe<Float>;
+  totalRevenuePs_in?: Maybe<Float[] | Float>;
+  totalRevenuePs_not_in?: Maybe<Float[] | Float>;
+  totalRevenuePs_lt?: Maybe<Float>;
+  totalRevenuePs_lte?: Maybe<Float>;
+  totalRevenuePs_gt?: Maybe<Float>;
+  totalRevenuePs_gte?: Maybe<Float>;
+  revenuePs?: Maybe<Float>;
+  revenuePs_not?: Maybe<Float>;
+  revenuePs_in?: Maybe<Float[] | Float>;
+  revenuePs_not_in?: Maybe<Float[] | Float>;
+  revenuePs_lt?: Maybe<Float>;
+  revenuePs_lte?: Maybe<Float>;
+  revenuePs_gt?: Maybe<Float>;
+  revenuePs_gte?: Maybe<Float>;
+  capitalResePs?: Maybe<Float>;
+  capitalResePs_not?: Maybe<Float>;
+  capitalResePs_in?: Maybe<Float[] | Float>;
+  capitalResePs_not_in?: Maybe<Float[] | Float>;
+  capitalResePs_lt?: Maybe<Float>;
+  capitalResePs_lte?: Maybe<Float>;
+  capitalResePs_gt?: Maybe<Float>;
+  capitalResePs_gte?: Maybe<Float>;
+  surplusResePs?: Maybe<Float>;
+  surplusResePs_not?: Maybe<Float>;
+  surplusResePs_in?: Maybe<Float[] | Float>;
+  surplusResePs_not_in?: Maybe<Float[] | Float>;
+  surplusResePs_lt?: Maybe<Float>;
+  surplusResePs_lte?: Maybe<Float>;
+  surplusResePs_gt?: Maybe<Float>;
+  surplusResePs_gte?: Maybe<Float>;
+  undistProfitPs?: Maybe<Float>;
+  undistProfitPs_not?: Maybe<Float>;
+  undistProfitPs_in?: Maybe<Float[] | Float>;
+  undistProfitPs_not_in?: Maybe<Float[] | Float>;
+  undistProfitPs_lt?: Maybe<Float>;
+  undistProfitPs_lte?: Maybe<Float>;
+  undistProfitPs_gt?: Maybe<Float>;
+  undistProfitPs_gte?: Maybe<Float>;
+  extraItem?: Maybe<Float>;
+  extraItem_not?: Maybe<Float>;
+  extraItem_in?: Maybe<Float[] | Float>;
+  extraItem_not_in?: Maybe<Float[] | Float>;
+  extraItem_lt?: Maybe<Float>;
+  extraItem_lte?: Maybe<Float>;
+  extraItem_gt?: Maybe<Float>;
+  extraItem_gte?: Maybe<Float>;
+  profitDedt?: Maybe<Float>;
+  profitDedt_not?: Maybe<Float>;
+  profitDedt_in?: Maybe<Float[] | Float>;
+  profitDedt_not_in?: Maybe<Float[] | Float>;
+  profitDedt_lt?: Maybe<Float>;
+  profitDedt_lte?: Maybe<Float>;
+  profitDedt_gt?: Maybe<Float>;
+  profitDedt_gte?: Maybe<Float>;
+  grossMargin?: Maybe<Float>;
+  grossMargin_not?: Maybe<Float>;
+  grossMargin_in?: Maybe<Float[] | Float>;
+  grossMargin_not_in?: Maybe<Float[] | Float>;
+  grossMargin_lt?: Maybe<Float>;
+  grossMargin_lte?: Maybe<Float>;
+  grossMargin_gt?: Maybe<Float>;
+  grossMargin_gte?: Maybe<Float>;
+  currentRatio?: Maybe<Float>;
+  currentRatio_not?: Maybe<Float>;
+  currentRatio_in?: Maybe<Float[] | Float>;
+  currentRatio_not_in?: Maybe<Float[] | Float>;
+  currentRatio_lt?: Maybe<Float>;
+  currentRatio_lte?: Maybe<Float>;
+  currentRatio_gt?: Maybe<Float>;
+  currentRatio_gte?: Maybe<Float>;
+  quickRatio?: Maybe<Float>;
+  quickRatio_not?: Maybe<Float>;
+  quickRatio_in?: Maybe<Float[] | Float>;
+  quickRatio_not_in?: Maybe<Float[] | Float>;
+  quickRatio_lt?: Maybe<Float>;
+  quickRatio_lte?: Maybe<Float>;
+  quickRatio_gt?: Maybe<Float>;
+  quickRatio_gte?: Maybe<Float>;
+  cashRatio?: Maybe<Float>;
+  cashRatio_not?: Maybe<Float>;
+  cashRatio_in?: Maybe<Float[] | Float>;
+  cashRatio_not_in?: Maybe<Float[] | Float>;
+  cashRatio_lt?: Maybe<Float>;
+  cashRatio_lte?: Maybe<Float>;
+  cashRatio_gt?: Maybe<Float>;
+  cashRatio_gte?: Maybe<Float>;
+  invturnDays?: Maybe<Float>;
+  invturnDays_not?: Maybe<Float>;
+  invturnDays_in?: Maybe<Float[] | Float>;
+  invturnDays_not_in?: Maybe<Float[] | Float>;
+  invturnDays_lt?: Maybe<Float>;
+  invturnDays_lte?: Maybe<Float>;
+  invturnDays_gt?: Maybe<Float>;
+  invturnDays_gte?: Maybe<Float>;
+  arturnDays?: Maybe<Float>;
+  arturnDays_not?: Maybe<Float>;
+  arturnDays_in?: Maybe<Float[] | Float>;
+  arturnDays_not_in?: Maybe<Float[] | Float>;
+  arturnDays_lt?: Maybe<Float>;
+  arturnDays_lte?: Maybe<Float>;
+  arturnDays_gt?: Maybe<Float>;
+  arturnDays_gte?: Maybe<Float>;
+  invTurn?: Maybe<Float>;
+  invTurn_not?: Maybe<Float>;
+  invTurn_in?: Maybe<Float[] | Float>;
+  invTurn_not_in?: Maybe<Float[] | Float>;
+  invTurn_lt?: Maybe<Float>;
+  invTurn_lte?: Maybe<Float>;
+  invTurn_gt?: Maybe<Float>;
+  invTurn_gte?: Maybe<Float>;
+  arTurn?: Maybe<Float>;
+  arTurn_not?: Maybe<Float>;
+  arTurn_in?: Maybe<Float[] | Float>;
+  arTurn_not_in?: Maybe<Float[] | Float>;
+  arTurn_lt?: Maybe<Float>;
+  arTurn_lte?: Maybe<Float>;
+  arTurn_gt?: Maybe<Float>;
+  arTurn_gte?: Maybe<Float>;
+  caTurn?: Maybe<Float>;
+  caTurn_not?: Maybe<Float>;
+  caTurn_in?: Maybe<Float[] | Float>;
+  caTurn_not_in?: Maybe<Float[] | Float>;
+  caTurn_lt?: Maybe<Float>;
+  caTurn_lte?: Maybe<Float>;
+  caTurn_gt?: Maybe<Float>;
+  caTurn_gte?: Maybe<Float>;
+  faTurn?: Maybe<Float>;
+  faTurn_not?: Maybe<Float>;
+  faTurn_in?: Maybe<Float[] | Float>;
+  faTurn_not_in?: Maybe<Float[] | Float>;
+  faTurn_lt?: Maybe<Float>;
+  faTurn_lte?: Maybe<Float>;
+  faTurn_gt?: Maybe<Float>;
+  faTurn_gte?: Maybe<Float>;
+  assetsTurn?: Maybe<Float>;
+  assetsTurn_not?: Maybe<Float>;
+  assetsTurn_in?: Maybe<Float[] | Float>;
+  assetsTurn_not_in?: Maybe<Float[] | Float>;
+  assetsTurn_lt?: Maybe<Float>;
+  assetsTurn_lte?: Maybe<Float>;
+  assetsTurn_gt?: Maybe<Float>;
+  assetsTurn_gte?: Maybe<Float>;
+  opIncome?: Maybe<Float>;
+  opIncome_not?: Maybe<Float>;
+  opIncome_in?: Maybe<Float[] | Float>;
+  opIncome_not_in?: Maybe<Float[] | Float>;
+  opIncome_lt?: Maybe<Float>;
+  opIncome_lte?: Maybe<Float>;
+  opIncome_gt?: Maybe<Float>;
+  opIncome_gte?: Maybe<Float>;
+  valuechangeIncome?: Maybe<Float>;
+  valuechangeIncome_not?: Maybe<Float>;
+  valuechangeIncome_in?: Maybe<Float[] | Float>;
+  valuechangeIncome_not_in?: Maybe<Float[] | Float>;
+  valuechangeIncome_lt?: Maybe<Float>;
+  valuechangeIncome_lte?: Maybe<Float>;
+  valuechangeIncome_gt?: Maybe<Float>;
+  valuechangeIncome_gte?: Maybe<Float>;
+  interstIncome?: Maybe<Float>;
+  interstIncome_not?: Maybe<Float>;
+  interstIncome_in?: Maybe<Float[] | Float>;
+  interstIncome_not_in?: Maybe<Float[] | Float>;
+  interstIncome_lt?: Maybe<Float>;
+  interstIncome_lte?: Maybe<Float>;
+  interstIncome_gt?: Maybe<Float>;
+  interstIncome_gte?: Maybe<Float>;
+  daa?: Maybe<Float>;
+  daa_not?: Maybe<Float>;
+  daa_in?: Maybe<Float[] | Float>;
+  daa_not_in?: Maybe<Float[] | Float>;
+  daa_lt?: Maybe<Float>;
+  daa_lte?: Maybe<Float>;
+  daa_gt?: Maybe<Float>;
+  daa_gte?: Maybe<Float>;
+  ebit?: Maybe<Float>;
+  ebit_not?: Maybe<Float>;
+  ebit_in?: Maybe<Float[] | Float>;
+  ebit_not_in?: Maybe<Float[] | Float>;
+  ebit_lt?: Maybe<Float>;
+  ebit_lte?: Maybe<Float>;
+  ebit_gt?: Maybe<Float>;
+  ebit_gte?: Maybe<Float>;
+  ebitda?: Maybe<Float>;
+  ebitda_not?: Maybe<Float>;
+  ebitda_in?: Maybe<Float[] | Float>;
+  ebitda_not_in?: Maybe<Float[] | Float>;
+  ebitda_lt?: Maybe<Float>;
+  ebitda_lte?: Maybe<Float>;
+  ebitda_gt?: Maybe<Float>;
+  ebitda_gte?: Maybe<Float>;
+  fcff?: Maybe<Float>;
+  fcff_not?: Maybe<Float>;
+  fcff_in?: Maybe<Float[] | Float>;
+  fcff_not_in?: Maybe<Float[] | Float>;
+  fcff_lt?: Maybe<Float>;
+  fcff_lte?: Maybe<Float>;
+  fcff_gt?: Maybe<Float>;
+  fcff_gte?: Maybe<Float>;
+  fcfe?: Maybe<Float>;
+  fcfe_not?: Maybe<Float>;
+  fcfe_in?: Maybe<Float[] | Float>;
+  fcfe_not_in?: Maybe<Float[] | Float>;
+  fcfe_lt?: Maybe<Float>;
+  fcfe_lte?: Maybe<Float>;
+  fcfe_gt?: Maybe<Float>;
+  fcfe_gte?: Maybe<Float>;
+  currentExint?: Maybe<Float>;
+  currentExint_not?: Maybe<Float>;
+  currentExint_in?: Maybe<Float[] | Float>;
+  currentExint_not_in?: Maybe<Float[] | Float>;
+  currentExint_lt?: Maybe<Float>;
+  currentExint_lte?: Maybe<Float>;
+  currentExint_gt?: Maybe<Float>;
+  currentExint_gte?: Maybe<Float>;
+  noncurrentExint?: Maybe<Float>;
+  noncurrentExint_not?: Maybe<Float>;
+  noncurrentExint_in?: Maybe<Float[] | Float>;
+  noncurrentExint_not_in?: Maybe<Float[] | Float>;
+  noncurrentExint_lt?: Maybe<Float>;
+  noncurrentExint_lte?: Maybe<Float>;
+  noncurrentExint_gt?: Maybe<Float>;
+  noncurrentExint_gte?: Maybe<Float>;
+  interestdebt?: Maybe<Float>;
+  interestdebt_not?: Maybe<Float>;
+  interestdebt_in?: Maybe<Float[] | Float>;
+  interestdebt_not_in?: Maybe<Float[] | Float>;
+  interestdebt_lt?: Maybe<Float>;
+  interestdebt_lte?: Maybe<Float>;
+  interestdebt_gt?: Maybe<Float>;
+  interestdebt_gte?: Maybe<Float>;
+  netdebt?: Maybe<Float>;
+  netdebt_not?: Maybe<Float>;
+  netdebt_in?: Maybe<Float[] | Float>;
+  netdebt_not_in?: Maybe<Float[] | Float>;
+  netdebt_lt?: Maybe<Float>;
+  netdebt_lte?: Maybe<Float>;
+  netdebt_gt?: Maybe<Float>;
+  netdebt_gte?: Maybe<Float>;
+  tangibleAsset?: Maybe<Float>;
+  tangibleAsset_not?: Maybe<Float>;
+  tangibleAsset_in?: Maybe<Float[] | Float>;
+  tangibleAsset_not_in?: Maybe<Float[] | Float>;
+  tangibleAsset_lt?: Maybe<Float>;
+  tangibleAsset_lte?: Maybe<Float>;
+  tangibleAsset_gt?: Maybe<Float>;
+  tangibleAsset_gte?: Maybe<Float>;
+  workingCapital?: Maybe<Float>;
+  workingCapital_not?: Maybe<Float>;
+  workingCapital_in?: Maybe<Float[] | Float>;
+  workingCapital_not_in?: Maybe<Float[] | Float>;
+  workingCapital_lt?: Maybe<Float>;
+  workingCapital_lte?: Maybe<Float>;
+  workingCapital_gt?: Maybe<Float>;
+  workingCapital_gte?: Maybe<Float>;
+  networkingCapital?: Maybe<Float>;
+  networkingCapital_not?: Maybe<Float>;
+  networkingCapital_in?: Maybe<Float[] | Float>;
+  networkingCapital_not_in?: Maybe<Float[] | Float>;
+  networkingCapital_lt?: Maybe<Float>;
+  networkingCapital_lte?: Maybe<Float>;
+  networkingCapital_gt?: Maybe<Float>;
+  networkingCapital_gte?: Maybe<Float>;
+  investCapital?: Maybe<Float>;
+  investCapital_not?: Maybe<Float>;
+  investCapital_in?: Maybe<Float[] | Float>;
+  investCapital_not_in?: Maybe<Float[] | Float>;
+  investCapital_lt?: Maybe<Float>;
+  investCapital_lte?: Maybe<Float>;
+  investCapital_gt?: Maybe<Float>;
+  investCapital_gte?: Maybe<Float>;
+  retainedEarnings?: Maybe<Float>;
+  retainedEarnings_not?: Maybe<Float>;
+  retainedEarnings_in?: Maybe<Float[] | Float>;
+  retainedEarnings_not_in?: Maybe<Float[] | Float>;
+  retainedEarnings_lt?: Maybe<Float>;
+  retainedEarnings_lte?: Maybe<Float>;
+  retainedEarnings_gt?: Maybe<Float>;
+  retainedEarnings_gte?: Maybe<Float>;
+  diluted2Eps?: Maybe<Float>;
+  diluted2Eps_not?: Maybe<Float>;
+  diluted2Eps_in?: Maybe<Float[] | Float>;
+  diluted2Eps_not_in?: Maybe<Float[] | Float>;
+  diluted2Eps_lt?: Maybe<Float>;
+  diluted2Eps_lte?: Maybe<Float>;
+  diluted2Eps_gt?: Maybe<Float>;
+  diluted2Eps_gte?: Maybe<Float>;
+  bps?: Maybe<Float>;
+  bps_not?: Maybe<Float>;
+  bps_in?: Maybe<Float[] | Float>;
+  bps_not_in?: Maybe<Float[] | Float>;
+  bps_lt?: Maybe<Float>;
+  bps_lte?: Maybe<Float>;
+  bps_gt?: Maybe<Float>;
+  bps_gte?: Maybe<Float>;
+  ocfps?: Maybe<Float>;
+  ocfps_not?: Maybe<Float>;
+  ocfps_in?: Maybe<Float[] | Float>;
+  ocfps_not_in?: Maybe<Float[] | Float>;
+  ocfps_lt?: Maybe<Float>;
+  ocfps_lte?: Maybe<Float>;
+  ocfps_gt?: Maybe<Float>;
+  ocfps_gte?: Maybe<Float>;
+  retainedps?: Maybe<Float>;
+  retainedps_not?: Maybe<Float>;
+  retainedps_in?: Maybe<Float[] | Float>;
+  retainedps_not_in?: Maybe<Float[] | Float>;
+  retainedps_lt?: Maybe<Float>;
+  retainedps_lte?: Maybe<Float>;
+  retainedps_gt?: Maybe<Float>;
+  retainedps_gte?: Maybe<Float>;
+  cfps?: Maybe<Float>;
+  cfps_not?: Maybe<Float>;
+  cfps_in?: Maybe<Float[] | Float>;
+  cfps_not_in?: Maybe<Float[] | Float>;
+  cfps_lt?: Maybe<Float>;
+  cfps_lte?: Maybe<Float>;
+  cfps_gt?: Maybe<Float>;
+  cfps_gte?: Maybe<Float>;
+  ebitPs?: Maybe<Float>;
+  ebitPs_not?: Maybe<Float>;
+  ebitPs_in?: Maybe<Float[] | Float>;
+  ebitPs_not_in?: Maybe<Float[] | Float>;
+  ebitPs_lt?: Maybe<Float>;
+  ebitPs_lte?: Maybe<Float>;
+  ebitPs_gt?: Maybe<Float>;
+  ebitPs_gte?: Maybe<Float>;
+  fcffPs?: Maybe<Float>;
+  fcffPs_not?: Maybe<Float>;
+  fcffPs_in?: Maybe<Float[] | Float>;
+  fcffPs_not_in?: Maybe<Float[] | Float>;
+  fcffPs_lt?: Maybe<Float>;
+  fcffPs_lte?: Maybe<Float>;
+  fcffPs_gt?: Maybe<Float>;
+  fcffPs_gte?: Maybe<Float>;
+  fcfePs?: Maybe<Float>;
+  fcfePs_not?: Maybe<Float>;
+  fcfePs_in?: Maybe<Float[] | Float>;
+  fcfePs_not_in?: Maybe<Float[] | Float>;
+  fcfePs_lt?: Maybe<Float>;
+  fcfePs_lte?: Maybe<Float>;
+  fcfePs_gt?: Maybe<Float>;
+  fcfePs_gte?: Maybe<Float>;
+  netprofitMargin?: Maybe<Float>;
+  netprofitMargin_not?: Maybe<Float>;
+  netprofitMargin_in?: Maybe<Float[] | Float>;
+  netprofitMargin_not_in?: Maybe<Float[] | Float>;
+  netprofitMargin_lt?: Maybe<Float>;
+  netprofitMargin_lte?: Maybe<Float>;
+  netprofitMargin_gt?: Maybe<Float>;
+  netprofitMargin_gte?: Maybe<Float>;
+  grossprofitMargin?: Maybe<Float>;
+  grossprofitMargin_not?: Maybe<Float>;
+  grossprofitMargin_in?: Maybe<Float[] | Float>;
+  grossprofitMargin_not_in?: Maybe<Float[] | Float>;
+  grossprofitMargin_lt?: Maybe<Float>;
+  grossprofitMargin_lte?: Maybe<Float>;
+  grossprofitMargin_gt?: Maybe<Float>;
+  grossprofitMargin_gte?: Maybe<Float>;
+  cogsOfSales?: Maybe<Float>;
+  cogsOfSales_not?: Maybe<Float>;
+  cogsOfSales_in?: Maybe<Float[] | Float>;
+  cogsOfSales_not_in?: Maybe<Float[] | Float>;
+  cogsOfSales_lt?: Maybe<Float>;
+  cogsOfSales_lte?: Maybe<Float>;
+  cogsOfSales_gt?: Maybe<Float>;
+  cogsOfSales_gte?: Maybe<Float>;
+  expenseOfSales?: Maybe<Float>;
+  expenseOfSales_not?: Maybe<Float>;
+  expenseOfSales_in?: Maybe<Float[] | Float>;
+  expenseOfSales_not_in?: Maybe<Float[] | Float>;
+  expenseOfSales_lt?: Maybe<Float>;
+  expenseOfSales_lte?: Maybe<Float>;
+  expenseOfSales_gt?: Maybe<Float>;
+  expenseOfSales_gte?: Maybe<Float>;
+  profitToGr?: Maybe<Float>;
+  profitToGr_not?: Maybe<Float>;
+  profitToGr_in?: Maybe<Float[] | Float>;
+  profitToGr_not_in?: Maybe<Float[] | Float>;
+  profitToGr_lt?: Maybe<Float>;
+  profitToGr_lte?: Maybe<Float>;
+  profitToGr_gt?: Maybe<Float>;
+  profitToGr_gte?: Maybe<Float>;
+  saleexpToGr?: Maybe<Float>;
+  saleexpToGr_not?: Maybe<Float>;
+  saleexpToGr_in?: Maybe<Float[] | Float>;
+  saleexpToGr_not_in?: Maybe<Float[] | Float>;
+  saleexpToGr_lt?: Maybe<Float>;
+  saleexpToGr_lte?: Maybe<Float>;
+  saleexpToGr_gt?: Maybe<Float>;
+  saleexpToGr_gte?: Maybe<Float>;
+  adminexpOfGr?: Maybe<Float>;
+  adminexpOfGr_not?: Maybe<Float>;
+  adminexpOfGr_in?: Maybe<Float[] | Float>;
+  adminexpOfGr_not_in?: Maybe<Float[] | Float>;
+  adminexpOfGr_lt?: Maybe<Float>;
+  adminexpOfGr_lte?: Maybe<Float>;
+  adminexpOfGr_gt?: Maybe<Float>;
+  adminexpOfGr_gte?: Maybe<Float>;
+  finaexpOfGr?: Maybe<Float>;
+  finaexpOfGr_not?: Maybe<Float>;
+  finaexpOfGr_in?: Maybe<Float[] | Float>;
+  finaexpOfGr_not_in?: Maybe<Float[] | Float>;
+  finaexpOfGr_lt?: Maybe<Float>;
+  finaexpOfGr_lte?: Maybe<Float>;
+  finaexpOfGr_gt?: Maybe<Float>;
+  finaexpOfGr_gte?: Maybe<Float>;
+  impaiTtm?: Maybe<Float>;
+  impaiTtm_not?: Maybe<Float>;
+  impaiTtm_in?: Maybe<Float[] | Float>;
+  impaiTtm_not_in?: Maybe<Float[] | Float>;
+  impaiTtm_lt?: Maybe<Float>;
+  impaiTtm_lte?: Maybe<Float>;
+  impaiTtm_gt?: Maybe<Float>;
+  impaiTtm_gte?: Maybe<Float>;
+  gcOfGr?: Maybe<Float>;
+  gcOfGr_not?: Maybe<Float>;
+  gcOfGr_in?: Maybe<Float[] | Float>;
+  gcOfGr_not_in?: Maybe<Float[] | Float>;
+  gcOfGr_lt?: Maybe<Float>;
+  gcOfGr_lte?: Maybe<Float>;
+  gcOfGr_gt?: Maybe<Float>;
+  gcOfGr_gte?: Maybe<Float>;
+  opOfGr?: Maybe<Float>;
+  opOfGr_not?: Maybe<Float>;
+  opOfGr_in?: Maybe<Float[] | Float>;
+  opOfGr_not_in?: Maybe<Float[] | Float>;
+  opOfGr_lt?: Maybe<Float>;
+  opOfGr_lte?: Maybe<Float>;
+  opOfGr_gt?: Maybe<Float>;
+  opOfGr_gte?: Maybe<Float>;
+  ebitOfGr?: Maybe<Float>;
+  ebitOfGr_not?: Maybe<Float>;
+  ebitOfGr_in?: Maybe<Float[] | Float>;
+  ebitOfGr_not_in?: Maybe<Float[] | Float>;
+  ebitOfGr_lt?: Maybe<Float>;
+  ebitOfGr_lte?: Maybe<Float>;
+  ebitOfGr_gt?: Maybe<Float>;
+  ebitOfGr_gte?: Maybe<Float>;
+  roe?: Maybe<Float>;
+  roe_not?: Maybe<Float>;
+  roe_in?: Maybe<Float[] | Float>;
+  roe_not_in?: Maybe<Float[] | Float>;
+  roe_lt?: Maybe<Float>;
+  roe_lte?: Maybe<Float>;
+  roe_gt?: Maybe<Float>;
+  roe_gte?: Maybe<Float>;
+  roeWaa?: Maybe<Float>;
+  roeWaa_not?: Maybe<Float>;
+  roeWaa_in?: Maybe<Float[] | Float>;
+  roeWaa_not_in?: Maybe<Float[] | Float>;
+  roeWaa_lt?: Maybe<Float>;
+  roeWaa_lte?: Maybe<Float>;
+  roeWaa_gt?: Maybe<Float>;
+  roeWaa_gte?: Maybe<Float>;
+  roeDt?: Maybe<Float>;
+  roeDt_not?: Maybe<Float>;
+  roeDt_in?: Maybe<Float[] | Float>;
+  roeDt_not_in?: Maybe<Float[] | Float>;
+  roeDt_lt?: Maybe<Float>;
+  roeDt_lte?: Maybe<Float>;
+  roeDt_gt?: Maybe<Float>;
+  roeDt_gte?: Maybe<Float>;
+  roa?: Maybe<Float>;
+  roa_not?: Maybe<Float>;
+  roa_in?: Maybe<Float[] | Float>;
+  roa_not_in?: Maybe<Float[] | Float>;
+  roa_lt?: Maybe<Float>;
+  roa_lte?: Maybe<Float>;
+  roa_gt?: Maybe<Float>;
+  roa_gte?: Maybe<Float>;
+  npta?: Maybe<Float>;
+  npta_not?: Maybe<Float>;
+  npta_in?: Maybe<Float[] | Float>;
+  npta_not_in?: Maybe<Float[] | Float>;
+  npta_lt?: Maybe<Float>;
+  npta_lte?: Maybe<Float>;
+  npta_gt?: Maybe<Float>;
+  npta_gte?: Maybe<Float>;
+  roic?: Maybe<Float>;
+  roic_not?: Maybe<Float>;
+  roic_in?: Maybe<Float[] | Float>;
+  roic_not_in?: Maybe<Float[] | Float>;
+  roic_lt?: Maybe<Float>;
+  roic_lte?: Maybe<Float>;
+  roic_gt?: Maybe<Float>;
+  roic_gte?: Maybe<Float>;
+  roeYearly?: Maybe<Float>;
+  roeYearly_not?: Maybe<Float>;
+  roeYearly_in?: Maybe<Float[] | Float>;
+  roeYearly_not_in?: Maybe<Float[] | Float>;
+  roeYearly_lt?: Maybe<Float>;
+  roeYearly_lte?: Maybe<Float>;
+  roeYearly_gt?: Maybe<Float>;
+  roeYearly_gte?: Maybe<Float>;
+  roa2Yearly?: Maybe<Float>;
+  roa2Yearly_not?: Maybe<Float>;
+  roa2Yearly_in?: Maybe<Float[] | Float>;
+  roa2Yearly_not_in?: Maybe<Float[] | Float>;
+  roa2Yearly_lt?: Maybe<Float>;
+  roa2Yearly_lte?: Maybe<Float>;
+  roa2Yearly_gt?: Maybe<Float>;
+  roa2Yearly_gte?: Maybe<Float>;
+  roeAvg?: Maybe<Float>;
+  roeAvg_not?: Maybe<Float>;
+  roeAvg_in?: Maybe<Float[] | Float>;
+  roeAvg_not_in?: Maybe<Float[] | Float>;
+  roeAvg_lt?: Maybe<Float>;
+  roeAvg_lte?: Maybe<Float>;
+  roeAvg_gt?: Maybe<Float>;
+  roeAvg_gte?: Maybe<Float>;
+  opincomeOfEbt?: Maybe<Float>;
+  opincomeOfEbt_not?: Maybe<Float>;
+  opincomeOfEbt_in?: Maybe<Float[] | Float>;
+  opincomeOfEbt_not_in?: Maybe<Float[] | Float>;
+  opincomeOfEbt_lt?: Maybe<Float>;
+  opincomeOfEbt_lte?: Maybe<Float>;
+  opincomeOfEbt_gt?: Maybe<Float>;
+  opincomeOfEbt_gte?: Maybe<Float>;
+  investincomeOfEbt?: Maybe<Float>;
+  investincomeOfEbt_not?: Maybe<Float>;
+  investincomeOfEbt_in?: Maybe<Float[] | Float>;
+  investincomeOfEbt_not_in?: Maybe<Float[] | Float>;
+  investincomeOfEbt_lt?: Maybe<Float>;
+  investincomeOfEbt_lte?: Maybe<Float>;
+  investincomeOfEbt_gt?: Maybe<Float>;
+  investincomeOfEbt_gte?: Maybe<Float>;
+  nOpProfitOfEbt?: Maybe<Float>;
+  nOpProfitOfEbt_not?: Maybe<Float>;
+  nOpProfitOfEbt_in?: Maybe<Float[] | Float>;
+  nOpProfitOfEbt_not_in?: Maybe<Float[] | Float>;
+  nOpProfitOfEbt_lt?: Maybe<Float>;
+  nOpProfitOfEbt_lte?: Maybe<Float>;
+  nOpProfitOfEbt_gt?: Maybe<Float>;
+  nOpProfitOfEbt_gte?: Maybe<Float>;
+  taxToEbt?: Maybe<Float>;
+  taxToEbt_not?: Maybe<Float>;
+  taxToEbt_in?: Maybe<Float[] | Float>;
+  taxToEbt_not_in?: Maybe<Float[] | Float>;
+  taxToEbt_lt?: Maybe<Float>;
+  taxToEbt_lte?: Maybe<Float>;
+  taxToEbt_gt?: Maybe<Float>;
+  taxToEbt_gte?: Maybe<Float>;
+  dtprofitToProfit?: Maybe<Float>;
+  dtprofitToProfit_not?: Maybe<Float>;
+  dtprofitToProfit_in?: Maybe<Float[] | Float>;
+  dtprofitToProfit_not_in?: Maybe<Float[] | Float>;
+  dtprofitToProfit_lt?: Maybe<Float>;
+  dtprofitToProfit_lte?: Maybe<Float>;
+  dtprofitToProfit_gt?: Maybe<Float>;
+  dtprofitToProfit_gte?: Maybe<Float>;
+  salescashToOr?: Maybe<Float>;
+  salescashToOr_not?: Maybe<Float>;
+  salescashToOr_in?: Maybe<Float[] | Float>;
+  salescashToOr_not_in?: Maybe<Float[] | Float>;
+  salescashToOr_lt?: Maybe<Float>;
+  salescashToOr_lte?: Maybe<Float>;
+  salescashToOr_gt?: Maybe<Float>;
+  salescashToOr_gte?: Maybe<Float>;
+  ocfToOr?: Maybe<Float>;
+  ocfToOr_not?: Maybe<Float>;
+  ocfToOr_in?: Maybe<Float[] | Float>;
+  ocfToOr_not_in?: Maybe<Float[] | Float>;
+  ocfToOr_lt?: Maybe<Float>;
+  ocfToOr_lte?: Maybe<Float>;
+  ocfToOr_gt?: Maybe<Float>;
+  ocfToOr_gte?: Maybe<Float>;
+  ocfToOpincome?: Maybe<Float>;
+  ocfToOpincome_not?: Maybe<Float>;
+  ocfToOpincome_in?: Maybe<Float[] | Float>;
+  ocfToOpincome_not_in?: Maybe<Float[] | Float>;
+  ocfToOpincome_lt?: Maybe<Float>;
+  ocfToOpincome_lte?: Maybe<Float>;
+  ocfToOpincome_gt?: Maybe<Float>;
+  ocfToOpincome_gte?: Maybe<Float>;
+  capitalizedToDa?: Maybe<Float>;
+  capitalizedToDa_not?: Maybe<Float>;
+  capitalizedToDa_in?: Maybe<Float[] | Float>;
+  capitalizedToDa_not_in?: Maybe<Float[] | Float>;
+  capitalizedToDa_lt?: Maybe<Float>;
+  capitalizedToDa_lte?: Maybe<Float>;
+  capitalizedToDa_gt?: Maybe<Float>;
+  capitalizedToDa_gte?: Maybe<Float>;
+  debtToAssets?: Maybe<Float>;
+  debtToAssets_not?: Maybe<Float>;
+  debtToAssets_in?: Maybe<Float[] | Float>;
+  debtToAssets_not_in?: Maybe<Float[] | Float>;
+  debtToAssets_lt?: Maybe<Float>;
+  debtToAssets_lte?: Maybe<Float>;
+  debtToAssets_gt?: Maybe<Float>;
+  debtToAssets_gte?: Maybe<Float>;
+  assetsToEqt?: Maybe<Float>;
+  assetsToEqt_not?: Maybe<Float>;
+  assetsToEqt_in?: Maybe<Float[] | Float>;
+  assetsToEqt_not_in?: Maybe<Float[] | Float>;
+  assetsToEqt_lt?: Maybe<Float>;
+  assetsToEqt_lte?: Maybe<Float>;
+  assetsToEqt_gt?: Maybe<Float>;
+  assetsToEqt_gte?: Maybe<Float>;
+  dpAssetsToEqt?: Maybe<Float>;
+  dpAssetsToEqt_not?: Maybe<Float>;
+  dpAssetsToEqt_in?: Maybe<Float[] | Float>;
+  dpAssetsToEqt_not_in?: Maybe<Float[] | Float>;
+  dpAssetsToEqt_lt?: Maybe<Float>;
+  dpAssetsToEqt_lte?: Maybe<Float>;
+  dpAssetsToEqt_gt?: Maybe<Float>;
+  dpAssetsToEqt_gte?: Maybe<Float>;
+  caToAssets?: Maybe<Float>;
+  caToAssets_not?: Maybe<Float>;
+  caToAssets_in?: Maybe<Float[] | Float>;
+  caToAssets_not_in?: Maybe<Float[] | Float>;
+  caToAssets_lt?: Maybe<Float>;
+  caToAssets_lte?: Maybe<Float>;
+  caToAssets_gt?: Maybe<Float>;
+  caToAssets_gte?: Maybe<Float>;
+  ncaToAssets?: Maybe<Float>;
+  ncaToAssets_not?: Maybe<Float>;
+  ncaToAssets_in?: Maybe<Float[] | Float>;
+  ncaToAssets_not_in?: Maybe<Float[] | Float>;
+  ncaToAssets_lt?: Maybe<Float>;
+  ncaToAssets_lte?: Maybe<Float>;
+  ncaToAssets_gt?: Maybe<Float>;
+  ncaToAssets_gte?: Maybe<Float>;
+  tbassetsToTotalassets?: Maybe<Float>;
+  tbassetsToTotalassets_not?: Maybe<Float>;
+  tbassetsToTotalassets_in?: Maybe<Float[] | Float>;
+  tbassetsToTotalassets_not_in?: Maybe<Float[] | Float>;
+  tbassetsToTotalassets_lt?: Maybe<Float>;
+  tbassetsToTotalassets_lte?: Maybe<Float>;
+  tbassetsToTotalassets_gt?: Maybe<Float>;
+  tbassetsToTotalassets_gte?: Maybe<Float>;
+  intToTalcap?: Maybe<Float>;
+  intToTalcap_not?: Maybe<Float>;
+  intToTalcap_in?: Maybe<Float[] | Float>;
+  intToTalcap_not_in?: Maybe<Float[] | Float>;
+  intToTalcap_lt?: Maybe<Float>;
+  intToTalcap_lte?: Maybe<Float>;
+  intToTalcap_gt?: Maybe<Float>;
+  intToTalcap_gte?: Maybe<Float>;
+  eqtToTalcapital?: Maybe<Float>;
+  eqtToTalcapital_not?: Maybe<Float>;
+  eqtToTalcapital_in?: Maybe<Float[] | Float>;
+  eqtToTalcapital_not_in?: Maybe<Float[] | Float>;
+  eqtToTalcapital_lt?: Maybe<Float>;
+  eqtToTalcapital_lte?: Maybe<Float>;
+  eqtToTalcapital_gt?: Maybe<Float>;
+  eqtToTalcapital_gte?: Maybe<Float>;
+  currentdebtToDebt?: Maybe<Float>;
+  currentdebtToDebt_not?: Maybe<Float>;
+  currentdebtToDebt_in?: Maybe<Float[] | Float>;
+  currentdebtToDebt_not_in?: Maybe<Float[] | Float>;
+  currentdebtToDebt_lt?: Maybe<Float>;
+  currentdebtToDebt_lte?: Maybe<Float>;
+  currentdebtToDebt_gt?: Maybe<Float>;
+  currentdebtToDebt_gte?: Maybe<Float>;
+  longdebToDebt?: Maybe<Float>;
+  longdebToDebt_not?: Maybe<Float>;
+  longdebToDebt_in?: Maybe<Float[] | Float>;
+  longdebToDebt_not_in?: Maybe<Float[] | Float>;
+  longdebToDebt_lt?: Maybe<Float>;
+  longdebToDebt_lte?: Maybe<Float>;
+  longdebToDebt_gt?: Maybe<Float>;
+  longdebToDebt_gte?: Maybe<Float>;
+  ocfToShortdebt?: Maybe<Float>;
+  ocfToShortdebt_not?: Maybe<Float>;
+  ocfToShortdebt_in?: Maybe<Float[] | Float>;
+  ocfToShortdebt_not_in?: Maybe<Float[] | Float>;
+  ocfToShortdebt_lt?: Maybe<Float>;
+  ocfToShortdebt_lte?: Maybe<Float>;
+  ocfToShortdebt_gt?: Maybe<Float>;
+  ocfToShortdebt_gte?: Maybe<Float>;
+  debtToEqt?: Maybe<Float>;
+  debtToEqt_not?: Maybe<Float>;
+  debtToEqt_in?: Maybe<Float[] | Float>;
+  debtToEqt_not_in?: Maybe<Float[] | Float>;
+  debtToEqt_lt?: Maybe<Float>;
+  debtToEqt_lte?: Maybe<Float>;
+  debtToEqt_gt?: Maybe<Float>;
+  debtToEqt_gte?: Maybe<Float>;
+  eqtToDebt?: Maybe<Float>;
+  eqtToDebt_not?: Maybe<Float>;
+  eqtToDebt_in?: Maybe<Float[] | Float>;
+  eqtToDebt_not_in?: Maybe<Float[] | Float>;
+  eqtToDebt_lt?: Maybe<Float>;
+  eqtToDebt_lte?: Maybe<Float>;
+  eqtToDebt_gt?: Maybe<Float>;
+  eqtToDebt_gte?: Maybe<Float>;
+  eqtToInterestdebt?: Maybe<Float>;
+  eqtToInterestdebt_not?: Maybe<Float>;
+  eqtToInterestdebt_in?: Maybe<Float[] | Float>;
+  eqtToInterestdebt_not_in?: Maybe<Float[] | Float>;
+  eqtToInterestdebt_lt?: Maybe<Float>;
+  eqtToInterestdebt_lte?: Maybe<Float>;
+  eqtToInterestdebt_gt?: Maybe<Float>;
+  eqtToInterestdebt_gte?: Maybe<Float>;
+  tangibleassetToDebt?: Maybe<Float>;
+  tangibleassetToDebt_not?: Maybe<Float>;
+  tangibleassetToDebt_in?: Maybe<Float[] | Float>;
+  tangibleassetToDebt_not_in?: Maybe<Float[] | Float>;
+  tangibleassetToDebt_lt?: Maybe<Float>;
+  tangibleassetToDebt_lte?: Maybe<Float>;
+  tangibleassetToDebt_gt?: Maybe<Float>;
+  tangibleassetToDebt_gte?: Maybe<Float>;
+  tangassetToIntdebt?: Maybe<Float>;
+  tangassetToIntdebt_not?: Maybe<Float>;
+  tangassetToIntdebt_in?: Maybe<Float[] | Float>;
+  tangassetToIntdebt_not_in?: Maybe<Float[] | Float>;
+  tangassetToIntdebt_lt?: Maybe<Float>;
+  tangassetToIntdebt_lte?: Maybe<Float>;
+  tangassetToIntdebt_gt?: Maybe<Float>;
+  tangassetToIntdebt_gte?: Maybe<Float>;
+  tangibleassetToNetdebt?: Maybe<Float>;
+  tangibleassetToNetdebt_not?: Maybe<Float>;
+  tangibleassetToNetdebt_in?: Maybe<Float[] | Float>;
+  tangibleassetToNetdebt_not_in?: Maybe<Float[] | Float>;
+  tangibleassetToNetdebt_lt?: Maybe<Float>;
+  tangibleassetToNetdebt_lte?: Maybe<Float>;
+  tangibleassetToNetdebt_gt?: Maybe<Float>;
+  tangibleassetToNetdebt_gte?: Maybe<Float>;
+  ocfToDebt?: Maybe<Float>;
+  ocfToDebt_not?: Maybe<Float>;
+  ocfToDebt_in?: Maybe<Float[] | Float>;
+  ocfToDebt_not_in?: Maybe<Float[] | Float>;
+  ocfToDebt_lt?: Maybe<Float>;
+  ocfToDebt_lte?: Maybe<Float>;
+  ocfToDebt_gt?: Maybe<Float>;
+  ocfToDebt_gte?: Maybe<Float>;
+  ocfToInterestdebt?: Maybe<Float>;
+  ocfToInterestdebt_not?: Maybe<Float>;
+  ocfToInterestdebt_in?: Maybe<Float[] | Float>;
+  ocfToInterestdebt_not_in?: Maybe<Float[] | Float>;
+  ocfToInterestdebt_lt?: Maybe<Float>;
+  ocfToInterestdebt_lte?: Maybe<Float>;
+  ocfToInterestdebt_gt?: Maybe<Float>;
+  ocfToInterestdebt_gte?: Maybe<Float>;
+  ocfToNetdebt?: Maybe<Float>;
+  ocfToNetdebt_not?: Maybe<Float>;
+  ocfToNetdebt_in?: Maybe<Float[] | Float>;
+  ocfToNetdebt_not_in?: Maybe<Float[] | Float>;
+  ocfToNetdebt_lt?: Maybe<Float>;
+  ocfToNetdebt_lte?: Maybe<Float>;
+  ocfToNetdebt_gt?: Maybe<Float>;
+  ocfToNetdebt_gte?: Maybe<Float>;
+  ebitToInterest?: Maybe<Float>;
+  ebitToInterest_not?: Maybe<Float>;
+  ebitToInterest_in?: Maybe<Float[] | Float>;
+  ebitToInterest_not_in?: Maybe<Float[] | Float>;
+  ebitToInterest_lt?: Maybe<Float>;
+  ebitToInterest_lte?: Maybe<Float>;
+  ebitToInterest_gt?: Maybe<Float>;
+  ebitToInterest_gte?: Maybe<Float>;
+  longdebtToWorkingcapital?: Maybe<Float>;
+  longdebtToWorkingcapital_not?: Maybe<Float>;
+  longdebtToWorkingcapital_in?: Maybe<Float[] | Float>;
+  longdebtToWorkingcapital_not_in?: Maybe<Float[] | Float>;
+  longdebtToWorkingcapital_lt?: Maybe<Float>;
+  longdebtToWorkingcapital_lte?: Maybe<Float>;
+  longdebtToWorkingcapital_gt?: Maybe<Float>;
+  longdebtToWorkingcapital_gte?: Maybe<Float>;
+  ebitdaToDebt?: Maybe<Float>;
+  ebitdaToDebt_not?: Maybe<Float>;
+  ebitdaToDebt_in?: Maybe<Float[] | Float>;
+  ebitdaToDebt_not_in?: Maybe<Float[] | Float>;
+  ebitdaToDebt_lt?: Maybe<Float>;
+  ebitdaToDebt_lte?: Maybe<Float>;
+  ebitdaToDebt_gt?: Maybe<Float>;
+  ebitdaToDebt_gte?: Maybe<Float>;
+  turnDays?: Maybe<Float>;
+  turnDays_not?: Maybe<Float>;
+  turnDays_in?: Maybe<Float[] | Float>;
+  turnDays_not_in?: Maybe<Float[] | Float>;
+  turnDays_lt?: Maybe<Float>;
+  turnDays_lte?: Maybe<Float>;
+  turnDays_gt?: Maybe<Float>;
+  turnDays_gte?: Maybe<Float>;
+  roaYearly?: Maybe<Float>;
+  roaYearly_not?: Maybe<Float>;
+  roaYearly_in?: Maybe<Float[] | Float>;
+  roaYearly_not_in?: Maybe<Float[] | Float>;
+  roaYearly_lt?: Maybe<Float>;
+  roaYearly_lte?: Maybe<Float>;
+  roaYearly_gt?: Maybe<Float>;
+  roaYearly_gte?: Maybe<Float>;
+  roaDp?: Maybe<Float>;
+  roaDp_not?: Maybe<Float>;
+  roaDp_in?: Maybe<Float[] | Float>;
+  roaDp_not_in?: Maybe<Float[] | Float>;
+  roaDp_lt?: Maybe<Float>;
+  roaDp_lte?: Maybe<Float>;
+  roaDp_gt?: Maybe<Float>;
+  roaDp_gte?: Maybe<Float>;
+  fixedAssets?: Maybe<Float>;
+  fixedAssets_not?: Maybe<Float>;
+  fixedAssets_in?: Maybe<Float[] | Float>;
+  fixedAssets_not_in?: Maybe<Float[] | Float>;
+  fixedAssets_lt?: Maybe<Float>;
+  fixedAssets_lte?: Maybe<Float>;
+  fixedAssets_gt?: Maybe<Float>;
+  fixedAssets_gte?: Maybe<Float>;
+  profitPrefinExp?: Maybe<Float>;
+  profitPrefinExp_not?: Maybe<Float>;
+  profitPrefinExp_in?: Maybe<Float[] | Float>;
+  profitPrefinExp_not_in?: Maybe<Float[] | Float>;
+  profitPrefinExp_lt?: Maybe<Float>;
+  profitPrefinExp_lte?: Maybe<Float>;
+  profitPrefinExp_gt?: Maybe<Float>;
+  profitPrefinExp_gte?: Maybe<Float>;
+  nonOpProfit?: Maybe<Float>;
+  nonOpProfit_not?: Maybe<Float>;
+  nonOpProfit_in?: Maybe<Float[] | Float>;
+  nonOpProfit_not_in?: Maybe<Float[] | Float>;
+  nonOpProfit_lt?: Maybe<Float>;
+  nonOpProfit_lte?: Maybe<Float>;
+  nonOpProfit_gt?: Maybe<Float>;
+  nonOpProfit_gte?: Maybe<Float>;
+  opToEbt?: Maybe<Float>;
+  opToEbt_not?: Maybe<Float>;
+  opToEbt_in?: Maybe<Float[] | Float>;
+  opToEbt_not_in?: Maybe<Float[] | Float>;
+  opToEbt_lt?: Maybe<Float>;
+  opToEbt_lte?: Maybe<Float>;
+  opToEbt_gt?: Maybe<Float>;
+  opToEbt_gte?: Maybe<Float>;
+  nopToEbt?: Maybe<Float>;
+  nopToEbt_not?: Maybe<Float>;
+  nopToEbt_in?: Maybe<Float[] | Float>;
+  nopToEbt_not_in?: Maybe<Float[] | Float>;
+  nopToEbt_lt?: Maybe<Float>;
+  nopToEbt_lte?: Maybe<Float>;
+  nopToEbt_gt?: Maybe<Float>;
+  nopToEbt_gte?: Maybe<Float>;
+  ocfToProfit?: Maybe<Float>;
+  ocfToProfit_not?: Maybe<Float>;
+  ocfToProfit_in?: Maybe<Float[] | Float>;
+  ocfToProfit_not_in?: Maybe<Float[] | Float>;
+  ocfToProfit_lt?: Maybe<Float>;
+  ocfToProfit_lte?: Maybe<Float>;
+  ocfToProfit_gt?: Maybe<Float>;
+  ocfToProfit_gte?: Maybe<Float>;
+  cashToLiqdebt?: Maybe<Float>;
+  cashToLiqdebt_not?: Maybe<Float>;
+  cashToLiqdebt_in?: Maybe<Float[] | Float>;
+  cashToLiqdebt_not_in?: Maybe<Float[] | Float>;
+  cashToLiqdebt_lt?: Maybe<Float>;
+  cashToLiqdebt_lte?: Maybe<Float>;
+  cashToLiqdebt_gt?: Maybe<Float>;
+  cashToLiqdebt_gte?: Maybe<Float>;
+  cashToLiqdebtWithinterest?: Maybe<Float>;
+  cashToLiqdebtWithinterest_not?: Maybe<Float>;
+  cashToLiqdebtWithinterest_in?: Maybe<Float[] | Float>;
+  cashToLiqdebtWithinterest_not_in?: Maybe<Float[] | Float>;
+  cashToLiqdebtWithinterest_lt?: Maybe<Float>;
+  cashToLiqdebtWithinterest_lte?: Maybe<Float>;
+  cashToLiqdebtWithinterest_gt?: Maybe<Float>;
+  cashToLiqdebtWithinterest_gte?: Maybe<Float>;
+  opToLiqdebt?: Maybe<Float>;
+  opToLiqdebt_not?: Maybe<Float>;
+  opToLiqdebt_in?: Maybe<Float[] | Float>;
+  opToLiqdebt_not_in?: Maybe<Float[] | Float>;
+  opToLiqdebt_lt?: Maybe<Float>;
+  opToLiqdebt_lte?: Maybe<Float>;
+  opToLiqdebt_gt?: Maybe<Float>;
+  opToLiqdebt_gte?: Maybe<Float>;
+  opToDebt?: Maybe<Float>;
+  opToDebt_not?: Maybe<Float>;
+  opToDebt_in?: Maybe<Float[] | Float>;
+  opToDebt_not_in?: Maybe<Float[] | Float>;
+  opToDebt_lt?: Maybe<Float>;
+  opToDebt_lte?: Maybe<Float>;
+  opToDebt_gt?: Maybe<Float>;
+  opToDebt_gte?: Maybe<Float>;
+  roicYearly?: Maybe<Float>;
+  roicYearly_not?: Maybe<Float>;
+  roicYearly_in?: Maybe<Float[] | Float>;
+  roicYearly_not_in?: Maybe<Float[] | Float>;
+  roicYearly_lt?: Maybe<Float>;
+  roicYearly_lte?: Maybe<Float>;
+  roicYearly_gt?: Maybe<Float>;
+  roicYearly_gte?: Maybe<Float>;
+  totalFaTrun?: Maybe<Float>;
+  totalFaTrun_not?: Maybe<Float>;
+  totalFaTrun_in?: Maybe<Float[] | Float>;
+  totalFaTrun_not_in?: Maybe<Float[] | Float>;
+  totalFaTrun_lt?: Maybe<Float>;
+  totalFaTrun_lte?: Maybe<Float>;
+  totalFaTrun_gt?: Maybe<Float>;
+  totalFaTrun_gte?: Maybe<Float>;
+  profitToOp?: Maybe<Float>;
+  profitToOp_not?: Maybe<Float>;
+  profitToOp_in?: Maybe<Float[] | Float>;
+  profitToOp_not_in?: Maybe<Float[] | Float>;
+  profitToOp_lt?: Maybe<Float>;
+  profitToOp_lte?: Maybe<Float>;
+  profitToOp_gt?: Maybe<Float>;
+  profitToOp_gte?: Maybe<Float>;
+  qOpincome?: Maybe<Float>;
+  qOpincome_not?: Maybe<Float>;
+  qOpincome_in?: Maybe<Float[] | Float>;
+  qOpincome_not_in?: Maybe<Float[] | Float>;
+  qOpincome_lt?: Maybe<Float>;
+  qOpincome_lte?: Maybe<Float>;
+  qOpincome_gt?: Maybe<Float>;
+  qOpincome_gte?: Maybe<Float>;
+  qInvestincome?: Maybe<Float>;
+  qInvestincome_not?: Maybe<Float>;
+  qInvestincome_in?: Maybe<Float[] | Float>;
+  qInvestincome_not_in?: Maybe<Float[] | Float>;
+  qInvestincome_lt?: Maybe<Float>;
+  qInvestincome_lte?: Maybe<Float>;
+  qInvestincome_gt?: Maybe<Float>;
+  qInvestincome_gte?: Maybe<Float>;
+  qDtprofit?: Maybe<Float>;
+  qDtprofit_not?: Maybe<Float>;
+  qDtprofit_in?: Maybe<Float[] | Float>;
+  qDtprofit_not_in?: Maybe<Float[] | Float>;
+  qDtprofit_lt?: Maybe<Float>;
+  qDtprofit_lte?: Maybe<Float>;
+  qDtprofit_gt?: Maybe<Float>;
+  qDtprofit_gte?: Maybe<Float>;
+  qEps?: Maybe<Float>;
+  qEps_not?: Maybe<Float>;
+  qEps_in?: Maybe<Float[] | Float>;
+  qEps_not_in?: Maybe<Float[] | Float>;
+  qEps_lt?: Maybe<Float>;
+  qEps_lte?: Maybe<Float>;
+  qEps_gt?: Maybe<Float>;
+  qEps_gte?: Maybe<Float>;
+  qNetprofitMargin?: Maybe<Float>;
+  qNetprofitMargin_not?: Maybe<Float>;
+  qNetprofitMargin_in?: Maybe<Float[] | Float>;
+  qNetprofitMargin_not_in?: Maybe<Float[] | Float>;
+  qNetprofitMargin_lt?: Maybe<Float>;
+  qNetprofitMargin_lte?: Maybe<Float>;
+  qNetprofitMargin_gt?: Maybe<Float>;
+  qNetprofitMargin_gte?: Maybe<Float>;
+  qGsprofitMargin?: Maybe<Float>;
+  qGsprofitMargin_not?: Maybe<Float>;
+  qGsprofitMargin_in?: Maybe<Float[] | Float>;
+  qGsprofitMargin_not_in?: Maybe<Float[] | Float>;
+  qGsprofitMargin_lt?: Maybe<Float>;
+  qGsprofitMargin_lte?: Maybe<Float>;
+  qGsprofitMargin_gt?: Maybe<Float>;
+  qGsprofitMargin_gte?: Maybe<Float>;
+  qExpToSales?: Maybe<Float>;
+  qExpToSales_not?: Maybe<Float>;
+  qExpToSales_in?: Maybe<Float[] | Float>;
+  qExpToSales_not_in?: Maybe<Float[] | Float>;
+  qExpToSales_lt?: Maybe<Float>;
+  qExpToSales_lte?: Maybe<Float>;
+  qExpToSales_gt?: Maybe<Float>;
+  qExpToSales_gte?: Maybe<Float>;
+  qProfitToGr?: Maybe<Float>;
+  qProfitToGr_not?: Maybe<Float>;
+  qProfitToGr_in?: Maybe<Float[] | Float>;
+  qProfitToGr_not_in?: Maybe<Float[] | Float>;
+  qProfitToGr_lt?: Maybe<Float>;
+  qProfitToGr_lte?: Maybe<Float>;
+  qProfitToGr_gt?: Maybe<Float>;
+  qProfitToGr_gte?: Maybe<Float>;
+  qSaleexpToGr?: Maybe<Float>;
+  qSaleexpToGr_not?: Maybe<Float>;
+  qSaleexpToGr_in?: Maybe<Float[] | Float>;
+  qSaleexpToGr_not_in?: Maybe<Float[] | Float>;
+  qSaleexpToGr_lt?: Maybe<Float>;
+  qSaleexpToGr_lte?: Maybe<Float>;
+  qSaleexpToGr_gt?: Maybe<Float>;
+  qSaleexpToGr_gte?: Maybe<Float>;
+  qAdminexpToGr?: Maybe<Float>;
+  qAdminexpToGr_not?: Maybe<Float>;
+  qAdminexpToGr_in?: Maybe<Float[] | Float>;
+  qAdminexpToGr_not_in?: Maybe<Float[] | Float>;
+  qAdminexpToGr_lt?: Maybe<Float>;
+  qAdminexpToGr_lte?: Maybe<Float>;
+  qAdminexpToGr_gt?: Maybe<Float>;
+  qAdminexpToGr_gte?: Maybe<Float>;
+  qFinaexpToGr?: Maybe<Float>;
+  qFinaexpToGr_not?: Maybe<Float>;
+  qFinaexpToGr_in?: Maybe<Float[] | Float>;
+  qFinaexpToGr_not_in?: Maybe<Float[] | Float>;
+  qFinaexpToGr_lt?: Maybe<Float>;
+  qFinaexpToGr_lte?: Maybe<Float>;
+  qFinaexpToGr_gt?: Maybe<Float>;
+  qFinaexpToGr_gte?: Maybe<Float>;
+  qImpairToGrTtm?: Maybe<Float>;
+  qImpairToGrTtm_not?: Maybe<Float>;
+  qImpairToGrTtm_in?: Maybe<Float[] | Float>;
+  qImpairToGrTtm_not_in?: Maybe<Float[] | Float>;
+  qImpairToGrTtm_lt?: Maybe<Float>;
+  qImpairToGrTtm_lte?: Maybe<Float>;
+  qImpairToGrTtm_gt?: Maybe<Float>;
+  qImpairToGrTtm_gte?: Maybe<Float>;
+  qGcToGr?: Maybe<Float>;
+  qGcToGr_not?: Maybe<Float>;
+  qGcToGr_in?: Maybe<Float[] | Float>;
+  qGcToGr_not_in?: Maybe<Float[] | Float>;
+  qGcToGr_lt?: Maybe<Float>;
+  qGcToGr_lte?: Maybe<Float>;
+  qGcToGr_gt?: Maybe<Float>;
+  qGcToGr_gte?: Maybe<Float>;
+  qOpToGr?: Maybe<Float>;
+  qOpToGr_not?: Maybe<Float>;
+  qOpToGr_in?: Maybe<Float[] | Float>;
+  qOpToGr_not_in?: Maybe<Float[] | Float>;
+  qOpToGr_lt?: Maybe<Float>;
+  qOpToGr_lte?: Maybe<Float>;
+  qOpToGr_gt?: Maybe<Float>;
+  qOpToGr_gte?: Maybe<Float>;
+  qRoe?: Maybe<Float>;
+  qRoe_not?: Maybe<Float>;
+  qRoe_in?: Maybe<Float[] | Float>;
+  qRoe_not_in?: Maybe<Float[] | Float>;
+  qRoe_lt?: Maybe<Float>;
+  qRoe_lte?: Maybe<Float>;
+  qRoe_gt?: Maybe<Float>;
+  qRoe_gte?: Maybe<Float>;
+  qDtRoe?: Maybe<Float>;
+  qDtRoe_not?: Maybe<Float>;
+  qDtRoe_in?: Maybe<Float[] | Float>;
+  qDtRoe_not_in?: Maybe<Float[] | Float>;
+  qDtRoe_lt?: Maybe<Float>;
+  qDtRoe_lte?: Maybe<Float>;
+  qDtRoe_gt?: Maybe<Float>;
+  qDtRoe_gte?: Maybe<Float>;
+  qNpta?: Maybe<Float>;
+  qNpta_not?: Maybe<Float>;
+  qNpta_in?: Maybe<Float[] | Float>;
+  qNpta_not_in?: Maybe<Float[] | Float>;
+  qNpta_lt?: Maybe<Float>;
+  qNpta_lte?: Maybe<Float>;
+  qNpta_gt?: Maybe<Float>;
+  qNpta_gte?: Maybe<Float>;
+  qOpincomeToEbt?: Maybe<Float>;
+  qOpincomeToEbt_not?: Maybe<Float>;
+  qOpincomeToEbt_in?: Maybe<Float[] | Float>;
+  qOpincomeToEbt_not_in?: Maybe<Float[] | Float>;
+  qOpincomeToEbt_lt?: Maybe<Float>;
+  qOpincomeToEbt_lte?: Maybe<Float>;
+  qOpincomeToEbt_gt?: Maybe<Float>;
+  qOpincomeToEbt_gte?: Maybe<Float>;
+  qInvestincomeToEbt?: Maybe<Float>;
+  qInvestincomeToEbt_not?: Maybe<Float>;
+  qInvestincomeToEbt_in?: Maybe<Float[] | Float>;
+  qInvestincomeToEbt_not_in?: Maybe<Float[] | Float>;
+  qInvestincomeToEbt_lt?: Maybe<Float>;
+  qInvestincomeToEbt_lte?: Maybe<Float>;
+  qInvestincomeToEbt_gt?: Maybe<Float>;
+  qInvestincomeToEbt_gte?: Maybe<Float>;
+  qDtprofitToProfit?: Maybe<Float>;
+  qDtprofitToProfit_not?: Maybe<Float>;
+  qDtprofitToProfit_in?: Maybe<Float[] | Float>;
+  qDtprofitToProfit_not_in?: Maybe<Float[] | Float>;
+  qDtprofitToProfit_lt?: Maybe<Float>;
+  qDtprofitToProfit_lte?: Maybe<Float>;
+  qDtprofitToProfit_gt?: Maybe<Float>;
+  qDtprofitToProfit_gte?: Maybe<Float>;
+  qSalescashToOr?: Maybe<Float>;
+  qSalescashToOr_not?: Maybe<Float>;
+  qSalescashToOr_in?: Maybe<Float[] | Float>;
+  qSalescashToOr_not_in?: Maybe<Float[] | Float>;
+  qSalescashToOr_lt?: Maybe<Float>;
+  qSalescashToOr_lte?: Maybe<Float>;
+  qSalescashToOr_gt?: Maybe<Float>;
+  qSalescashToOr_gte?: Maybe<Float>;
+  qOcfToSales?: Maybe<Float>;
+  qOcfToSales_not?: Maybe<Float>;
+  qOcfToSales_in?: Maybe<Float[] | Float>;
+  qOcfToSales_not_in?: Maybe<Float[] | Float>;
+  qOcfToSales_lt?: Maybe<Float>;
+  qOcfToSales_lte?: Maybe<Float>;
+  qOcfToSales_gt?: Maybe<Float>;
+  qOcfToSales_gte?: Maybe<Float>;
+  qOcfToOr?: Maybe<Float>;
+  qOcfToOr_not?: Maybe<Float>;
+  qOcfToOr_in?: Maybe<Float[] | Float>;
+  qOcfToOr_not_in?: Maybe<Float[] | Float>;
+  qOcfToOr_lt?: Maybe<Float>;
+  qOcfToOr_lte?: Maybe<Float>;
+  qOcfToOr_gt?: Maybe<Float>;
+  qOcfToOr_gte?: Maybe<Float>;
+  basicEpsYoy?: Maybe<Float>;
+  basicEpsYoy_not?: Maybe<Float>;
+  basicEpsYoy_in?: Maybe<Float[] | Float>;
+  basicEpsYoy_not_in?: Maybe<Float[] | Float>;
+  basicEpsYoy_lt?: Maybe<Float>;
+  basicEpsYoy_lte?: Maybe<Float>;
+  basicEpsYoy_gt?: Maybe<Float>;
+  basicEpsYoy_gte?: Maybe<Float>;
+  dtEpsYoy?: Maybe<Float>;
+  dtEpsYoy_not?: Maybe<Float>;
+  dtEpsYoy_in?: Maybe<Float[] | Float>;
+  dtEpsYoy_not_in?: Maybe<Float[] | Float>;
+  dtEpsYoy_lt?: Maybe<Float>;
+  dtEpsYoy_lte?: Maybe<Float>;
+  dtEpsYoy_gt?: Maybe<Float>;
+  dtEpsYoy_gte?: Maybe<Float>;
+  cfpsYoy?: Maybe<Float>;
+  cfpsYoy_not?: Maybe<Float>;
+  cfpsYoy_in?: Maybe<Float[] | Float>;
+  cfpsYoy_not_in?: Maybe<Float[] | Float>;
+  cfpsYoy_lt?: Maybe<Float>;
+  cfpsYoy_lte?: Maybe<Float>;
+  cfpsYoy_gt?: Maybe<Float>;
+  cfpsYoy_gte?: Maybe<Float>;
+  opYoy?: Maybe<Float>;
+  opYoy_not?: Maybe<Float>;
+  opYoy_in?: Maybe<Float[] | Float>;
+  opYoy_not_in?: Maybe<Float[] | Float>;
+  opYoy_lt?: Maybe<Float>;
+  opYoy_lte?: Maybe<Float>;
+  opYoy_gt?: Maybe<Float>;
+  opYoy_gte?: Maybe<Float>;
+  ebtYoy?: Maybe<Float>;
+  ebtYoy_not?: Maybe<Float>;
+  ebtYoy_in?: Maybe<Float[] | Float>;
+  ebtYoy_not_in?: Maybe<Float[] | Float>;
+  ebtYoy_lt?: Maybe<Float>;
+  ebtYoy_lte?: Maybe<Float>;
+  ebtYoy_gt?: Maybe<Float>;
+  ebtYoy_gte?: Maybe<Float>;
+  netprofitYoy?: Maybe<Float>;
+  netprofitYoy_not?: Maybe<Float>;
+  netprofitYoy_in?: Maybe<Float[] | Float>;
+  netprofitYoy_not_in?: Maybe<Float[] | Float>;
+  netprofitYoy_lt?: Maybe<Float>;
+  netprofitYoy_lte?: Maybe<Float>;
+  netprofitYoy_gt?: Maybe<Float>;
+  netprofitYoy_gte?: Maybe<Float>;
+  dtNetprofitYoy?: Maybe<Float>;
+  dtNetprofitYoy_not?: Maybe<Float>;
+  dtNetprofitYoy_in?: Maybe<Float[] | Float>;
+  dtNetprofitYoy_not_in?: Maybe<Float[] | Float>;
+  dtNetprofitYoy_lt?: Maybe<Float>;
+  dtNetprofitYoy_lte?: Maybe<Float>;
+  dtNetprofitYoy_gt?: Maybe<Float>;
+  dtNetprofitYoy_gte?: Maybe<Float>;
+  ocfYoy?: Maybe<Float>;
+  ocfYoy_not?: Maybe<Float>;
+  ocfYoy_in?: Maybe<Float[] | Float>;
+  ocfYoy_not_in?: Maybe<Float[] | Float>;
+  ocfYoy_lt?: Maybe<Float>;
+  ocfYoy_lte?: Maybe<Float>;
+  ocfYoy_gt?: Maybe<Float>;
+  ocfYoy_gte?: Maybe<Float>;
+  roeYoy?: Maybe<Float>;
+  roeYoy_not?: Maybe<Float>;
+  roeYoy_in?: Maybe<Float[] | Float>;
+  roeYoy_not_in?: Maybe<Float[] | Float>;
+  roeYoy_lt?: Maybe<Float>;
+  roeYoy_lte?: Maybe<Float>;
+  roeYoy_gt?: Maybe<Float>;
+  roeYoy_gte?: Maybe<Float>;
+  bpsYoy?: Maybe<Float>;
+  bpsYoy_not?: Maybe<Float>;
+  bpsYoy_in?: Maybe<Float[] | Float>;
+  bpsYoy_not_in?: Maybe<Float[] | Float>;
+  bpsYoy_lt?: Maybe<Float>;
+  bpsYoy_lte?: Maybe<Float>;
+  bpsYoy_gt?: Maybe<Float>;
+  bpsYoy_gte?: Maybe<Float>;
+  assetsYoy?: Maybe<Float>;
+  assetsYoy_not?: Maybe<Float>;
+  assetsYoy_in?: Maybe<Float[] | Float>;
+  assetsYoy_not_in?: Maybe<Float[] | Float>;
+  assetsYoy_lt?: Maybe<Float>;
+  assetsYoy_lte?: Maybe<Float>;
+  assetsYoy_gt?: Maybe<Float>;
+  assetsYoy_gte?: Maybe<Float>;
+  eqtYoy?: Maybe<Float>;
+  eqtYoy_not?: Maybe<Float>;
+  eqtYoy_in?: Maybe<Float[] | Float>;
+  eqtYoy_not_in?: Maybe<Float[] | Float>;
+  eqtYoy_lt?: Maybe<Float>;
+  eqtYoy_lte?: Maybe<Float>;
+  eqtYoy_gt?: Maybe<Float>;
+  eqtYoy_gte?: Maybe<Float>;
+  trYoy?: Maybe<Float>;
+  trYoy_not?: Maybe<Float>;
+  trYoy_in?: Maybe<Float[] | Float>;
+  trYoy_not_in?: Maybe<Float[] | Float>;
+  trYoy_lt?: Maybe<Float>;
+  trYoy_lte?: Maybe<Float>;
+  trYoy_gt?: Maybe<Float>;
+  trYoy_gte?: Maybe<Float>;
+  orYoy?: Maybe<Float>;
+  orYoy_not?: Maybe<Float>;
+  orYoy_in?: Maybe<Float[] | Float>;
+  orYoy_not_in?: Maybe<Float[] | Float>;
+  orYoy_lt?: Maybe<Float>;
+  orYoy_lte?: Maybe<Float>;
+  orYoy_gt?: Maybe<Float>;
+  orYoy_gte?: Maybe<Float>;
+  qGrYoy?: Maybe<Float>;
+  qGrYoy_not?: Maybe<Float>;
+  qGrYoy_in?: Maybe<Float[] | Float>;
+  qGrYoy_not_in?: Maybe<Float[] | Float>;
+  qGrYoy_lt?: Maybe<Float>;
+  qGrYoy_lte?: Maybe<Float>;
+  qGrYoy_gt?: Maybe<Float>;
+  qGrYoy_gte?: Maybe<Float>;
+  qGrQoq?: Maybe<Float>;
+  qGrQoq_not?: Maybe<Float>;
+  qGrQoq_in?: Maybe<Float[] | Float>;
+  qGrQoq_not_in?: Maybe<Float[] | Float>;
+  qGrQoq_lt?: Maybe<Float>;
+  qGrQoq_lte?: Maybe<Float>;
+  qGrQoq_gt?: Maybe<Float>;
+  qGrQoq_gte?: Maybe<Float>;
+  qSalesYoy?: Maybe<Float>;
+  qSalesYoy_not?: Maybe<Float>;
+  qSalesYoy_in?: Maybe<Float[] | Float>;
+  qSalesYoy_not_in?: Maybe<Float[] | Float>;
+  qSalesYoy_lt?: Maybe<Float>;
+  qSalesYoy_lte?: Maybe<Float>;
+  qSalesYoy_gt?: Maybe<Float>;
+  qSalesYoy_gte?: Maybe<Float>;
+  qSalesQoq?: Maybe<Float>;
+  qSalesQoq_not?: Maybe<Float>;
+  qSalesQoq_in?: Maybe<Float[] | Float>;
+  qSalesQoq_not_in?: Maybe<Float[] | Float>;
+  qSalesQoq_lt?: Maybe<Float>;
+  qSalesQoq_lte?: Maybe<Float>;
+  qSalesQoq_gt?: Maybe<Float>;
+  qSalesQoq_gte?: Maybe<Float>;
+  qOpYoy?: Maybe<Float>;
+  qOpYoy_not?: Maybe<Float>;
+  qOpYoy_in?: Maybe<Float[] | Float>;
+  qOpYoy_not_in?: Maybe<Float[] | Float>;
+  qOpYoy_lt?: Maybe<Float>;
+  qOpYoy_lte?: Maybe<Float>;
+  qOpYoy_gt?: Maybe<Float>;
+  qOpYoy_gte?: Maybe<Float>;
+  qOpQoq?: Maybe<Float>;
+  qOpQoq_not?: Maybe<Float>;
+  qOpQoq_in?: Maybe<Float[] | Float>;
+  qOpQoq_not_in?: Maybe<Float[] | Float>;
+  qOpQoq_lt?: Maybe<Float>;
+  qOpQoq_lte?: Maybe<Float>;
+  qOpQoq_gt?: Maybe<Float>;
+  qOpQoq_gte?: Maybe<Float>;
+  qProfitYoy?: Maybe<Float>;
+  qProfitYoy_not?: Maybe<Float>;
+  qProfitYoy_in?: Maybe<Float[] | Float>;
+  qProfitYoy_not_in?: Maybe<Float[] | Float>;
+  qProfitYoy_lt?: Maybe<Float>;
+  qProfitYoy_lte?: Maybe<Float>;
+  qProfitYoy_gt?: Maybe<Float>;
+  qProfitYoy_gte?: Maybe<Float>;
+  qProfitQoq?: Maybe<Float>;
+  qProfitQoq_not?: Maybe<Float>;
+  qProfitQoq_in?: Maybe<Float[] | Float>;
+  qProfitQoq_not_in?: Maybe<Float[] | Float>;
+  qProfitQoq_lt?: Maybe<Float>;
+  qProfitQoq_lte?: Maybe<Float>;
+  qProfitQoq_gt?: Maybe<Float>;
+  qProfitQoq_gte?: Maybe<Float>;
+  qNetprofitYoy?: Maybe<Float>;
+  qNetprofitYoy_not?: Maybe<Float>;
+  qNetprofitYoy_in?: Maybe<Float[] | Float>;
+  qNetprofitYoy_not_in?: Maybe<Float[] | Float>;
+  qNetprofitYoy_lt?: Maybe<Float>;
+  qNetprofitYoy_lte?: Maybe<Float>;
+  qNetprofitYoy_gt?: Maybe<Float>;
+  qNetprofitYoy_gte?: Maybe<Float>;
+  qNetprofitQoq?: Maybe<Float>;
+  qNetprofitQoq_not?: Maybe<Float>;
+  qNetprofitQoq_in?: Maybe<Float[] | Float>;
+  qNetprofitQoq_not_in?: Maybe<Float[] | Float>;
+  qNetprofitQoq_lt?: Maybe<Float>;
+  qNetprofitQoq_lte?: Maybe<Float>;
+  qNetprofitQoq_gt?: Maybe<Float>;
+  qNetprofitQoq_gte?: Maybe<Float>;
+  equityYoy?: Maybe<Float>;
+  equityYoy_not?: Maybe<Float>;
+  equityYoy_in?: Maybe<Float[] | Float>;
+  equityYoy_not_in?: Maybe<Float[] | Float>;
+  equityYoy_lt?: Maybe<Float>;
+  equityYoy_lte?: Maybe<Float>;
+  equityYoy_gt?: Maybe<Float>;
+  equityYoy_gte?: Maybe<Float>;
+  rdExp?: Maybe<Float>;
+  rdExp_not?: Maybe<Float>;
+  rdExp_in?: Maybe<Float[] | Float>;
+  rdExp_not_in?: Maybe<Float[] | Float>;
+  rdExp_lt?: Maybe<Float>;
+  rdExp_lte?: Maybe<Float>;
+  rdExp_gt?: Maybe<Float>;
+  rdExp_gte?: Maybe<Float>;
+  updateFlag?: Maybe<String>;
+  updateFlag_not?: Maybe<String>;
+  updateFlag_in?: Maybe<String[] | String>;
+  updateFlag_not_in?: Maybe<String[] | String>;
+  updateFlag_lt?: Maybe<String>;
+  updateFlag_lte?: Maybe<String>;
+  updateFlag_gt?: Maybe<String>;
+  updateFlag_gte?: Maybe<String>;
+  updateFlag_contains?: Maybe<String>;
+  updateFlag_not_contains?: Maybe<String>;
+  updateFlag_starts_with?: Maybe<String>;
+  updateFlag_not_starts_with?: Maybe<String>;
+  updateFlag_ends_with?: Maybe<String>;
+  updateFlag_not_ends_with?: Maybe<String>;
+  AND?: Maybe<FinaIndicatorWhereInput[] | FinaIndicatorWhereInput>;
+  OR?: Maybe<FinaIndicatorWhereInput[] | FinaIndicatorWhereInput>;
+  NOT?: Maybe<FinaIndicatorWhereInput[] | FinaIndicatorWhereInput>;
 }
 
 export interface CommentCreateInput {
@@ -2067,11 +3962,9 @@ export interface CommentCreateInput {
   company?: Maybe<CompanyCreateOneWithoutCommentsInput>;
 }
 
-export interface CompanyProductUpdateInput {
-  name?: Maybe<String>;
-  introduce?: Maybe<String>;
-  inputs?: Maybe<CompanyUpdateManyWithoutPurchasesInput>;
-  outputs?: Maybe<CompanyUpdateManyWithoutSellesInput>;
+export interface CompanyUpdateWithWhereUniqueWithoutTradesInput {
+  where: CompanyWhereUniqueInput;
+  data: CompanyUpdateWithoutTradesDataInput;
 }
 
 export interface CompanyCreateWithoutCommentsInput {
@@ -2097,156 +3990,7 @@ export interface CompanyCreateWithoutCommentsInput {
   trades?: Maybe<IndustryCreateManyWithoutCompaniesInput>;
   events?: Maybe<CompanyEventCreateManyWithoutCompanyInput>;
   dailies?: Maybe<DailyCreateManyWithoutCompanyInput>;
-}
-
-export interface ProductWhereInput {
-  id?: Maybe<ID_Input>;
-  id_not?: Maybe<ID_Input>;
-  id_in?: Maybe<ID_Input[] | ID_Input>;
-  id_not_in?: Maybe<ID_Input[] | ID_Input>;
-  id_lt?: Maybe<ID_Input>;
-  id_lte?: Maybe<ID_Input>;
-  id_gt?: Maybe<ID_Input>;
-  id_gte?: Maybe<ID_Input>;
-  id_contains?: Maybe<ID_Input>;
-  id_not_contains?: Maybe<ID_Input>;
-  id_starts_with?: Maybe<ID_Input>;
-  id_not_starts_with?: Maybe<ID_Input>;
-  id_ends_with?: Maybe<ID_Input>;
-  id_not_ends_with?: Maybe<ID_Input>;
-  name?: Maybe<String>;
-  name_not?: Maybe<String>;
-  name_in?: Maybe<String[] | String>;
-  name_not_in?: Maybe<String[] | String>;
-  name_lt?: Maybe<String>;
-  name_lte?: Maybe<String>;
-  name_gt?: Maybe<String>;
-  name_gte?: Maybe<String>;
-  name_contains?: Maybe<String>;
-  name_not_contains?: Maybe<String>;
-  name_starts_with?: Maybe<String>;
-  name_not_starts_with?: Maybe<String>;
-  name_ends_with?: Maybe<String>;
-  name_not_ends_with?: Maybe<String>;
-  introduce?: Maybe<String>;
-  introduce_not?: Maybe<String>;
-  introduce_in?: Maybe<String[] | String>;
-  introduce_not_in?: Maybe<String[] | String>;
-  introduce_lt?: Maybe<String>;
-  introduce_lte?: Maybe<String>;
-  introduce_gt?: Maybe<String>;
-  introduce_gte?: Maybe<String>;
-  introduce_contains?: Maybe<String>;
-  introduce_not_contains?: Maybe<String>;
-  introduce_starts_with?: Maybe<String>;
-  introduce_not_starts_with?: Maybe<String>;
-  introduce_ends_with?: Maybe<String>;
-  introduce_not_ends_with?: Maybe<String>;
-  inputs_every?: Maybe<IndustryWhereInput>;
-  inputs_some?: Maybe<IndustryWhereInput>;
-  inputs_none?: Maybe<IndustryWhereInput>;
-  outputs_every?: Maybe<IndustryWhereInput>;
-  outputs_some?: Maybe<IndustryWhereInput>;
-  outputs_none?: Maybe<IndustryWhereInput>;
-  AND?: Maybe<ProductWhereInput[] | ProductWhereInput>;
-  OR?: Maybe<ProductWhereInput[] | ProductWhereInput>;
-  NOT?: Maybe<ProductWhereInput[] | ProductWhereInput>;
-}
-
-export interface CompanyProductCreateWithoutInputsInput {
-  id?: Maybe<ID_Input>;
-  name: String;
-  introduce: String;
-  outputs?: Maybe<CompanyCreateManyWithoutSellesInput>;
-}
-
-export interface IndustryUpdateWithWhereUniqueWithoutSellesInput {
-  where: IndustryWhereUniqueInput;
-  data: IndustryUpdateWithoutSellesDataInput;
-}
-
-export interface CompanyCreateWithoutSellesInput {
-  id?: Maybe<ID_Input>;
-  symbol: String;
-  name: String;
-  area?: Maybe<String>;
-  industry?: Maybe<String>;
-  fullname?: Maybe<String>;
-  enname?: Maybe<String>;
-  market?: Maybe<String>;
-  exchange?: Maybe<String>;
-  currType?: Maybe<String>;
-  listStatus?: Maybe<String>;
-  listDate?: Maybe<String>;
-  delistDate?: Maybe<String>;
-  isHS?: Maybe<String>;
-  scope?: Maybe<String>;
-  desc?: Maybe<String>;
-  purchases?: Maybe<CompanyProductCreateManyWithoutInputsInput>;
-  comments?: Maybe<CommentCreateManyWithoutCompanyInput>;
-  pool?: Maybe<Boolean>;
-  trades?: Maybe<IndustryCreateManyWithoutCompaniesInput>;
-  events?: Maybe<CompanyEventCreateManyWithoutCompanyInput>;
-  dailies?: Maybe<DailyCreateManyWithoutCompanyInput>;
-}
-
-export interface IndustryUpdateWithoutSellesDataInput {
-  code?: Maybe<String>;
-  name?: Maybe<String>;
-  desc?: Maybe<String>;
-  researches?: Maybe<ResearchUpdateManyInput>;
-  companies?: Maybe<CompanyUpdateManyWithoutTradesInput>;
-  influences?: Maybe<IndustryInfluenceUpdateManyWithoutIndustryInput>;
-  purchases?: Maybe<ProductUpdateManyWithoutInputsInput>;
-}
-
-export interface CommentCreateWithoutCompanyInput {
-  id?: Maybe<ID_Input>;
-  desc: String;
-}
-
-export interface CompanyUpdateManyWithoutTradesInput {
-  create?: Maybe<
-    CompanyCreateWithoutTradesInput[] | CompanyCreateWithoutTradesInput
-  >;
-  delete?: Maybe<CompanyWhereUniqueInput[] | CompanyWhereUniqueInput>;
-  connect?: Maybe<CompanyWhereUniqueInput[] | CompanyWhereUniqueInput>;
-  set?: Maybe<CompanyWhereUniqueInput[] | CompanyWhereUniqueInput>;
-  disconnect?: Maybe<CompanyWhereUniqueInput[] | CompanyWhereUniqueInput>;
-  update?: Maybe<
-    | CompanyUpdateWithWhereUniqueWithoutTradesInput[]
-    | CompanyUpdateWithWhereUniqueWithoutTradesInput
-  >;
-  upsert?: Maybe<
-    | CompanyUpsertWithWhereUniqueWithoutTradesInput[]
-    | CompanyUpsertWithWhereUniqueWithoutTradesInput
-  >;
-  deleteMany?: Maybe<CompanyScalarWhereInput[] | CompanyScalarWhereInput>;
-  updateMany?: Maybe<
-    | CompanyUpdateManyWithWhereNestedInput[]
-    | CompanyUpdateManyWithWhereNestedInput
-  >;
-}
-
-export interface IndustryCreateWithoutCompaniesInput {
-  id?: Maybe<ID_Input>;
-  code?: Maybe<String>;
-  name: String;
-  desc: String;
-  researches?: Maybe<ResearchCreateManyInput>;
-  influences?: Maybe<IndustryInfluenceCreateManyWithoutIndustryInput>;
-  purchases?: Maybe<ProductCreateManyWithoutInputsInput>;
-  selles?: Maybe<ProductCreateManyWithoutOutputsInput>;
-}
-
-export interface CompanyUpdateWithWhereUniqueWithoutTradesInput {
-  where: CompanyWhereUniqueInput;
-  data: CompanyUpdateWithoutTradesDataInput;
-}
-
-export interface ResearchCreateInput {
-  id?: Maybe<ID_Input>;
-  desc: String;
+  finaIndicators?: Maybe<FinaIndicatorCreateManyWithoutCompanyInput>;
 }
 
 export interface CompanyUpdateWithoutTradesDataInput {
@@ -2271,15 +4015,14 @@ export interface CompanyUpdateWithoutTradesDataInput {
   pool?: Maybe<Boolean>;
   events?: Maybe<CompanyEventUpdateManyWithoutCompanyInput>;
   dailies?: Maybe<DailyUpdateManyWithoutCompanyInput>;
+  finaIndicators?: Maybe<FinaIndicatorUpdateManyWithoutCompanyInput>;
 }
 
-export interface IndustryInfluenceCreateWithoutIndustryInput {
+export interface CompanyProductCreateWithoutInputsInput {
   id?: Maybe<ID_Input>;
-  keyword?: Maybe<KeywordCreateOneInput>;
-  keywordDirection: Direction;
-  kind: FactorKind;
-  desc: String;
-  direction: Direction;
+  name: String;
+  introduce: String;
+  outputs?: Maybe<CompanyCreateManyWithoutSellesInput>;
 }
 
 export interface CompanyProductUpdateManyWithoutOutputsInput {
@@ -2316,9 +4059,30 @@ export interface CompanyProductUpdateManyWithoutOutputsInput {
   >;
 }
 
-export interface KeywordCreateInput {
+export interface CompanyCreateWithoutSellesInput {
   id?: Maybe<ID_Input>;
+  symbol: String;
   name: String;
+  area?: Maybe<String>;
+  industry?: Maybe<String>;
+  fullname?: Maybe<String>;
+  enname?: Maybe<String>;
+  market?: Maybe<String>;
+  exchange?: Maybe<String>;
+  currType?: Maybe<String>;
+  listStatus?: Maybe<String>;
+  listDate?: Maybe<String>;
+  delistDate?: Maybe<String>;
+  isHS?: Maybe<String>;
+  scope?: Maybe<String>;
+  desc?: Maybe<String>;
+  purchases?: Maybe<CompanyProductCreateManyWithoutInputsInput>;
+  comments?: Maybe<CommentCreateManyWithoutCompanyInput>;
+  pool?: Maybe<Boolean>;
+  trades?: Maybe<IndustryCreateManyWithoutCompaniesInput>;
+  events?: Maybe<CompanyEventCreateManyWithoutCompanyInput>;
+  dailies?: Maybe<DailyCreateManyWithoutCompanyInput>;
+  finaIndicators?: Maybe<FinaIndicatorCreateManyWithoutCompanyInput>;
 }
 
 export interface CompanyProductUpdateWithWhereUniqueWithoutOutputsInput {
@@ -2326,11 +4090,9 @@ export interface CompanyProductUpdateWithWhereUniqueWithoutOutputsInput {
   data: CompanyProductUpdateWithoutOutputsDataInput;
 }
 
-export interface ProductCreateWithoutInputsInput {
+export interface CommentCreateWithoutCompanyInput {
   id?: Maybe<ID_Input>;
-  name: String;
-  introduce: String;
-  outputs?: Maybe<IndustryCreateManyWithoutSellesInput>;
+  desc: String;
 }
 
 export interface CompanyProductUpdateWithoutOutputsDataInput {
@@ -2339,15 +4101,15 @@ export interface CompanyProductUpdateWithoutOutputsDataInput {
   inputs?: Maybe<CompanyUpdateManyWithoutPurchasesInput>;
 }
 
-export interface IndustryCreateWithoutSellesInput {
+export interface IndustryCreateWithoutCompaniesInput {
   id?: Maybe<ID_Input>;
   code?: Maybe<String>;
   name: String;
   desc: String;
   researches?: Maybe<ResearchCreateManyInput>;
-  companies?: Maybe<CompanyCreateManyWithoutTradesInput>;
   influences?: Maybe<IndustryInfluenceCreateManyWithoutIndustryInput>;
   purchases?: Maybe<ProductCreateManyWithoutInputsInput>;
+  selles?: Maybe<ProductCreateManyWithoutOutputsInput>;
 }
 
 export interface CompanyUpdateManyWithoutPurchasesInput {
@@ -2373,29 +4135,9 @@ export interface CompanyUpdateManyWithoutPurchasesInput {
   >;
 }
 
-export interface CompanyCreateWithoutTradesInput {
+export interface ResearchCreateInput {
   id?: Maybe<ID_Input>;
-  symbol: String;
-  name: String;
-  area?: Maybe<String>;
-  industry?: Maybe<String>;
-  fullname?: Maybe<String>;
-  enname?: Maybe<String>;
-  market?: Maybe<String>;
-  exchange?: Maybe<String>;
-  currType?: Maybe<String>;
-  listStatus?: Maybe<String>;
-  listDate?: Maybe<String>;
-  delistDate?: Maybe<String>;
-  isHS?: Maybe<String>;
-  scope?: Maybe<String>;
-  desc?: Maybe<String>;
-  purchases?: Maybe<CompanyProductCreateManyWithoutInputsInput>;
-  selles?: Maybe<CompanyProductCreateManyWithoutOutputsInput>;
-  comments?: Maybe<CommentCreateManyWithoutCompanyInput>;
-  pool?: Maybe<Boolean>;
-  events?: Maybe<CompanyEventCreateManyWithoutCompanyInput>;
-  dailies?: Maybe<DailyCreateManyWithoutCompanyInput>;
+  desc: String;
 }
 
 export interface CompanyUpdateWithWhereUniqueWithoutPurchasesInput {
@@ -2403,11 +4145,13 @@ export interface CompanyUpdateWithWhereUniqueWithoutPurchasesInput {
   data: CompanyUpdateWithoutPurchasesDataInput;
 }
 
-export interface CompanyProductCreateWithoutOutputsInput {
+export interface IndustryInfluenceCreateWithoutIndustryInput {
   id?: Maybe<ID_Input>;
-  name: String;
-  introduce: String;
-  inputs?: Maybe<CompanyCreateManyWithoutPurchasesInput>;
+  keyword?: Maybe<KeywordCreateOneInput>;
+  keywordDirection: Direction;
+  kind: FactorKind;
+  desc: String;
+  direction: Direction;
 }
 
 export interface CompanyUpdateWithoutPurchasesDataInput {
@@ -2432,31 +4176,12 @@ export interface CompanyUpdateWithoutPurchasesDataInput {
   trades?: Maybe<IndustryUpdateManyWithoutCompaniesInput>;
   events?: Maybe<CompanyEventUpdateManyWithoutCompanyInput>;
   dailies?: Maybe<DailyUpdateManyWithoutCompanyInput>;
+  finaIndicators?: Maybe<FinaIndicatorUpdateManyWithoutCompanyInput>;
 }
 
-export interface CompanyCreateWithoutPurchasesInput {
+export interface KeywordCreateInput {
   id?: Maybe<ID_Input>;
-  symbol: String;
   name: String;
-  area?: Maybe<String>;
-  industry?: Maybe<String>;
-  fullname?: Maybe<String>;
-  enname?: Maybe<String>;
-  market?: Maybe<String>;
-  exchange?: Maybe<String>;
-  currType?: Maybe<String>;
-  listStatus?: Maybe<String>;
-  listDate?: Maybe<String>;
-  delistDate?: Maybe<String>;
-  isHS?: Maybe<String>;
-  scope?: Maybe<String>;
-  desc?: Maybe<String>;
-  selles?: Maybe<CompanyProductCreateManyWithoutOutputsInput>;
-  comments?: Maybe<CommentCreateManyWithoutCompanyInput>;
-  pool?: Maybe<Boolean>;
-  trades?: Maybe<IndustryCreateManyWithoutCompaniesInput>;
-  events?: Maybe<CompanyEventCreateManyWithoutCompanyInput>;
-  dailies?: Maybe<DailyCreateManyWithoutCompanyInput>;
 }
 
 export interface CompanyEventUpdateManyWithoutCompanyInput {
@@ -2489,16 +4214,11 @@ export interface CompanyEventUpdateManyWithoutCompanyInput {
   >;
 }
 
-export interface CompanyEventCreateWithoutCompanyInput {
+export interface ProductCreateWithoutInputsInput {
   id?: Maybe<ID_Input>;
-  title: String;
-  content: String;
-  reportTime: DateTimeInput;
-  happen: TimeKind;
-  happenTime?: Maybe<DateTimeInput>;
-  influence: String;
-  kind: FactorKind;
-  dierction: Direction;
+  name: String;
+  introduce: String;
+  outputs?: Maybe<IndustryCreateManyWithoutSellesInput>;
 }
 
 export interface CompanyEventUpdateWithWhereUniqueWithoutCompanyInput {
@@ -2506,19 +4226,15 @@ export interface CompanyEventUpdateWithWhereUniqueWithoutCompanyInput {
   data: CompanyEventUpdateWithoutCompanyDataInput;
 }
 
-export interface DailyCreateWithoutCompanyInput {
+export interface IndustryCreateWithoutSellesInput {
   id?: Maybe<ID_Input>;
-  symbol?: Maybe<String>;
-  tradeDate: DateTimeInput;
-  open?: Maybe<Float>;
-  high?: Maybe<Float>;
-  low?: Maybe<Float>;
-  close?: Maybe<Float>;
-  preClose?: Maybe<Float>;
-  change?: Maybe<Float>;
-  pctChg?: Maybe<Float>;
-  vol?: Maybe<Float>;
-  amount?: Maybe<Float>;
+  code?: Maybe<String>;
+  name: String;
+  desc: String;
+  researches?: Maybe<ResearchCreateManyInput>;
+  companies?: Maybe<CompanyCreateManyWithoutTradesInput>;
+  influences?: Maybe<IndustryInfluenceCreateManyWithoutIndustryInput>;
+  purchases?: Maybe<ProductCreateManyWithoutInputsInput>;
 }
 
 export interface CompanyEventUpdateWithoutCompanyDataInput {
@@ -2532,11 +4248,30 @@ export interface CompanyEventUpdateWithoutCompanyDataInput {
   dierction?: Maybe<Direction>;
 }
 
-export interface ProductCreateWithoutOutputsInput {
+export interface CompanyCreateWithoutTradesInput {
   id?: Maybe<ID_Input>;
+  symbol: String;
   name: String;
-  introduce: String;
-  inputs?: Maybe<IndustryCreateManyWithoutPurchasesInput>;
+  area?: Maybe<String>;
+  industry?: Maybe<String>;
+  fullname?: Maybe<String>;
+  enname?: Maybe<String>;
+  market?: Maybe<String>;
+  exchange?: Maybe<String>;
+  currType?: Maybe<String>;
+  listStatus?: Maybe<String>;
+  listDate?: Maybe<String>;
+  delistDate?: Maybe<String>;
+  isHS?: Maybe<String>;
+  scope?: Maybe<String>;
+  desc?: Maybe<String>;
+  purchases?: Maybe<CompanyProductCreateManyWithoutInputsInput>;
+  selles?: Maybe<CompanyProductCreateManyWithoutOutputsInput>;
+  comments?: Maybe<CommentCreateManyWithoutCompanyInput>;
+  pool?: Maybe<Boolean>;
+  events?: Maybe<CompanyEventCreateManyWithoutCompanyInput>;
+  dailies?: Maybe<DailyCreateManyWithoutCompanyInput>;
+  finaIndicators?: Maybe<FinaIndicatorCreateManyWithoutCompanyInput>;
 }
 
 export interface CompanyEventUpsertWithWhereUniqueWithoutCompanyInput {
@@ -2545,15 +4280,11 @@ export interface CompanyEventUpsertWithWhereUniqueWithoutCompanyInput {
   create: CompanyEventCreateWithoutCompanyInput;
 }
 
-export interface IndustryCreateWithoutPurchasesInput {
+export interface CompanyProductCreateWithoutOutputsInput {
   id?: Maybe<ID_Input>;
-  code?: Maybe<String>;
   name: String;
-  desc: String;
-  researches?: Maybe<ResearchCreateManyInput>;
-  companies?: Maybe<CompanyCreateManyWithoutTradesInput>;
-  influences?: Maybe<IndustryInfluenceCreateManyWithoutIndustryInput>;
-  selles?: Maybe<ProductCreateManyWithoutOutputsInput>;
+  introduce: String;
+  inputs?: Maybe<CompanyCreateManyWithoutPurchasesInput>;
 }
 
 export interface CompanyEventScalarWhereInput {
@@ -2646,15 +4377,30 @@ export interface CompanyEventScalarWhereInput {
   NOT?: Maybe<CompanyEventScalarWhereInput[] | CompanyEventScalarWhereInput>;
 }
 
-export interface UserSubscriptionWhereInput {
-  mutation_in?: Maybe<MutationType[] | MutationType>;
-  updatedFields_contains?: Maybe<String>;
-  updatedFields_contains_every?: Maybe<String[] | String>;
-  updatedFields_contains_some?: Maybe<String[] | String>;
-  node?: Maybe<UserWhereInput>;
-  AND?: Maybe<UserSubscriptionWhereInput[] | UserSubscriptionWhereInput>;
-  OR?: Maybe<UserSubscriptionWhereInput[] | UserSubscriptionWhereInput>;
-  NOT?: Maybe<UserSubscriptionWhereInput[] | UserSubscriptionWhereInput>;
+export interface CompanyCreateWithoutPurchasesInput {
+  id?: Maybe<ID_Input>;
+  symbol: String;
+  name: String;
+  area?: Maybe<String>;
+  industry?: Maybe<String>;
+  fullname?: Maybe<String>;
+  enname?: Maybe<String>;
+  market?: Maybe<String>;
+  exchange?: Maybe<String>;
+  currType?: Maybe<String>;
+  listStatus?: Maybe<String>;
+  listDate?: Maybe<String>;
+  delistDate?: Maybe<String>;
+  isHS?: Maybe<String>;
+  scope?: Maybe<String>;
+  desc?: Maybe<String>;
+  selles?: Maybe<CompanyProductCreateManyWithoutOutputsInput>;
+  comments?: Maybe<CommentCreateManyWithoutCompanyInput>;
+  pool?: Maybe<Boolean>;
+  trades?: Maybe<IndustryCreateManyWithoutCompaniesInput>;
+  events?: Maybe<CompanyEventCreateManyWithoutCompanyInput>;
+  dailies?: Maybe<DailyCreateManyWithoutCompanyInput>;
+  finaIndicators?: Maybe<FinaIndicatorCreateManyWithoutCompanyInput>;
 }
 
 export interface CompanyEventUpdateManyWithWhereNestedInput {
@@ -2662,15 +4408,16 @@ export interface CompanyEventUpdateManyWithWhereNestedInput {
   data: CompanyEventUpdateManyDataInput;
 }
 
-export interface ProductSubscriptionWhereInput {
-  mutation_in?: Maybe<MutationType[] | MutationType>;
-  updatedFields_contains?: Maybe<String>;
-  updatedFields_contains_every?: Maybe<String[] | String>;
-  updatedFields_contains_some?: Maybe<String[] | String>;
-  node?: Maybe<ProductWhereInput>;
-  AND?: Maybe<ProductSubscriptionWhereInput[] | ProductSubscriptionWhereInput>;
-  OR?: Maybe<ProductSubscriptionWhereInput[] | ProductSubscriptionWhereInput>;
-  NOT?: Maybe<ProductSubscriptionWhereInput[] | ProductSubscriptionWhereInput>;
+export interface CompanyEventCreateWithoutCompanyInput {
+  id?: Maybe<ID_Input>;
+  title: String;
+  content: String;
+  reportTime: DateTimeInput;
+  happen: TimeKind;
+  happenTime?: Maybe<DateTimeInput>;
+  influence: String;
+  kind: FactorKind;
+  dierction: Direction;
 }
 
 export interface CompanyEventUpdateManyDataInput {
@@ -2684,47 +4431,19 @@ export interface CompanyEventUpdateManyDataInput {
   dierction?: Maybe<Direction>;
 }
 
-export interface CommentWhereInput {
+export interface DailyCreateWithoutCompanyInput {
   id?: Maybe<ID_Input>;
-  id_not?: Maybe<ID_Input>;
-  id_in?: Maybe<ID_Input[] | ID_Input>;
-  id_not_in?: Maybe<ID_Input[] | ID_Input>;
-  id_lt?: Maybe<ID_Input>;
-  id_lte?: Maybe<ID_Input>;
-  id_gt?: Maybe<ID_Input>;
-  id_gte?: Maybe<ID_Input>;
-  id_contains?: Maybe<ID_Input>;
-  id_not_contains?: Maybe<ID_Input>;
-  id_starts_with?: Maybe<ID_Input>;
-  id_not_starts_with?: Maybe<ID_Input>;
-  id_ends_with?: Maybe<ID_Input>;
-  id_not_ends_with?: Maybe<ID_Input>;
-  createTime?: Maybe<DateTimeInput>;
-  createTime_not?: Maybe<DateTimeInput>;
-  createTime_in?: Maybe<DateTimeInput[] | DateTimeInput>;
-  createTime_not_in?: Maybe<DateTimeInput[] | DateTimeInput>;
-  createTime_lt?: Maybe<DateTimeInput>;
-  createTime_lte?: Maybe<DateTimeInput>;
-  createTime_gt?: Maybe<DateTimeInput>;
-  createTime_gte?: Maybe<DateTimeInput>;
-  desc?: Maybe<String>;
-  desc_not?: Maybe<String>;
-  desc_in?: Maybe<String[] | String>;
-  desc_not_in?: Maybe<String[] | String>;
-  desc_lt?: Maybe<String>;
-  desc_lte?: Maybe<String>;
-  desc_gt?: Maybe<String>;
-  desc_gte?: Maybe<String>;
-  desc_contains?: Maybe<String>;
-  desc_not_contains?: Maybe<String>;
-  desc_starts_with?: Maybe<String>;
-  desc_not_starts_with?: Maybe<String>;
-  desc_ends_with?: Maybe<String>;
-  desc_not_ends_with?: Maybe<String>;
-  company?: Maybe<CompanyWhereInput>;
-  AND?: Maybe<CommentWhereInput[] | CommentWhereInput>;
-  OR?: Maybe<CommentWhereInput[] | CommentWhereInput>;
-  NOT?: Maybe<CommentWhereInput[] | CommentWhereInput>;
+  symbol?: Maybe<String>;
+  tradeDate: DateTimeInput;
+  open?: Maybe<Float>;
+  high?: Maybe<Float>;
+  low?: Maybe<Float>;
+  close?: Maybe<Float>;
+  preClose?: Maybe<Float>;
+  change?: Maybe<Float>;
+  pctChg?: Maybe<Float>;
+  vol?: Maybe<Float>;
+  amount?: Maybe<Float>;
 }
 
 export interface DailyUpdateManyWithoutCompanyInput {
@@ -2749,24 +4468,175 @@ export interface DailyUpdateManyWithoutCompanyInput {
   >;
 }
 
-export interface CompanyProductSubscriptionWhereInput {
-  mutation_in?: Maybe<MutationType[] | MutationType>;
-  updatedFields_contains?: Maybe<String>;
-  updatedFields_contains_every?: Maybe<String[] | String>;
-  updatedFields_contains_some?: Maybe<String[] | String>;
-  node?: Maybe<CompanyProductWhereInput>;
-  AND?: Maybe<
-    | CompanyProductSubscriptionWhereInput[]
-    | CompanyProductSubscriptionWhereInput
-  >;
-  OR?: Maybe<
-    | CompanyProductSubscriptionWhereInput[]
-    | CompanyProductSubscriptionWhereInput
-  >;
-  NOT?: Maybe<
-    | CompanyProductSubscriptionWhereInput[]
-    | CompanyProductSubscriptionWhereInput
-  >;
+export interface FinaIndicatorCreateWithoutCompanyInput {
+  id?: Maybe<ID_Input>;
+  symbol?: Maybe<String>;
+  annDate?: Maybe<String>;
+  endDate?: Maybe<String>;
+  eps?: Maybe<Float>;
+  dtEps?: Maybe<Float>;
+  totalRevenuePs?: Maybe<Float>;
+  revenuePs?: Maybe<Float>;
+  capitalResePs?: Maybe<Float>;
+  surplusResePs?: Maybe<Float>;
+  undistProfitPs?: Maybe<Float>;
+  extraItem?: Maybe<Float>;
+  profitDedt?: Maybe<Float>;
+  grossMargin?: Maybe<Float>;
+  currentRatio?: Maybe<Float>;
+  quickRatio?: Maybe<Float>;
+  cashRatio?: Maybe<Float>;
+  invturnDays?: Maybe<Float>;
+  arturnDays?: Maybe<Float>;
+  invTurn?: Maybe<Float>;
+  arTurn?: Maybe<Float>;
+  caTurn?: Maybe<Float>;
+  faTurn?: Maybe<Float>;
+  assetsTurn?: Maybe<Float>;
+  opIncome?: Maybe<Float>;
+  valuechangeIncome?: Maybe<Float>;
+  interstIncome?: Maybe<Float>;
+  daa?: Maybe<Float>;
+  ebit?: Maybe<Float>;
+  ebitda?: Maybe<Float>;
+  fcff?: Maybe<Float>;
+  fcfe?: Maybe<Float>;
+  currentExint?: Maybe<Float>;
+  noncurrentExint?: Maybe<Float>;
+  interestdebt?: Maybe<Float>;
+  netdebt?: Maybe<Float>;
+  tangibleAsset?: Maybe<Float>;
+  workingCapital?: Maybe<Float>;
+  networkingCapital?: Maybe<Float>;
+  investCapital?: Maybe<Float>;
+  retainedEarnings?: Maybe<Float>;
+  diluted2Eps?: Maybe<Float>;
+  bps?: Maybe<Float>;
+  ocfps?: Maybe<Float>;
+  retainedps?: Maybe<Float>;
+  cfps?: Maybe<Float>;
+  ebitPs?: Maybe<Float>;
+  fcffPs?: Maybe<Float>;
+  fcfePs?: Maybe<Float>;
+  netprofitMargin?: Maybe<Float>;
+  grossprofitMargin?: Maybe<Float>;
+  cogsOfSales?: Maybe<Float>;
+  expenseOfSales?: Maybe<Float>;
+  profitToGr?: Maybe<Float>;
+  saleexpToGr?: Maybe<Float>;
+  adminexpOfGr?: Maybe<Float>;
+  finaexpOfGr?: Maybe<Float>;
+  impaiTtm?: Maybe<Float>;
+  gcOfGr?: Maybe<Float>;
+  opOfGr?: Maybe<Float>;
+  ebitOfGr?: Maybe<Float>;
+  roe?: Maybe<Float>;
+  roeWaa?: Maybe<Float>;
+  roeDt?: Maybe<Float>;
+  roa?: Maybe<Float>;
+  npta?: Maybe<Float>;
+  roic?: Maybe<Float>;
+  roeYearly?: Maybe<Float>;
+  roa2Yearly?: Maybe<Float>;
+  roeAvg?: Maybe<Float>;
+  opincomeOfEbt?: Maybe<Float>;
+  investincomeOfEbt?: Maybe<Float>;
+  nOpProfitOfEbt?: Maybe<Float>;
+  taxToEbt?: Maybe<Float>;
+  dtprofitToProfit?: Maybe<Float>;
+  salescashToOr?: Maybe<Float>;
+  ocfToOr?: Maybe<Float>;
+  ocfToOpincome?: Maybe<Float>;
+  capitalizedToDa?: Maybe<Float>;
+  debtToAssets?: Maybe<Float>;
+  assetsToEqt?: Maybe<Float>;
+  dpAssetsToEqt?: Maybe<Float>;
+  caToAssets?: Maybe<Float>;
+  ncaToAssets?: Maybe<Float>;
+  tbassetsToTotalassets?: Maybe<Float>;
+  intToTalcap?: Maybe<Float>;
+  eqtToTalcapital?: Maybe<Float>;
+  currentdebtToDebt?: Maybe<Float>;
+  longdebToDebt?: Maybe<Float>;
+  ocfToShortdebt?: Maybe<Float>;
+  debtToEqt?: Maybe<Float>;
+  eqtToDebt?: Maybe<Float>;
+  eqtToInterestdebt?: Maybe<Float>;
+  tangibleassetToDebt?: Maybe<Float>;
+  tangassetToIntdebt?: Maybe<Float>;
+  tangibleassetToNetdebt?: Maybe<Float>;
+  ocfToDebt?: Maybe<Float>;
+  ocfToInterestdebt?: Maybe<Float>;
+  ocfToNetdebt?: Maybe<Float>;
+  ebitToInterest?: Maybe<Float>;
+  longdebtToWorkingcapital?: Maybe<Float>;
+  ebitdaToDebt?: Maybe<Float>;
+  turnDays?: Maybe<Float>;
+  roaYearly?: Maybe<Float>;
+  roaDp?: Maybe<Float>;
+  fixedAssets?: Maybe<Float>;
+  profitPrefinExp?: Maybe<Float>;
+  nonOpProfit?: Maybe<Float>;
+  opToEbt?: Maybe<Float>;
+  nopToEbt?: Maybe<Float>;
+  ocfToProfit?: Maybe<Float>;
+  cashToLiqdebt?: Maybe<Float>;
+  cashToLiqdebtWithinterest?: Maybe<Float>;
+  opToLiqdebt?: Maybe<Float>;
+  opToDebt?: Maybe<Float>;
+  roicYearly?: Maybe<Float>;
+  totalFaTrun?: Maybe<Float>;
+  profitToOp?: Maybe<Float>;
+  qOpincome?: Maybe<Float>;
+  qInvestincome?: Maybe<Float>;
+  qDtprofit?: Maybe<Float>;
+  qEps?: Maybe<Float>;
+  qNetprofitMargin?: Maybe<Float>;
+  qGsprofitMargin?: Maybe<Float>;
+  qExpToSales?: Maybe<Float>;
+  qProfitToGr?: Maybe<Float>;
+  qSaleexpToGr?: Maybe<Float>;
+  qAdminexpToGr?: Maybe<Float>;
+  qFinaexpToGr?: Maybe<Float>;
+  qImpairToGrTtm?: Maybe<Float>;
+  qGcToGr?: Maybe<Float>;
+  qOpToGr?: Maybe<Float>;
+  qRoe?: Maybe<Float>;
+  qDtRoe?: Maybe<Float>;
+  qNpta?: Maybe<Float>;
+  qOpincomeToEbt?: Maybe<Float>;
+  qInvestincomeToEbt?: Maybe<Float>;
+  qDtprofitToProfit?: Maybe<Float>;
+  qSalescashToOr?: Maybe<Float>;
+  qOcfToSales?: Maybe<Float>;
+  qOcfToOr?: Maybe<Float>;
+  basicEpsYoy?: Maybe<Float>;
+  dtEpsYoy?: Maybe<Float>;
+  cfpsYoy?: Maybe<Float>;
+  opYoy?: Maybe<Float>;
+  ebtYoy?: Maybe<Float>;
+  netprofitYoy?: Maybe<Float>;
+  dtNetprofitYoy?: Maybe<Float>;
+  ocfYoy?: Maybe<Float>;
+  roeYoy?: Maybe<Float>;
+  bpsYoy?: Maybe<Float>;
+  assetsYoy?: Maybe<Float>;
+  eqtYoy?: Maybe<Float>;
+  trYoy?: Maybe<Float>;
+  orYoy?: Maybe<Float>;
+  qGrYoy?: Maybe<Float>;
+  qGrQoq?: Maybe<Float>;
+  qSalesYoy?: Maybe<Float>;
+  qSalesQoq?: Maybe<Float>;
+  qOpYoy?: Maybe<Float>;
+  qOpQoq?: Maybe<Float>;
+  qProfitYoy?: Maybe<Float>;
+  qProfitQoq?: Maybe<Float>;
+  qNetprofitYoy?: Maybe<Float>;
+  qNetprofitQoq?: Maybe<Float>;
+  equityYoy?: Maybe<Float>;
+  rdExp?: Maybe<Float>;
+  updateFlag?: Maybe<String>;
 }
 
 export interface DailyUpdateWithWhereUniqueWithoutCompanyInput {
@@ -2774,11 +4644,12 @@ export interface DailyUpdateWithWhereUniqueWithoutCompanyInput {
   data: DailyUpdateWithoutCompanyDataInput;
 }
 
-export type CompanyWhereUniqueInput = AtLeastOne<{
-  id: Maybe<ID_Input>;
-  symbol?: Maybe<String>;
-  name?: Maybe<String>;
-}>;
+export interface ProductCreateWithoutOutputsInput {
+  id?: Maybe<ID_Input>;
+  name: String;
+  introduce: String;
+  inputs?: Maybe<IndustryCreateManyWithoutPurchasesInput>;
+}
 
 export interface DailyUpdateWithoutCompanyDataInput {
   symbol?: Maybe<String>;
@@ -2794,9 +4665,16 @@ export interface DailyUpdateWithoutCompanyDataInput {
   amount?: Maybe<Float>;
 }
 
-export type CompanyEventWhereUniqueInput = AtLeastOne<{
-  id: Maybe<ID_Input>;
-}>;
+export interface IndustryCreateWithoutPurchasesInput {
+  id?: Maybe<ID_Input>;
+  code?: Maybe<String>;
+  name: String;
+  desc: String;
+  researches?: Maybe<ResearchCreateManyInput>;
+  companies?: Maybe<CompanyCreateManyWithoutTradesInput>;
+  influences?: Maybe<IndustryInfluenceCreateManyWithoutIndustryInput>;
+  selles?: Maybe<ProductCreateManyWithoutOutputsInput>;
+}
 
 export interface DailyUpsertWithWhereUniqueWithoutCompanyInput {
   where: DailyWhereUniqueInput;
@@ -2804,10 +4682,20 @@ export interface DailyUpsertWithWhereUniqueWithoutCompanyInput {
   create: DailyCreateWithoutCompanyInput;
 }
 
-export type CompanyProductWhereUniqueInput = AtLeastOne<{
-  id: Maybe<ID_Input>;
-  name?: Maybe<String>;
-}>;
+export interface ResearchSubscriptionWhereInput {
+  mutation_in?: Maybe<MutationType[] | MutationType>;
+  updatedFields_contains?: Maybe<String>;
+  updatedFields_contains_every?: Maybe<String[] | String>;
+  updatedFields_contains_some?: Maybe<String[] | String>;
+  node?: Maybe<ResearchWhereInput>;
+  AND?: Maybe<
+    ResearchSubscriptionWhereInput[] | ResearchSubscriptionWhereInput
+  >;
+  OR?: Maybe<ResearchSubscriptionWhereInput[] | ResearchSubscriptionWhereInput>;
+  NOT?: Maybe<
+    ResearchSubscriptionWhereInput[] | ResearchSubscriptionWhereInput
+  >;
+}
 
 export interface DailyScalarWhereInput {
   id?: Maybe<ID_Input>;
@@ -2923,645 +4811,20 @@ export interface DailyScalarWhereInput {
   NOT?: Maybe<DailyScalarWhereInput[] | DailyScalarWhereInput>;
 }
 
-export type DailyWhereUniqueInput = AtLeastOne<{
-  id: Maybe<ID_Input>;
-}>;
+export interface ProductSubscriptionWhereInput {
+  mutation_in?: Maybe<MutationType[] | MutationType>;
+  updatedFields_contains?: Maybe<String>;
+  updatedFields_contains_every?: Maybe<String[] | String>;
+  updatedFields_contains_some?: Maybe<String[] | String>;
+  node?: Maybe<ProductWhereInput>;
+  AND?: Maybe<ProductSubscriptionWhereInput[] | ProductSubscriptionWhereInput>;
+  OR?: Maybe<ProductSubscriptionWhereInput[] | ProductSubscriptionWhereInput>;
+  NOT?: Maybe<ProductSubscriptionWhereInput[] | ProductSubscriptionWhereInput>;
+}
 
 export interface DailyUpdateManyWithWhereNestedInput {
   where: DailyScalarWhereInput;
   data: DailyUpdateManyDataInput;
-}
-
-export type IndustryWhereUniqueInput = AtLeastOne<{
-  id: Maybe<ID_Input>;
-  name?: Maybe<String>;
-}>;
-
-export interface DailyUpdateManyDataInput {
-  symbol?: Maybe<String>;
-  tradeDate?: Maybe<DateTimeInput>;
-  open?: Maybe<Float>;
-  high?: Maybe<Float>;
-  low?: Maybe<Float>;
-  close?: Maybe<Float>;
-  preClose?: Maybe<Float>;
-  change?: Maybe<Float>;
-  pctChg?: Maybe<Float>;
-  vol?: Maybe<Float>;
-  amount?: Maybe<Float>;
-}
-
-export type IndustryEventWhereUniqueInput = AtLeastOne<{
-  id: Maybe<ID_Input>;
-}>;
-
-export interface CompanyUpsertWithWhereUniqueWithoutPurchasesInput {
-  where: CompanyWhereUniqueInput;
-  update: CompanyUpdateWithoutPurchasesDataInput;
-  create: CompanyCreateWithoutPurchasesInput;
-}
-
-export interface IndustryCreateOneWithoutInfluencesInput {
-  create?: Maybe<IndustryCreateWithoutInfluencesInput>;
-  connect?: Maybe<IndustryWhereUniqueInput>;
-}
-
-export interface CompanyScalarWhereInput {
-  id?: Maybe<ID_Input>;
-  id_not?: Maybe<ID_Input>;
-  id_in?: Maybe<ID_Input[] | ID_Input>;
-  id_not_in?: Maybe<ID_Input[] | ID_Input>;
-  id_lt?: Maybe<ID_Input>;
-  id_lte?: Maybe<ID_Input>;
-  id_gt?: Maybe<ID_Input>;
-  id_gte?: Maybe<ID_Input>;
-  id_contains?: Maybe<ID_Input>;
-  id_not_contains?: Maybe<ID_Input>;
-  id_starts_with?: Maybe<ID_Input>;
-  id_not_starts_with?: Maybe<ID_Input>;
-  id_ends_with?: Maybe<ID_Input>;
-  id_not_ends_with?: Maybe<ID_Input>;
-  symbol?: Maybe<String>;
-  symbol_not?: Maybe<String>;
-  symbol_in?: Maybe<String[] | String>;
-  symbol_not_in?: Maybe<String[] | String>;
-  symbol_lt?: Maybe<String>;
-  symbol_lte?: Maybe<String>;
-  symbol_gt?: Maybe<String>;
-  symbol_gte?: Maybe<String>;
-  symbol_contains?: Maybe<String>;
-  symbol_not_contains?: Maybe<String>;
-  symbol_starts_with?: Maybe<String>;
-  symbol_not_starts_with?: Maybe<String>;
-  symbol_ends_with?: Maybe<String>;
-  symbol_not_ends_with?: Maybe<String>;
-  name?: Maybe<String>;
-  name_not?: Maybe<String>;
-  name_in?: Maybe<String[] | String>;
-  name_not_in?: Maybe<String[] | String>;
-  name_lt?: Maybe<String>;
-  name_lte?: Maybe<String>;
-  name_gt?: Maybe<String>;
-  name_gte?: Maybe<String>;
-  name_contains?: Maybe<String>;
-  name_not_contains?: Maybe<String>;
-  name_starts_with?: Maybe<String>;
-  name_not_starts_with?: Maybe<String>;
-  name_ends_with?: Maybe<String>;
-  name_not_ends_with?: Maybe<String>;
-  area?: Maybe<String>;
-  area_not?: Maybe<String>;
-  area_in?: Maybe<String[] | String>;
-  area_not_in?: Maybe<String[] | String>;
-  area_lt?: Maybe<String>;
-  area_lte?: Maybe<String>;
-  area_gt?: Maybe<String>;
-  area_gte?: Maybe<String>;
-  area_contains?: Maybe<String>;
-  area_not_contains?: Maybe<String>;
-  area_starts_with?: Maybe<String>;
-  area_not_starts_with?: Maybe<String>;
-  area_ends_with?: Maybe<String>;
-  area_not_ends_with?: Maybe<String>;
-  industry?: Maybe<String>;
-  industry_not?: Maybe<String>;
-  industry_in?: Maybe<String[] | String>;
-  industry_not_in?: Maybe<String[] | String>;
-  industry_lt?: Maybe<String>;
-  industry_lte?: Maybe<String>;
-  industry_gt?: Maybe<String>;
-  industry_gte?: Maybe<String>;
-  industry_contains?: Maybe<String>;
-  industry_not_contains?: Maybe<String>;
-  industry_starts_with?: Maybe<String>;
-  industry_not_starts_with?: Maybe<String>;
-  industry_ends_with?: Maybe<String>;
-  industry_not_ends_with?: Maybe<String>;
-  fullname?: Maybe<String>;
-  fullname_not?: Maybe<String>;
-  fullname_in?: Maybe<String[] | String>;
-  fullname_not_in?: Maybe<String[] | String>;
-  fullname_lt?: Maybe<String>;
-  fullname_lte?: Maybe<String>;
-  fullname_gt?: Maybe<String>;
-  fullname_gte?: Maybe<String>;
-  fullname_contains?: Maybe<String>;
-  fullname_not_contains?: Maybe<String>;
-  fullname_starts_with?: Maybe<String>;
-  fullname_not_starts_with?: Maybe<String>;
-  fullname_ends_with?: Maybe<String>;
-  fullname_not_ends_with?: Maybe<String>;
-  enname?: Maybe<String>;
-  enname_not?: Maybe<String>;
-  enname_in?: Maybe<String[] | String>;
-  enname_not_in?: Maybe<String[] | String>;
-  enname_lt?: Maybe<String>;
-  enname_lte?: Maybe<String>;
-  enname_gt?: Maybe<String>;
-  enname_gte?: Maybe<String>;
-  enname_contains?: Maybe<String>;
-  enname_not_contains?: Maybe<String>;
-  enname_starts_with?: Maybe<String>;
-  enname_not_starts_with?: Maybe<String>;
-  enname_ends_with?: Maybe<String>;
-  enname_not_ends_with?: Maybe<String>;
-  market?: Maybe<String>;
-  market_not?: Maybe<String>;
-  market_in?: Maybe<String[] | String>;
-  market_not_in?: Maybe<String[] | String>;
-  market_lt?: Maybe<String>;
-  market_lte?: Maybe<String>;
-  market_gt?: Maybe<String>;
-  market_gte?: Maybe<String>;
-  market_contains?: Maybe<String>;
-  market_not_contains?: Maybe<String>;
-  market_starts_with?: Maybe<String>;
-  market_not_starts_with?: Maybe<String>;
-  market_ends_with?: Maybe<String>;
-  market_not_ends_with?: Maybe<String>;
-  exchange?: Maybe<String>;
-  exchange_not?: Maybe<String>;
-  exchange_in?: Maybe<String[] | String>;
-  exchange_not_in?: Maybe<String[] | String>;
-  exchange_lt?: Maybe<String>;
-  exchange_lte?: Maybe<String>;
-  exchange_gt?: Maybe<String>;
-  exchange_gte?: Maybe<String>;
-  exchange_contains?: Maybe<String>;
-  exchange_not_contains?: Maybe<String>;
-  exchange_starts_with?: Maybe<String>;
-  exchange_not_starts_with?: Maybe<String>;
-  exchange_ends_with?: Maybe<String>;
-  exchange_not_ends_with?: Maybe<String>;
-  currType?: Maybe<String>;
-  currType_not?: Maybe<String>;
-  currType_in?: Maybe<String[] | String>;
-  currType_not_in?: Maybe<String[] | String>;
-  currType_lt?: Maybe<String>;
-  currType_lte?: Maybe<String>;
-  currType_gt?: Maybe<String>;
-  currType_gte?: Maybe<String>;
-  currType_contains?: Maybe<String>;
-  currType_not_contains?: Maybe<String>;
-  currType_starts_with?: Maybe<String>;
-  currType_not_starts_with?: Maybe<String>;
-  currType_ends_with?: Maybe<String>;
-  currType_not_ends_with?: Maybe<String>;
-  listStatus?: Maybe<String>;
-  listStatus_not?: Maybe<String>;
-  listStatus_in?: Maybe<String[] | String>;
-  listStatus_not_in?: Maybe<String[] | String>;
-  listStatus_lt?: Maybe<String>;
-  listStatus_lte?: Maybe<String>;
-  listStatus_gt?: Maybe<String>;
-  listStatus_gte?: Maybe<String>;
-  listStatus_contains?: Maybe<String>;
-  listStatus_not_contains?: Maybe<String>;
-  listStatus_starts_with?: Maybe<String>;
-  listStatus_not_starts_with?: Maybe<String>;
-  listStatus_ends_with?: Maybe<String>;
-  listStatus_not_ends_with?: Maybe<String>;
-  listDate?: Maybe<String>;
-  listDate_not?: Maybe<String>;
-  listDate_in?: Maybe<String[] | String>;
-  listDate_not_in?: Maybe<String[] | String>;
-  listDate_lt?: Maybe<String>;
-  listDate_lte?: Maybe<String>;
-  listDate_gt?: Maybe<String>;
-  listDate_gte?: Maybe<String>;
-  listDate_contains?: Maybe<String>;
-  listDate_not_contains?: Maybe<String>;
-  listDate_starts_with?: Maybe<String>;
-  listDate_not_starts_with?: Maybe<String>;
-  listDate_ends_with?: Maybe<String>;
-  listDate_not_ends_with?: Maybe<String>;
-  delistDate?: Maybe<String>;
-  delistDate_not?: Maybe<String>;
-  delistDate_in?: Maybe<String[] | String>;
-  delistDate_not_in?: Maybe<String[] | String>;
-  delistDate_lt?: Maybe<String>;
-  delistDate_lte?: Maybe<String>;
-  delistDate_gt?: Maybe<String>;
-  delistDate_gte?: Maybe<String>;
-  delistDate_contains?: Maybe<String>;
-  delistDate_not_contains?: Maybe<String>;
-  delistDate_starts_with?: Maybe<String>;
-  delistDate_not_starts_with?: Maybe<String>;
-  delistDate_ends_with?: Maybe<String>;
-  delistDate_not_ends_with?: Maybe<String>;
-  isHS?: Maybe<String>;
-  isHS_not?: Maybe<String>;
-  isHS_in?: Maybe<String[] | String>;
-  isHS_not_in?: Maybe<String[] | String>;
-  isHS_lt?: Maybe<String>;
-  isHS_lte?: Maybe<String>;
-  isHS_gt?: Maybe<String>;
-  isHS_gte?: Maybe<String>;
-  isHS_contains?: Maybe<String>;
-  isHS_not_contains?: Maybe<String>;
-  isHS_starts_with?: Maybe<String>;
-  isHS_not_starts_with?: Maybe<String>;
-  isHS_ends_with?: Maybe<String>;
-  isHS_not_ends_with?: Maybe<String>;
-  scope?: Maybe<String>;
-  scope_not?: Maybe<String>;
-  scope_in?: Maybe<String[] | String>;
-  scope_not_in?: Maybe<String[] | String>;
-  scope_lt?: Maybe<String>;
-  scope_lte?: Maybe<String>;
-  scope_gt?: Maybe<String>;
-  scope_gte?: Maybe<String>;
-  scope_contains?: Maybe<String>;
-  scope_not_contains?: Maybe<String>;
-  scope_starts_with?: Maybe<String>;
-  scope_not_starts_with?: Maybe<String>;
-  scope_ends_with?: Maybe<String>;
-  scope_not_ends_with?: Maybe<String>;
-  desc?: Maybe<String>;
-  desc_not?: Maybe<String>;
-  desc_in?: Maybe<String[] | String>;
-  desc_not_in?: Maybe<String[] | String>;
-  desc_lt?: Maybe<String>;
-  desc_lte?: Maybe<String>;
-  desc_gt?: Maybe<String>;
-  desc_gte?: Maybe<String>;
-  desc_contains?: Maybe<String>;
-  desc_not_contains?: Maybe<String>;
-  desc_starts_with?: Maybe<String>;
-  desc_not_starts_with?: Maybe<String>;
-  desc_ends_with?: Maybe<String>;
-  desc_not_ends_with?: Maybe<String>;
-  pool?: Maybe<Boolean>;
-  pool_not?: Maybe<Boolean>;
-  AND?: Maybe<CompanyScalarWhereInput[] | CompanyScalarWhereInput>;
-  OR?: Maybe<CompanyScalarWhereInput[] | CompanyScalarWhereInput>;
-  NOT?: Maybe<CompanyScalarWhereInput[] | CompanyScalarWhereInput>;
-}
-
-export type IndustryInfluenceWhereUniqueInput = AtLeastOne<{
-  id: Maybe<ID_Input>;
-}>;
-
-export interface CompanyUpdateManyWithWhereNestedInput {
-  where: CompanyScalarWhereInput;
-  data: CompanyUpdateManyDataInput;
-}
-
-export type KeywordWhereUniqueInput = AtLeastOne<{
-  id: Maybe<ID_Input>;
-  name?: Maybe<String>;
-}>;
-
-export interface CompanyUpdateManyDataInput {
-  symbol?: Maybe<String>;
-  name?: Maybe<String>;
-  area?: Maybe<String>;
-  industry?: Maybe<String>;
-  fullname?: Maybe<String>;
-  enname?: Maybe<String>;
-  market?: Maybe<String>;
-  exchange?: Maybe<String>;
-  currType?: Maybe<String>;
-  listStatus?: Maybe<String>;
-  listDate?: Maybe<String>;
-  delistDate?: Maybe<String>;
-  isHS?: Maybe<String>;
-  scope?: Maybe<String>;
-  desc?: Maybe<String>;
-  pool?: Maybe<Boolean>;
-}
-
-export type ProductWhereUniqueInput = AtLeastOne<{
-  id: Maybe<ID_Input>;
-  name?: Maybe<String>;
-}>;
-
-export interface CompanyProductUpsertWithWhereUniqueWithoutOutputsInput {
-  where: CompanyProductWhereUniqueInput;
-  update: CompanyProductUpdateWithoutOutputsDataInput;
-  create: CompanyProductCreateWithoutOutputsInput;
-}
-
-export type ResearchWhereUniqueInput = AtLeastOne<{
-  id: Maybe<ID_Input>;
-}>;
-
-export interface CompanyProductScalarWhereInput {
-  id?: Maybe<ID_Input>;
-  id_not?: Maybe<ID_Input>;
-  id_in?: Maybe<ID_Input[] | ID_Input>;
-  id_not_in?: Maybe<ID_Input[] | ID_Input>;
-  id_lt?: Maybe<ID_Input>;
-  id_lte?: Maybe<ID_Input>;
-  id_gt?: Maybe<ID_Input>;
-  id_gte?: Maybe<ID_Input>;
-  id_contains?: Maybe<ID_Input>;
-  id_not_contains?: Maybe<ID_Input>;
-  id_starts_with?: Maybe<ID_Input>;
-  id_not_starts_with?: Maybe<ID_Input>;
-  id_ends_with?: Maybe<ID_Input>;
-  id_not_ends_with?: Maybe<ID_Input>;
-  name?: Maybe<String>;
-  name_not?: Maybe<String>;
-  name_in?: Maybe<String[] | String>;
-  name_not_in?: Maybe<String[] | String>;
-  name_lt?: Maybe<String>;
-  name_lte?: Maybe<String>;
-  name_gt?: Maybe<String>;
-  name_gte?: Maybe<String>;
-  name_contains?: Maybe<String>;
-  name_not_contains?: Maybe<String>;
-  name_starts_with?: Maybe<String>;
-  name_not_starts_with?: Maybe<String>;
-  name_ends_with?: Maybe<String>;
-  name_not_ends_with?: Maybe<String>;
-  introduce?: Maybe<String>;
-  introduce_not?: Maybe<String>;
-  introduce_in?: Maybe<String[] | String>;
-  introduce_not_in?: Maybe<String[] | String>;
-  introduce_lt?: Maybe<String>;
-  introduce_lte?: Maybe<String>;
-  introduce_gt?: Maybe<String>;
-  introduce_gte?: Maybe<String>;
-  introduce_contains?: Maybe<String>;
-  introduce_not_contains?: Maybe<String>;
-  introduce_starts_with?: Maybe<String>;
-  introduce_not_starts_with?: Maybe<String>;
-  introduce_ends_with?: Maybe<String>;
-  introduce_not_ends_with?: Maybe<String>;
-  AND?: Maybe<
-    CompanyProductScalarWhereInput[] | CompanyProductScalarWhereInput
-  >;
-  OR?: Maybe<CompanyProductScalarWhereInput[] | CompanyProductScalarWhereInput>;
-  NOT?: Maybe<
-    CompanyProductScalarWhereInput[] | CompanyProductScalarWhereInput
-  >;
-}
-
-export type UserWhereUniqueInput = AtLeastOne<{
-  id: Maybe<ID_Input>;
-  username?: Maybe<String>;
-}>;
-
-export interface CompanyProductUpdateManyWithWhereNestedInput {
-  where: CompanyProductScalarWhereInput;
-  data: CompanyProductUpdateManyDataInput;
-}
-
-export interface CompanyUpdateOneRequiredWithoutDailiesInput {
-  create?: Maybe<CompanyCreateWithoutDailiesInput>;
-  update?: Maybe<CompanyUpdateWithoutDailiesDataInput>;
-  upsert?: Maybe<CompanyUpsertWithoutDailiesInput>;
-  connect?: Maybe<CompanyWhereUniqueInput>;
-}
-
-export interface CompanyProductUpdateManyDataInput {
-  name?: Maybe<String>;
-  introduce?: Maybe<String>;
-}
-
-export interface CompanyProductCreateManyWithoutInputsInput {
-  create?: Maybe<
-    | CompanyProductCreateWithoutInputsInput[]
-    | CompanyProductCreateWithoutInputsInput
-  >;
-  connect?: Maybe<
-    CompanyProductWhereUniqueInput[] | CompanyProductWhereUniqueInput
-  >;
-}
-
-export interface CompanyUpsertWithWhereUniqueWithoutTradesInput {
-  where: CompanyWhereUniqueInput;
-  update: CompanyUpdateWithoutTradesDataInput;
-  create: CompanyCreateWithoutTradesInput;
-}
-
-export interface CommentCreateManyWithoutCompanyInput {
-  create?: Maybe<
-    CommentCreateWithoutCompanyInput[] | CommentCreateWithoutCompanyInput
-  >;
-  connect?: Maybe<CommentWhereUniqueInput[] | CommentWhereUniqueInput>;
-}
-
-export interface IndustryUpsertWithWhereUniqueWithoutSellesInput {
-  where: IndustryWhereUniqueInput;
-  update: IndustryUpdateWithoutSellesDataInput;
-  create: IndustryCreateWithoutSellesInput;
-}
-
-export interface ResearchCreateManyInput {
-  create?: Maybe<ResearchCreateInput[] | ResearchCreateInput>;
-  connect?: Maybe<ResearchWhereUniqueInput[] | ResearchWhereUniqueInput>;
-}
-
-export interface IndustryScalarWhereInput {
-  id?: Maybe<ID_Input>;
-  id_not?: Maybe<ID_Input>;
-  id_in?: Maybe<ID_Input[] | ID_Input>;
-  id_not_in?: Maybe<ID_Input[] | ID_Input>;
-  id_lt?: Maybe<ID_Input>;
-  id_lte?: Maybe<ID_Input>;
-  id_gt?: Maybe<ID_Input>;
-  id_gte?: Maybe<ID_Input>;
-  id_contains?: Maybe<ID_Input>;
-  id_not_contains?: Maybe<ID_Input>;
-  id_starts_with?: Maybe<ID_Input>;
-  id_not_starts_with?: Maybe<ID_Input>;
-  id_ends_with?: Maybe<ID_Input>;
-  id_not_ends_with?: Maybe<ID_Input>;
-  code?: Maybe<String>;
-  code_not?: Maybe<String>;
-  code_in?: Maybe<String[] | String>;
-  code_not_in?: Maybe<String[] | String>;
-  code_lt?: Maybe<String>;
-  code_lte?: Maybe<String>;
-  code_gt?: Maybe<String>;
-  code_gte?: Maybe<String>;
-  code_contains?: Maybe<String>;
-  code_not_contains?: Maybe<String>;
-  code_starts_with?: Maybe<String>;
-  code_not_starts_with?: Maybe<String>;
-  code_ends_with?: Maybe<String>;
-  code_not_ends_with?: Maybe<String>;
-  name?: Maybe<String>;
-  name_not?: Maybe<String>;
-  name_in?: Maybe<String[] | String>;
-  name_not_in?: Maybe<String[] | String>;
-  name_lt?: Maybe<String>;
-  name_lte?: Maybe<String>;
-  name_gt?: Maybe<String>;
-  name_gte?: Maybe<String>;
-  name_contains?: Maybe<String>;
-  name_not_contains?: Maybe<String>;
-  name_starts_with?: Maybe<String>;
-  name_not_starts_with?: Maybe<String>;
-  name_ends_with?: Maybe<String>;
-  name_not_ends_with?: Maybe<String>;
-  desc?: Maybe<String>;
-  desc_not?: Maybe<String>;
-  desc_in?: Maybe<String[] | String>;
-  desc_not_in?: Maybe<String[] | String>;
-  desc_lt?: Maybe<String>;
-  desc_lte?: Maybe<String>;
-  desc_gt?: Maybe<String>;
-  desc_gte?: Maybe<String>;
-  desc_contains?: Maybe<String>;
-  desc_not_contains?: Maybe<String>;
-  desc_starts_with?: Maybe<String>;
-  desc_not_starts_with?: Maybe<String>;
-  desc_ends_with?: Maybe<String>;
-  desc_not_ends_with?: Maybe<String>;
-  AND?: Maybe<IndustryScalarWhereInput[] | IndustryScalarWhereInput>;
-  OR?: Maybe<IndustryScalarWhereInput[] | IndustryScalarWhereInput>;
-  NOT?: Maybe<IndustryScalarWhereInput[] | IndustryScalarWhereInput>;
-}
-
-export interface KeywordCreateOneInput {
-  create?: Maybe<KeywordCreateInput>;
-  connect?: Maybe<KeywordWhereUniqueInput>;
-}
-
-export interface IndustryUpdateManyWithWhereNestedInput {
-  where: IndustryScalarWhereInput;
-  data: IndustryUpdateManyDataInput;
-}
-
-export interface IndustryCreateManyWithoutSellesInput {
-  create?: Maybe<
-    IndustryCreateWithoutSellesInput[] | IndustryCreateWithoutSellesInput
-  >;
-  connect?: Maybe<IndustryWhereUniqueInput[] | IndustryWhereUniqueInput>;
-}
-
-export interface IndustryUpdateManyDataInput {
-  code?: Maybe<String>;
-  name?: Maybe<String>;
-  desc?: Maybe<String>;
-}
-
-export interface CompanyProductCreateManyWithoutOutputsInput {
-  create?: Maybe<
-    | CompanyProductCreateWithoutOutputsInput[]
-    | CompanyProductCreateWithoutOutputsInput
-  >;
-  connect?: Maybe<
-    CompanyProductWhereUniqueInput[] | CompanyProductWhereUniqueInput
-  >;
-}
-
-export interface ProductUpsertWithWhereUniqueWithoutInputsInput {
-  where: ProductWhereUniqueInput;
-  update: ProductUpdateWithoutInputsDataInput;
-  create: ProductCreateWithoutInputsInput;
-}
-
-export interface CompanyEventCreateManyWithoutCompanyInput {
-  create?: Maybe<
-    | CompanyEventCreateWithoutCompanyInput[]
-    | CompanyEventCreateWithoutCompanyInput
-  >;
-  connect?: Maybe<
-    CompanyEventWhereUniqueInput[] | CompanyEventWhereUniqueInput
-  >;
-}
-
-export interface ProductScalarWhereInput {
-  id?: Maybe<ID_Input>;
-  id_not?: Maybe<ID_Input>;
-  id_in?: Maybe<ID_Input[] | ID_Input>;
-  id_not_in?: Maybe<ID_Input[] | ID_Input>;
-  id_lt?: Maybe<ID_Input>;
-  id_lte?: Maybe<ID_Input>;
-  id_gt?: Maybe<ID_Input>;
-  id_gte?: Maybe<ID_Input>;
-  id_contains?: Maybe<ID_Input>;
-  id_not_contains?: Maybe<ID_Input>;
-  id_starts_with?: Maybe<ID_Input>;
-  id_not_starts_with?: Maybe<ID_Input>;
-  id_ends_with?: Maybe<ID_Input>;
-  id_not_ends_with?: Maybe<ID_Input>;
-  name?: Maybe<String>;
-  name_not?: Maybe<String>;
-  name_in?: Maybe<String[] | String>;
-  name_not_in?: Maybe<String[] | String>;
-  name_lt?: Maybe<String>;
-  name_lte?: Maybe<String>;
-  name_gt?: Maybe<String>;
-  name_gte?: Maybe<String>;
-  name_contains?: Maybe<String>;
-  name_not_contains?: Maybe<String>;
-  name_starts_with?: Maybe<String>;
-  name_not_starts_with?: Maybe<String>;
-  name_ends_with?: Maybe<String>;
-  name_not_ends_with?: Maybe<String>;
-  introduce?: Maybe<String>;
-  introduce_not?: Maybe<String>;
-  introduce_in?: Maybe<String[] | String>;
-  introduce_not_in?: Maybe<String[] | String>;
-  introduce_lt?: Maybe<String>;
-  introduce_lte?: Maybe<String>;
-  introduce_gt?: Maybe<String>;
-  introduce_gte?: Maybe<String>;
-  introduce_contains?: Maybe<String>;
-  introduce_not_contains?: Maybe<String>;
-  introduce_starts_with?: Maybe<String>;
-  introduce_not_starts_with?: Maybe<String>;
-  introduce_ends_with?: Maybe<String>;
-  introduce_not_ends_with?: Maybe<String>;
-  AND?: Maybe<ProductScalarWhereInput[] | ProductScalarWhereInput>;
-  OR?: Maybe<ProductScalarWhereInput[] | ProductScalarWhereInput>;
-  NOT?: Maybe<ProductScalarWhereInput[] | ProductScalarWhereInput>;
-}
-
-export interface ProductCreateManyWithoutOutputsInput {
-  create?: Maybe<
-    ProductCreateWithoutOutputsInput[] | ProductCreateWithoutOutputsInput
-  >;
-  connect?: Maybe<ProductWhereUniqueInput[] | ProductWhereUniqueInput>;
-}
-
-export interface ProductUpdateManyWithWhereNestedInput {
-  where: ProductScalarWhereInput;
-  data: ProductUpdateManyDataInput;
-}
-
-export interface KeywordWhereInput {
-  id?: Maybe<ID_Input>;
-  id_not?: Maybe<ID_Input>;
-  id_in?: Maybe<ID_Input[] | ID_Input>;
-  id_not_in?: Maybe<ID_Input[] | ID_Input>;
-  id_lt?: Maybe<ID_Input>;
-  id_lte?: Maybe<ID_Input>;
-  id_gt?: Maybe<ID_Input>;
-  id_gte?: Maybe<ID_Input>;
-  id_contains?: Maybe<ID_Input>;
-  id_not_contains?: Maybe<ID_Input>;
-  id_starts_with?: Maybe<ID_Input>;
-  id_not_starts_with?: Maybe<ID_Input>;
-  id_ends_with?: Maybe<ID_Input>;
-  id_not_ends_with?: Maybe<ID_Input>;
-  name?: Maybe<String>;
-  name_not?: Maybe<String>;
-  name_in?: Maybe<String[] | String>;
-  name_not_in?: Maybe<String[] | String>;
-  name_lt?: Maybe<String>;
-  name_lte?: Maybe<String>;
-  name_gt?: Maybe<String>;
-  name_gte?: Maybe<String>;
-  name_contains?: Maybe<String>;
-  name_not_contains?: Maybe<String>;
-  name_starts_with?: Maybe<String>;
-  name_not_starts_with?: Maybe<String>;
-  name_ends_with?: Maybe<String>;
-  name_not_ends_with?: Maybe<String>;
-  AND?: Maybe<KeywordWhereInput[] | KeywordWhereInput>;
-  OR?: Maybe<KeywordWhereInput[] | KeywordWhereInput>;
-  NOT?: Maybe<KeywordWhereInput[] | KeywordWhereInput>;
-}
-
-export interface ProductUpdateManyDataInput {
-  name?: Maybe<String>;
-  introduce?: Maybe<String>;
 }
 
 export interface IndustryInfluenceSubscriptionWhereInput {
@@ -3584,293 +4847,67 @@ export interface IndustryInfluenceSubscriptionWhereInput {
   >;
 }
 
-export interface ProductUpdateManyWithoutOutputsInput {
-  create?: Maybe<
-    ProductCreateWithoutOutputsInput[] | ProductCreateWithoutOutputsInput
-  >;
-  delete?: Maybe<ProductWhereUniqueInput[] | ProductWhereUniqueInput>;
-  connect?: Maybe<ProductWhereUniqueInput[] | ProductWhereUniqueInput>;
-  set?: Maybe<ProductWhereUniqueInput[] | ProductWhereUniqueInput>;
-  disconnect?: Maybe<ProductWhereUniqueInput[] | ProductWhereUniqueInput>;
-  update?: Maybe<
-    | ProductUpdateWithWhereUniqueWithoutOutputsInput[]
-    | ProductUpdateWithWhereUniqueWithoutOutputsInput
-  >;
-  upsert?: Maybe<
-    | ProductUpsertWithWhereUniqueWithoutOutputsInput[]
-    | ProductUpsertWithWhereUniqueWithoutOutputsInput
-  >;
-  deleteMany?: Maybe<ProductScalarWhereInput[] | ProductScalarWhereInput>;
-  updateMany?: Maybe<
-    | ProductUpdateManyWithWhereNestedInput[]
-    | ProductUpdateManyWithWhereNestedInput
-  >;
+export interface DailyUpdateManyDataInput {
+  symbol?: Maybe<String>;
+  tradeDate?: Maybe<DateTimeInput>;
+  open?: Maybe<Float>;
+  high?: Maybe<Float>;
+  low?: Maybe<Float>;
+  close?: Maybe<Float>;
+  preClose?: Maybe<Float>;
+  change?: Maybe<Float>;
+  pctChg?: Maybe<Float>;
+  vol?: Maybe<Float>;
+  amount?: Maybe<Float>;
 }
 
-export interface CompanySubscriptionWhereInput {
+export interface FinaIndicatorSubscriptionWhereInput {
   mutation_in?: Maybe<MutationType[] | MutationType>;
   updatedFields_contains?: Maybe<String>;
   updatedFields_contains_every?: Maybe<String[] | String>;
   updatedFields_contains_some?: Maybe<String[] | String>;
-  node?: Maybe<CompanyWhereInput>;
-  AND?: Maybe<CompanySubscriptionWhereInput[] | CompanySubscriptionWhereInput>;
-  OR?: Maybe<CompanySubscriptionWhereInput[] | CompanySubscriptionWhereInput>;
-  NOT?: Maybe<CompanySubscriptionWhereInput[] | CompanySubscriptionWhereInput>;
-}
-
-export interface ProductUpdateWithWhereUniqueWithoutOutputsInput {
-  where: ProductWhereUniqueInput;
-  data: ProductUpdateWithoutOutputsDataInput;
-}
-
-export interface ResearchUpdateInput {
-  desc?: Maybe<String>;
-}
-
-export interface ProductUpdateWithoutOutputsDataInput {
-  name?: Maybe<String>;
-  introduce?: Maybe<String>;
-  inputs?: Maybe<IndustryUpdateManyWithoutPurchasesInput>;
-}
-
-export interface IndustryInfluenceUpdateManyMutationInput {
-  keywordDirection?: Maybe<Direction>;
-  kind?: Maybe<FactorKind>;
-  desc?: Maybe<String>;
-  direction?: Maybe<Direction>;
-}
-
-export interface IndustryUpdateManyWithoutPurchasesInput {
-  create?: Maybe<
-    IndustryCreateWithoutPurchasesInput[] | IndustryCreateWithoutPurchasesInput
+  node?: Maybe<FinaIndicatorWhereInput>;
+  AND?: Maybe<
+    FinaIndicatorSubscriptionWhereInput[] | FinaIndicatorSubscriptionWhereInput
   >;
-  delete?: Maybe<IndustryWhereUniqueInput[] | IndustryWhereUniqueInput>;
-  connect?: Maybe<IndustryWhereUniqueInput[] | IndustryWhereUniqueInput>;
-  set?: Maybe<IndustryWhereUniqueInput[] | IndustryWhereUniqueInput>;
-  disconnect?: Maybe<IndustryWhereUniqueInput[] | IndustryWhereUniqueInput>;
+  OR?: Maybe<
+    FinaIndicatorSubscriptionWhereInput[] | FinaIndicatorSubscriptionWhereInput
+  >;
+  NOT?: Maybe<
+    FinaIndicatorSubscriptionWhereInput[] | FinaIndicatorSubscriptionWhereInput
+  >;
+}
+
+export interface FinaIndicatorUpdateManyWithoutCompanyInput {
+  create?: Maybe<
+    | FinaIndicatorCreateWithoutCompanyInput[]
+    | FinaIndicatorCreateWithoutCompanyInput
+  >;
+  delete?: Maybe<
+    FinaIndicatorWhereUniqueInput[] | FinaIndicatorWhereUniqueInput
+  >;
+  connect?: Maybe<
+    FinaIndicatorWhereUniqueInput[] | FinaIndicatorWhereUniqueInput
+  >;
+  set?: Maybe<FinaIndicatorWhereUniqueInput[] | FinaIndicatorWhereUniqueInput>;
+  disconnect?: Maybe<
+    FinaIndicatorWhereUniqueInput[] | FinaIndicatorWhereUniqueInput
+  >;
   update?: Maybe<
-    | IndustryUpdateWithWhereUniqueWithoutPurchasesInput[]
-    | IndustryUpdateWithWhereUniqueWithoutPurchasesInput
+    | FinaIndicatorUpdateWithWhereUniqueWithoutCompanyInput[]
+    | FinaIndicatorUpdateWithWhereUniqueWithoutCompanyInput
   >;
   upsert?: Maybe<
-    | IndustryUpsertWithWhereUniqueWithoutPurchasesInput[]
-    | IndustryUpsertWithWhereUniqueWithoutPurchasesInput
+    | FinaIndicatorUpsertWithWhereUniqueWithoutCompanyInput[]
+    | FinaIndicatorUpsertWithWhereUniqueWithoutCompanyInput
   >;
-  deleteMany?: Maybe<IndustryScalarWhereInput[] | IndustryScalarWhereInput>;
+  deleteMany?: Maybe<
+    FinaIndicatorScalarWhereInput[] | FinaIndicatorScalarWhereInput
+  >;
   updateMany?: Maybe<
-    | IndustryUpdateManyWithWhereNestedInput[]
-    | IndustryUpdateManyWithWhereNestedInput
+    | FinaIndicatorUpdateManyWithWhereNestedInput[]
+    | FinaIndicatorUpdateManyWithWhereNestedInput
   >;
-}
-
-export interface CompanyProductWhereInput {
-  id?: Maybe<ID_Input>;
-  id_not?: Maybe<ID_Input>;
-  id_in?: Maybe<ID_Input[] | ID_Input>;
-  id_not_in?: Maybe<ID_Input[] | ID_Input>;
-  id_lt?: Maybe<ID_Input>;
-  id_lte?: Maybe<ID_Input>;
-  id_gt?: Maybe<ID_Input>;
-  id_gte?: Maybe<ID_Input>;
-  id_contains?: Maybe<ID_Input>;
-  id_not_contains?: Maybe<ID_Input>;
-  id_starts_with?: Maybe<ID_Input>;
-  id_not_starts_with?: Maybe<ID_Input>;
-  id_ends_with?: Maybe<ID_Input>;
-  id_not_ends_with?: Maybe<ID_Input>;
-  name?: Maybe<String>;
-  name_not?: Maybe<String>;
-  name_in?: Maybe<String[] | String>;
-  name_not_in?: Maybe<String[] | String>;
-  name_lt?: Maybe<String>;
-  name_lte?: Maybe<String>;
-  name_gt?: Maybe<String>;
-  name_gte?: Maybe<String>;
-  name_contains?: Maybe<String>;
-  name_not_contains?: Maybe<String>;
-  name_starts_with?: Maybe<String>;
-  name_not_starts_with?: Maybe<String>;
-  name_ends_with?: Maybe<String>;
-  name_not_ends_with?: Maybe<String>;
-  introduce?: Maybe<String>;
-  introduce_not?: Maybe<String>;
-  introduce_in?: Maybe<String[] | String>;
-  introduce_not_in?: Maybe<String[] | String>;
-  introduce_lt?: Maybe<String>;
-  introduce_lte?: Maybe<String>;
-  introduce_gt?: Maybe<String>;
-  introduce_gte?: Maybe<String>;
-  introduce_contains?: Maybe<String>;
-  introduce_not_contains?: Maybe<String>;
-  introduce_starts_with?: Maybe<String>;
-  introduce_not_starts_with?: Maybe<String>;
-  introduce_ends_with?: Maybe<String>;
-  introduce_not_ends_with?: Maybe<String>;
-  inputs_every?: Maybe<CompanyWhereInput>;
-  inputs_some?: Maybe<CompanyWhereInput>;
-  inputs_none?: Maybe<CompanyWhereInput>;
-  outputs_every?: Maybe<CompanyWhereInput>;
-  outputs_some?: Maybe<CompanyWhereInput>;
-  outputs_none?: Maybe<CompanyWhereInput>;
-  AND?: Maybe<CompanyProductWhereInput[] | CompanyProductWhereInput>;
-  OR?: Maybe<CompanyProductWhereInput[] | CompanyProductWhereInput>;
-  NOT?: Maybe<CompanyProductWhereInput[] | CompanyProductWhereInput>;
-}
-
-export interface IndustryUpdateWithWhereUniqueWithoutPurchasesInput {
-  where: IndustryWhereUniqueInput;
-  data: IndustryUpdateWithoutPurchasesDataInput;
-}
-
-export interface KeywordScalarWhereInput {
-  id?: Maybe<ID_Input>;
-  id_not?: Maybe<ID_Input>;
-  id_in?: Maybe<ID_Input[] | ID_Input>;
-  id_not_in?: Maybe<ID_Input[] | ID_Input>;
-  id_lt?: Maybe<ID_Input>;
-  id_lte?: Maybe<ID_Input>;
-  id_gt?: Maybe<ID_Input>;
-  id_gte?: Maybe<ID_Input>;
-  id_contains?: Maybe<ID_Input>;
-  id_not_contains?: Maybe<ID_Input>;
-  id_starts_with?: Maybe<ID_Input>;
-  id_not_starts_with?: Maybe<ID_Input>;
-  id_ends_with?: Maybe<ID_Input>;
-  id_not_ends_with?: Maybe<ID_Input>;
-  name?: Maybe<String>;
-  name_not?: Maybe<String>;
-  name_in?: Maybe<String[] | String>;
-  name_not_in?: Maybe<String[] | String>;
-  name_lt?: Maybe<String>;
-  name_lte?: Maybe<String>;
-  name_gt?: Maybe<String>;
-  name_gte?: Maybe<String>;
-  name_contains?: Maybe<String>;
-  name_not_contains?: Maybe<String>;
-  name_starts_with?: Maybe<String>;
-  name_not_starts_with?: Maybe<String>;
-  name_ends_with?: Maybe<String>;
-  name_not_ends_with?: Maybe<String>;
-  AND?: Maybe<KeywordScalarWhereInput[] | KeywordScalarWhereInput>;
-  OR?: Maybe<KeywordScalarWhereInput[] | KeywordScalarWhereInput>;
-  NOT?: Maybe<KeywordScalarWhereInput[] | KeywordScalarWhereInput>;
-}
-
-export interface IndustryUpdateWithoutPurchasesDataInput {
-  code?: Maybe<String>;
-  name?: Maybe<String>;
-  desc?: Maybe<String>;
-  researches?: Maybe<ResearchUpdateManyInput>;
-  companies?: Maybe<CompanyUpdateManyWithoutTradesInput>;
-  influences?: Maybe<IndustryInfluenceUpdateManyWithoutIndustryInput>;
-  selles?: Maybe<ProductUpdateManyWithoutOutputsInput>;
-}
-
-export interface IndustryEventCreateInput {
-  id?: Maybe<ID_Input>;
-  title: String;
-  src: String;
-  reportTime: DateTimeInput;
-  happen: TimeKind;
-  happenTime: DateTimeInput;
-  content: String;
-  Keywords?: Maybe<KeywordCreateManyInput>;
-}
-
-export interface IndustryUpsertWithWhereUniqueWithoutPurchasesInput {
-  where: IndustryWhereUniqueInput;
-  update: IndustryUpdateWithoutPurchasesDataInput;
-  create: IndustryCreateWithoutPurchasesInput;
-}
-
-export interface CompanyUpdateWithoutDailiesDataInput {
-  symbol?: Maybe<String>;
-  name?: Maybe<String>;
-  area?: Maybe<String>;
-  industry?: Maybe<String>;
-  fullname?: Maybe<String>;
-  enname?: Maybe<String>;
-  market?: Maybe<String>;
-  exchange?: Maybe<String>;
-  currType?: Maybe<String>;
-  listStatus?: Maybe<String>;
-  listDate?: Maybe<String>;
-  delistDate?: Maybe<String>;
-  isHS?: Maybe<String>;
-  scope?: Maybe<String>;
-  desc?: Maybe<String>;
-  purchases?: Maybe<CompanyProductUpdateManyWithoutInputsInput>;
-  selles?: Maybe<CompanyProductUpdateManyWithoutOutputsInput>;
-  comments?: Maybe<CommentUpdateManyWithoutCompanyInput>;
-  pool?: Maybe<Boolean>;
-  trades?: Maybe<IndustryUpdateManyWithoutCompaniesInput>;
-  events?: Maybe<CompanyEventUpdateManyWithoutCompanyInput>;
-}
-
-export interface ProductUpsertWithWhereUniqueWithoutOutputsInput {
-  where: ProductWhereUniqueInput;
-  update: ProductUpdateWithoutOutputsDataInput;
-  create: ProductCreateWithoutOutputsInput;
-}
-
-export interface CompanyCreateOneWithoutCommentsInput {
-  create?: Maybe<CompanyCreateWithoutCommentsInput>;
-  connect?: Maybe<CompanyWhereUniqueInput>;
-}
-
-export interface IndustryUpsertWithWhereUniqueWithoutCompaniesInput {
-  where: IndustryWhereUniqueInput;
-  update: IndustryUpdateWithoutCompaniesDataInput;
-  create: IndustryCreateWithoutCompaniesInput;
-}
-
-export interface IndustryCreateManyWithoutCompaniesInput {
-  create?: Maybe<
-    IndustryCreateWithoutCompaniesInput[] | IndustryCreateWithoutCompaniesInput
-  >;
-  connect?: Maybe<IndustryWhereUniqueInput[] | IndustryWhereUniqueInput>;
-}
-
-export interface CompanyUpsertWithWhereUniqueWithoutSellesInput {
-  where: CompanyWhereUniqueInput;
-  update: CompanyUpdateWithoutSellesDataInput;
-  create: CompanyCreateWithoutSellesInput;
-}
-
-export interface ProductCreateManyWithoutInputsInput {
-  create?: Maybe<
-    ProductCreateWithoutInputsInput[] | ProductCreateWithoutInputsInput
-  >;
-  connect?: Maybe<ProductWhereUniqueInput[] | ProductWhereUniqueInput>;
-}
-
-export interface CompanyProductUpsertWithWhereUniqueWithoutInputsInput {
-  where: CompanyProductWhereUniqueInput;
-  update: CompanyProductUpdateWithoutInputsDataInput;
-  create: CompanyProductCreateWithoutInputsInput;
-}
-
-export interface CompanyCreateManyWithoutPurchasesInput {
-  create?: Maybe<
-    CompanyCreateWithoutPurchasesInput[] | CompanyCreateWithoutPurchasesInput
-  >;
-  connect?: Maybe<CompanyWhereUniqueInput[] | CompanyWhereUniqueInput>;
-}
-
-export interface CompanyUpsertWithoutCommentsInput {
-  update: CompanyUpdateWithoutCommentsDataInput;
-  create: CompanyCreateWithoutCommentsInput;
-}
-
-export interface IndustryCreateManyWithoutPurchasesInput {
-  create?: Maybe<
-    IndustryCreateWithoutPurchasesInput[] | IndustryCreateWithoutPurchasesInput
-  >;
-  connect?: Maybe<IndustryWhereUniqueInput[] | IndustryWhereUniqueInput>;
-}
-
-export interface CommentUpdateManyMutationInput {
-  desc?: Maybe<String>;
 }
 
 export interface CompanyWhereInput {
@@ -4118,36 +5155,1796 @@ export interface CompanyWhereInput {
   dailies_every?: Maybe<DailyWhereInput>;
   dailies_some?: Maybe<DailyWhereInput>;
   dailies_none?: Maybe<DailyWhereInput>;
+  finaIndicators_every?: Maybe<FinaIndicatorWhereInput>;
+  finaIndicators_some?: Maybe<FinaIndicatorWhereInput>;
+  finaIndicators_none?: Maybe<FinaIndicatorWhereInput>;
   AND?: Maybe<CompanyWhereInput[] | CompanyWhereInput>;
   OR?: Maybe<CompanyWhereInput[] | CompanyWhereInput>;
   NOT?: Maybe<CompanyWhereInput[] | CompanyWhereInput>;
 }
 
-export interface CompanyProductCreateInput {
-  id?: Maybe<ID_Input>;
-  name: String;
-  introduce: String;
-  inputs?: Maybe<CompanyCreateManyWithoutPurchasesInput>;
-  outputs?: Maybe<CompanyCreateManyWithoutSellesInput>;
+export interface FinaIndicatorUpdateWithWhereUniqueWithoutCompanyInput {
+  where: FinaIndicatorWhereUniqueInput;
+  data: FinaIndicatorUpdateWithoutCompanyDataInput;
 }
 
-export interface ProductCreateInput {
-  id?: Maybe<ID_Input>;
-  name: String;
-  introduce: String;
-  inputs?: Maybe<IndustryCreateManyWithoutPurchasesInput>;
-  outputs?: Maybe<IndustryCreateManyWithoutSellesInput>;
+export interface UserUpdateManyMutationInput {
+  username?: Maybe<String>;
+  password?: Maybe<String>;
+  role?: Maybe<Role>;
 }
 
-export interface CompanyEventUpdateManyMutationInput {
-  title?: Maybe<String>;
-  content?: Maybe<String>;
-  reportTime?: Maybe<DateTimeInput>;
-  happen?: Maybe<TimeKind>;
-  happenTime?: Maybe<DateTimeInput>;
-  influence?: Maybe<String>;
-  kind?: Maybe<FactorKind>;
-  dierction?: Maybe<Direction>;
+export interface FinaIndicatorUpdateWithoutCompanyDataInput {
+  symbol?: Maybe<String>;
+  annDate?: Maybe<String>;
+  endDate?: Maybe<String>;
+  eps?: Maybe<Float>;
+  dtEps?: Maybe<Float>;
+  totalRevenuePs?: Maybe<Float>;
+  revenuePs?: Maybe<Float>;
+  capitalResePs?: Maybe<Float>;
+  surplusResePs?: Maybe<Float>;
+  undistProfitPs?: Maybe<Float>;
+  extraItem?: Maybe<Float>;
+  profitDedt?: Maybe<Float>;
+  grossMargin?: Maybe<Float>;
+  currentRatio?: Maybe<Float>;
+  quickRatio?: Maybe<Float>;
+  cashRatio?: Maybe<Float>;
+  invturnDays?: Maybe<Float>;
+  arturnDays?: Maybe<Float>;
+  invTurn?: Maybe<Float>;
+  arTurn?: Maybe<Float>;
+  caTurn?: Maybe<Float>;
+  faTurn?: Maybe<Float>;
+  assetsTurn?: Maybe<Float>;
+  opIncome?: Maybe<Float>;
+  valuechangeIncome?: Maybe<Float>;
+  interstIncome?: Maybe<Float>;
+  daa?: Maybe<Float>;
+  ebit?: Maybe<Float>;
+  ebitda?: Maybe<Float>;
+  fcff?: Maybe<Float>;
+  fcfe?: Maybe<Float>;
+  currentExint?: Maybe<Float>;
+  noncurrentExint?: Maybe<Float>;
+  interestdebt?: Maybe<Float>;
+  netdebt?: Maybe<Float>;
+  tangibleAsset?: Maybe<Float>;
+  workingCapital?: Maybe<Float>;
+  networkingCapital?: Maybe<Float>;
+  investCapital?: Maybe<Float>;
+  retainedEarnings?: Maybe<Float>;
+  diluted2Eps?: Maybe<Float>;
+  bps?: Maybe<Float>;
+  ocfps?: Maybe<Float>;
+  retainedps?: Maybe<Float>;
+  cfps?: Maybe<Float>;
+  ebitPs?: Maybe<Float>;
+  fcffPs?: Maybe<Float>;
+  fcfePs?: Maybe<Float>;
+  netprofitMargin?: Maybe<Float>;
+  grossprofitMargin?: Maybe<Float>;
+  cogsOfSales?: Maybe<Float>;
+  expenseOfSales?: Maybe<Float>;
+  profitToGr?: Maybe<Float>;
+  saleexpToGr?: Maybe<Float>;
+  adminexpOfGr?: Maybe<Float>;
+  finaexpOfGr?: Maybe<Float>;
+  impaiTtm?: Maybe<Float>;
+  gcOfGr?: Maybe<Float>;
+  opOfGr?: Maybe<Float>;
+  ebitOfGr?: Maybe<Float>;
+  roe?: Maybe<Float>;
+  roeWaa?: Maybe<Float>;
+  roeDt?: Maybe<Float>;
+  roa?: Maybe<Float>;
+  npta?: Maybe<Float>;
+  roic?: Maybe<Float>;
+  roeYearly?: Maybe<Float>;
+  roa2Yearly?: Maybe<Float>;
+  roeAvg?: Maybe<Float>;
+  opincomeOfEbt?: Maybe<Float>;
+  investincomeOfEbt?: Maybe<Float>;
+  nOpProfitOfEbt?: Maybe<Float>;
+  taxToEbt?: Maybe<Float>;
+  dtprofitToProfit?: Maybe<Float>;
+  salescashToOr?: Maybe<Float>;
+  ocfToOr?: Maybe<Float>;
+  ocfToOpincome?: Maybe<Float>;
+  capitalizedToDa?: Maybe<Float>;
+  debtToAssets?: Maybe<Float>;
+  assetsToEqt?: Maybe<Float>;
+  dpAssetsToEqt?: Maybe<Float>;
+  caToAssets?: Maybe<Float>;
+  ncaToAssets?: Maybe<Float>;
+  tbassetsToTotalassets?: Maybe<Float>;
+  intToTalcap?: Maybe<Float>;
+  eqtToTalcapital?: Maybe<Float>;
+  currentdebtToDebt?: Maybe<Float>;
+  longdebToDebt?: Maybe<Float>;
+  ocfToShortdebt?: Maybe<Float>;
+  debtToEqt?: Maybe<Float>;
+  eqtToDebt?: Maybe<Float>;
+  eqtToInterestdebt?: Maybe<Float>;
+  tangibleassetToDebt?: Maybe<Float>;
+  tangassetToIntdebt?: Maybe<Float>;
+  tangibleassetToNetdebt?: Maybe<Float>;
+  ocfToDebt?: Maybe<Float>;
+  ocfToInterestdebt?: Maybe<Float>;
+  ocfToNetdebt?: Maybe<Float>;
+  ebitToInterest?: Maybe<Float>;
+  longdebtToWorkingcapital?: Maybe<Float>;
+  ebitdaToDebt?: Maybe<Float>;
+  turnDays?: Maybe<Float>;
+  roaYearly?: Maybe<Float>;
+  roaDp?: Maybe<Float>;
+  fixedAssets?: Maybe<Float>;
+  profitPrefinExp?: Maybe<Float>;
+  nonOpProfit?: Maybe<Float>;
+  opToEbt?: Maybe<Float>;
+  nopToEbt?: Maybe<Float>;
+  ocfToProfit?: Maybe<Float>;
+  cashToLiqdebt?: Maybe<Float>;
+  cashToLiqdebtWithinterest?: Maybe<Float>;
+  opToLiqdebt?: Maybe<Float>;
+  opToDebt?: Maybe<Float>;
+  roicYearly?: Maybe<Float>;
+  totalFaTrun?: Maybe<Float>;
+  profitToOp?: Maybe<Float>;
+  qOpincome?: Maybe<Float>;
+  qInvestincome?: Maybe<Float>;
+  qDtprofit?: Maybe<Float>;
+  qEps?: Maybe<Float>;
+  qNetprofitMargin?: Maybe<Float>;
+  qGsprofitMargin?: Maybe<Float>;
+  qExpToSales?: Maybe<Float>;
+  qProfitToGr?: Maybe<Float>;
+  qSaleexpToGr?: Maybe<Float>;
+  qAdminexpToGr?: Maybe<Float>;
+  qFinaexpToGr?: Maybe<Float>;
+  qImpairToGrTtm?: Maybe<Float>;
+  qGcToGr?: Maybe<Float>;
+  qOpToGr?: Maybe<Float>;
+  qRoe?: Maybe<Float>;
+  qDtRoe?: Maybe<Float>;
+  qNpta?: Maybe<Float>;
+  qOpincomeToEbt?: Maybe<Float>;
+  qInvestincomeToEbt?: Maybe<Float>;
+  qDtprofitToProfit?: Maybe<Float>;
+  qSalescashToOr?: Maybe<Float>;
+  qOcfToSales?: Maybe<Float>;
+  qOcfToOr?: Maybe<Float>;
+  basicEpsYoy?: Maybe<Float>;
+  dtEpsYoy?: Maybe<Float>;
+  cfpsYoy?: Maybe<Float>;
+  opYoy?: Maybe<Float>;
+  ebtYoy?: Maybe<Float>;
+  netprofitYoy?: Maybe<Float>;
+  dtNetprofitYoy?: Maybe<Float>;
+  ocfYoy?: Maybe<Float>;
+  roeYoy?: Maybe<Float>;
+  bpsYoy?: Maybe<Float>;
+  assetsYoy?: Maybe<Float>;
+  eqtYoy?: Maybe<Float>;
+  trYoy?: Maybe<Float>;
+  orYoy?: Maybe<Float>;
+  qGrYoy?: Maybe<Float>;
+  qGrQoq?: Maybe<Float>;
+  qSalesYoy?: Maybe<Float>;
+  qSalesQoq?: Maybe<Float>;
+  qOpYoy?: Maybe<Float>;
+  qOpQoq?: Maybe<Float>;
+  qProfitYoy?: Maybe<Float>;
+  qProfitQoq?: Maybe<Float>;
+  qNetprofitYoy?: Maybe<Float>;
+  qNetprofitQoq?: Maybe<Float>;
+  equityYoy?: Maybe<Float>;
+  rdExp?: Maybe<Float>;
+  updateFlag?: Maybe<String>;
+}
+
+export interface ResearchUpdateManyMutationInput {
+  desc?: Maybe<String>;
+}
+
+export interface FinaIndicatorUpsertWithWhereUniqueWithoutCompanyInput {
+  where: FinaIndicatorWhereUniqueInput;
+  update: FinaIndicatorUpdateWithoutCompanyDataInput;
+  create: FinaIndicatorCreateWithoutCompanyInput;
+}
+
+export interface ProductUpdateInput {
+  name?: Maybe<String>;
+  introduce?: Maybe<String>;
+  inputs?: Maybe<IndustryUpdateManyWithoutPurchasesInput>;
+  outputs?: Maybe<IndustryUpdateManyWithoutSellesInput>;
+}
+
+export interface FinaIndicatorScalarWhereInput {
+  id?: Maybe<ID_Input>;
+  id_not?: Maybe<ID_Input>;
+  id_in?: Maybe<ID_Input[] | ID_Input>;
+  id_not_in?: Maybe<ID_Input[] | ID_Input>;
+  id_lt?: Maybe<ID_Input>;
+  id_lte?: Maybe<ID_Input>;
+  id_gt?: Maybe<ID_Input>;
+  id_gte?: Maybe<ID_Input>;
+  id_contains?: Maybe<ID_Input>;
+  id_not_contains?: Maybe<ID_Input>;
+  id_starts_with?: Maybe<ID_Input>;
+  id_not_starts_with?: Maybe<ID_Input>;
+  id_ends_with?: Maybe<ID_Input>;
+  id_not_ends_with?: Maybe<ID_Input>;
+  symbol?: Maybe<String>;
+  symbol_not?: Maybe<String>;
+  symbol_in?: Maybe<String[] | String>;
+  symbol_not_in?: Maybe<String[] | String>;
+  symbol_lt?: Maybe<String>;
+  symbol_lte?: Maybe<String>;
+  symbol_gt?: Maybe<String>;
+  symbol_gte?: Maybe<String>;
+  symbol_contains?: Maybe<String>;
+  symbol_not_contains?: Maybe<String>;
+  symbol_starts_with?: Maybe<String>;
+  symbol_not_starts_with?: Maybe<String>;
+  symbol_ends_with?: Maybe<String>;
+  symbol_not_ends_with?: Maybe<String>;
+  annDate?: Maybe<String>;
+  annDate_not?: Maybe<String>;
+  annDate_in?: Maybe<String[] | String>;
+  annDate_not_in?: Maybe<String[] | String>;
+  annDate_lt?: Maybe<String>;
+  annDate_lte?: Maybe<String>;
+  annDate_gt?: Maybe<String>;
+  annDate_gte?: Maybe<String>;
+  annDate_contains?: Maybe<String>;
+  annDate_not_contains?: Maybe<String>;
+  annDate_starts_with?: Maybe<String>;
+  annDate_not_starts_with?: Maybe<String>;
+  annDate_ends_with?: Maybe<String>;
+  annDate_not_ends_with?: Maybe<String>;
+  endDate?: Maybe<String>;
+  endDate_not?: Maybe<String>;
+  endDate_in?: Maybe<String[] | String>;
+  endDate_not_in?: Maybe<String[] | String>;
+  endDate_lt?: Maybe<String>;
+  endDate_lte?: Maybe<String>;
+  endDate_gt?: Maybe<String>;
+  endDate_gte?: Maybe<String>;
+  endDate_contains?: Maybe<String>;
+  endDate_not_contains?: Maybe<String>;
+  endDate_starts_with?: Maybe<String>;
+  endDate_not_starts_with?: Maybe<String>;
+  endDate_ends_with?: Maybe<String>;
+  endDate_not_ends_with?: Maybe<String>;
+  eps?: Maybe<Float>;
+  eps_not?: Maybe<Float>;
+  eps_in?: Maybe<Float[] | Float>;
+  eps_not_in?: Maybe<Float[] | Float>;
+  eps_lt?: Maybe<Float>;
+  eps_lte?: Maybe<Float>;
+  eps_gt?: Maybe<Float>;
+  eps_gte?: Maybe<Float>;
+  dtEps?: Maybe<Float>;
+  dtEps_not?: Maybe<Float>;
+  dtEps_in?: Maybe<Float[] | Float>;
+  dtEps_not_in?: Maybe<Float[] | Float>;
+  dtEps_lt?: Maybe<Float>;
+  dtEps_lte?: Maybe<Float>;
+  dtEps_gt?: Maybe<Float>;
+  dtEps_gte?: Maybe<Float>;
+  totalRevenuePs?: Maybe<Float>;
+  totalRevenuePs_not?: Maybe<Float>;
+  totalRevenuePs_in?: Maybe<Float[] | Float>;
+  totalRevenuePs_not_in?: Maybe<Float[] | Float>;
+  totalRevenuePs_lt?: Maybe<Float>;
+  totalRevenuePs_lte?: Maybe<Float>;
+  totalRevenuePs_gt?: Maybe<Float>;
+  totalRevenuePs_gte?: Maybe<Float>;
+  revenuePs?: Maybe<Float>;
+  revenuePs_not?: Maybe<Float>;
+  revenuePs_in?: Maybe<Float[] | Float>;
+  revenuePs_not_in?: Maybe<Float[] | Float>;
+  revenuePs_lt?: Maybe<Float>;
+  revenuePs_lte?: Maybe<Float>;
+  revenuePs_gt?: Maybe<Float>;
+  revenuePs_gte?: Maybe<Float>;
+  capitalResePs?: Maybe<Float>;
+  capitalResePs_not?: Maybe<Float>;
+  capitalResePs_in?: Maybe<Float[] | Float>;
+  capitalResePs_not_in?: Maybe<Float[] | Float>;
+  capitalResePs_lt?: Maybe<Float>;
+  capitalResePs_lte?: Maybe<Float>;
+  capitalResePs_gt?: Maybe<Float>;
+  capitalResePs_gte?: Maybe<Float>;
+  surplusResePs?: Maybe<Float>;
+  surplusResePs_not?: Maybe<Float>;
+  surplusResePs_in?: Maybe<Float[] | Float>;
+  surplusResePs_not_in?: Maybe<Float[] | Float>;
+  surplusResePs_lt?: Maybe<Float>;
+  surplusResePs_lte?: Maybe<Float>;
+  surplusResePs_gt?: Maybe<Float>;
+  surplusResePs_gte?: Maybe<Float>;
+  undistProfitPs?: Maybe<Float>;
+  undistProfitPs_not?: Maybe<Float>;
+  undistProfitPs_in?: Maybe<Float[] | Float>;
+  undistProfitPs_not_in?: Maybe<Float[] | Float>;
+  undistProfitPs_lt?: Maybe<Float>;
+  undistProfitPs_lte?: Maybe<Float>;
+  undistProfitPs_gt?: Maybe<Float>;
+  undistProfitPs_gte?: Maybe<Float>;
+  extraItem?: Maybe<Float>;
+  extraItem_not?: Maybe<Float>;
+  extraItem_in?: Maybe<Float[] | Float>;
+  extraItem_not_in?: Maybe<Float[] | Float>;
+  extraItem_lt?: Maybe<Float>;
+  extraItem_lte?: Maybe<Float>;
+  extraItem_gt?: Maybe<Float>;
+  extraItem_gte?: Maybe<Float>;
+  profitDedt?: Maybe<Float>;
+  profitDedt_not?: Maybe<Float>;
+  profitDedt_in?: Maybe<Float[] | Float>;
+  profitDedt_not_in?: Maybe<Float[] | Float>;
+  profitDedt_lt?: Maybe<Float>;
+  profitDedt_lte?: Maybe<Float>;
+  profitDedt_gt?: Maybe<Float>;
+  profitDedt_gte?: Maybe<Float>;
+  grossMargin?: Maybe<Float>;
+  grossMargin_not?: Maybe<Float>;
+  grossMargin_in?: Maybe<Float[] | Float>;
+  grossMargin_not_in?: Maybe<Float[] | Float>;
+  grossMargin_lt?: Maybe<Float>;
+  grossMargin_lte?: Maybe<Float>;
+  grossMargin_gt?: Maybe<Float>;
+  grossMargin_gte?: Maybe<Float>;
+  currentRatio?: Maybe<Float>;
+  currentRatio_not?: Maybe<Float>;
+  currentRatio_in?: Maybe<Float[] | Float>;
+  currentRatio_not_in?: Maybe<Float[] | Float>;
+  currentRatio_lt?: Maybe<Float>;
+  currentRatio_lte?: Maybe<Float>;
+  currentRatio_gt?: Maybe<Float>;
+  currentRatio_gte?: Maybe<Float>;
+  quickRatio?: Maybe<Float>;
+  quickRatio_not?: Maybe<Float>;
+  quickRatio_in?: Maybe<Float[] | Float>;
+  quickRatio_not_in?: Maybe<Float[] | Float>;
+  quickRatio_lt?: Maybe<Float>;
+  quickRatio_lte?: Maybe<Float>;
+  quickRatio_gt?: Maybe<Float>;
+  quickRatio_gte?: Maybe<Float>;
+  cashRatio?: Maybe<Float>;
+  cashRatio_not?: Maybe<Float>;
+  cashRatio_in?: Maybe<Float[] | Float>;
+  cashRatio_not_in?: Maybe<Float[] | Float>;
+  cashRatio_lt?: Maybe<Float>;
+  cashRatio_lte?: Maybe<Float>;
+  cashRatio_gt?: Maybe<Float>;
+  cashRatio_gte?: Maybe<Float>;
+  invturnDays?: Maybe<Float>;
+  invturnDays_not?: Maybe<Float>;
+  invturnDays_in?: Maybe<Float[] | Float>;
+  invturnDays_not_in?: Maybe<Float[] | Float>;
+  invturnDays_lt?: Maybe<Float>;
+  invturnDays_lte?: Maybe<Float>;
+  invturnDays_gt?: Maybe<Float>;
+  invturnDays_gte?: Maybe<Float>;
+  arturnDays?: Maybe<Float>;
+  arturnDays_not?: Maybe<Float>;
+  arturnDays_in?: Maybe<Float[] | Float>;
+  arturnDays_not_in?: Maybe<Float[] | Float>;
+  arturnDays_lt?: Maybe<Float>;
+  arturnDays_lte?: Maybe<Float>;
+  arturnDays_gt?: Maybe<Float>;
+  arturnDays_gte?: Maybe<Float>;
+  invTurn?: Maybe<Float>;
+  invTurn_not?: Maybe<Float>;
+  invTurn_in?: Maybe<Float[] | Float>;
+  invTurn_not_in?: Maybe<Float[] | Float>;
+  invTurn_lt?: Maybe<Float>;
+  invTurn_lte?: Maybe<Float>;
+  invTurn_gt?: Maybe<Float>;
+  invTurn_gte?: Maybe<Float>;
+  arTurn?: Maybe<Float>;
+  arTurn_not?: Maybe<Float>;
+  arTurn_in?: Maybe<Float[] | Float>;
+  arTurn_not_in?: Maybe<Float[] | Float>;
+  arTurn_lt?: Maybe<Float>;
+  arTurn_lte?: Maybe<Float>;
+  arTurn_gt?: Maybe<Float>;
+  arTurn_gte?: Maybe<Float>;
+  caTurn?: Maybe<Float>;
+  caTurn_not?: Maybe<Float>;
+  caTurn_in?: Maybe<Float[] | Float>;
+  caTurn_not_in?: Maybe<Float[] | Float>;
+  caTurn_lt?: Maybe<Float>;
+  caTurn_lte?: Maybe<Float>;
+  caTurn_gt?: Maybe<Float>;
+  caTurn_gte?: Maybe<Float>;
+  faTurn?: Maybe<Float>;
+  faTurn_not?: Maybe<Float>;
+  faTurn_in?: Maybe<Float[] | Float>;
+  faTurn_not_in?: Maybe<Float[] | Float>;
+  faTurn_lt?: Maybe<Float>;
+  faTurn_lte?: Maybe<Float>;
+  faTurn_gt?: Maybe<Float>;
+  faTurn_gte?: Maybe<Float>;
+  assetsTurn?: Maybe<Float>;
+  assetsTurn_not?: Maybe<Float>;
+  assetsTurn_in?: Maybe<Float[] | Float>;
+  assetsTurn_not_in?: Maybe<Float[] | Float>;
+  assetsTurn_lt?: Maybe<Float>;
+  assetsTurn_lte?: Maybe<Float>;
+  assetsTurn_gt?: Maybe<Float>;
+  assetsTurn_gte?: Maybe<Float>;
+  opIncome?: Maybe<Float>;
+  opIncome_not?: Maybe<Float>;
+  opIncome_in?: Maybe<Float[] | Float>;
+  opIncome_not_in?: Maybe<Float[] | Float>;
+  opIncome_lt?: Maybe<Float>;
+  opIncome_lte?: Maybe<Float>;
+  opIncome_gt?: Maybe<Float>;
+  opIncome_gte?: Maybe<Float>;
+  valuechangeIncome?: Maybe<Float>;
+  valuechangeIncome_not?: Maybe<Float>;
+  valuechangeIncome_in?: Maybe<Float[] | Float>;
+  valuechangeIncome_not_in?: Maybe<Float[] | Float>;
+  valuechangeIncome_lt?: Maybe<Float>;
+  valuechangeIncome_lte?: Maybe<Float>;
+  valuechangeIncome_gt?: Maybe<Float>;
+  valuechangeIncome_gte?: Maybe<Float>;
+  interstIncome?: Maybe<Float>;
+  interstIncome_not?: Maybe<Float>;
+  interstIncome_in?: Maybe<Float[] | Float>;
+  interstIncome_not_in?: Maybe<Float[] | Float>;
+  interstIncome_lt?: Maybe<Float>;
+  interstIncome_lte?: Maybe<Float>;
+  interstIncome_gt?: Maybe<Float>;
+  interstIncome_gte?: Maybe<Float>;
+  daa?: Maybe<Float>;
+  daa_not?: Maybe<Float>;
+  daa_in?: Maybe<Float[] | Float>;
+  daa_not_in?: Maybe<Float[] | Float>;
+  daa_lt?: Maybe<Float>;
+  daa_lte?: Maybe<Float>;
+  daa_gt?: Maybe<Float>;
+  daa_gte?: Maybe<Float>;
+  ebit?: Maybe<Float>;
+  ebit_not?: Maybe<Float>;
+  ebit_in?: Maybe<Float[] | Float>;
+  ebit_not_in?: Maybe<Float[] | Float>;
+  ebit_lt?: Maybe<Float>;
+  ebit_lte?: Maybe<Float>;
+  ebit_gt?: Maybe<Float>;
+  ebit_gte?: Maybe<Float>;
+  ebitda?: Maybe<Float>;
+  ebitda_not?: Maybe<Float>;
+  ebitda_in?: Maybe<Float[] | Float>;
+  ebitda_not_in?: Maybe<Float[] | Float>;
+  ebitda_lt?: Maybe<Float>;
+  ebitda_lte?: Maybe<Float>;
+  ebitda_gt?: Maybe<Float>;
+  ebitda_gte?: Maybe<Float>;
+  fcff?: Maybe<Float>;
+  fcff_not?: Maybe<Float>;
+  fcff_in?: Maybe<Float[] | Float>;
+  fcff_not_in?: Maybe<Float[] | Float>;
+  fcff_lt?: Maybe<Float>;
+  fcff_lte?: Maybe<Float>;
+  fcff_gt?: Maybe<Float>;
+  fcff_gte?: Maybe<Float>;
+  fcfe?: Maybe<Float>;
+  fcfe_not?: Maybe<Float>;
+  fcfe_in?: Maybe<Float[] | Float>;
+  fcfe_not_in?: Maybe<Float[] | Float>;
+  fcfe_lt?: Maybe<Float>;
+  fcfe_lte?: Maybe<Float>;
+  fcfe_gt?: Maybe<Float>;
+  fcfe_gte?: Maybe<Float>;
+  currentExint?: Maybe<Float>;
+  currentExint_not?: Maybe<Float>;
+  currentExint_in?: Maybe<Float[] | Float>;
+  currentExint_not_in?: Maybe<Float[] | Float>;
+  currentExint_lt?: Maybe<Float>;
+  currentExint_lte?: Maybe<Float>;
+  currentExint_gt?: Maybe<Float>;
+  currentExint_gte?: Maybe<Float>;
+  noncurrentExint?: Maybe<Float>;
+  noncurrentExint_not?: Maybe<Float>;
+  noncurrentExint_in?: Maybe<Float[] | Float>;
+  noncurrentExint_not_in?: Maybe<Float[] | Float>;
+  noncurrentExint_lt?: Maybe<Float>;
+  noncurrentExint_lte?: Maybe<Float>;
+  noncurrentExint_gt?: Maybe<Float>;
+  noncurrentExint_gte?: Maybe<Float>;
+  interestdebt?: Maybe<Float>;
+  interestdebt_not?: Maybe<Float>;
+  interestdebt_in?: Maybe<Float[] | Float>;
+  interestdebt_not_in?: Maybe<Float[] | Float>;
+  interestdebt_lt?: Maybe<Float>;
+  interestdebt_lte?: Maybe<Float>;
+  interestdebt_gt?: Maybe<Float>;
+  interestdebt_gte?: Maybe<Float>;
+  netdebt?: Maybe<Float>;
+  netdebt_not?: Maybe<Float>;
+  netdebt_in?: Maybe<Float[] | Float>;
+  netdebt_not_in?: Maybe<Float[] | Float>;
+  netdebt_lt?: Maybe<Float>;
+  netdebt_lte?: Maybe<Float>;
+  netdebt_gt?: Maybe<Float>;
+  netdebt_gte?: Maybe<Float>;
+  tangibleAsset?: Maybe<Float>;
+  tangibleAsset_not?: Maybe<Float>;
+  tangibleAsset_in?: Maybe<Float[] | Float>;
+  tangibleAsset_not_in?: Maybe<Float[] | Float>;
+  tangibleAsset_lt?: Maybe<Float>;
+  tangibleAsset_lte?: Maybe<Float>;
+  tangibleAsset_gt?: Maybe<Float>;
+  tangibleAsset_gte?: Maybe<Float>;
+  workingCapital?: Maybe<Float>;
+  workingCapital_not?: Maybe<Float>;
+  workingCapital_in?: Maybe<Float[] | Float>;
+  workingCapital_not_in?: Maybe<Float[] | Float>;
+  workingCapital_lt?: Maybe<Float>;
+  workingCapital_lte?: Maybe<Float>;
+  workingCapital_gt?: Maybe<Float>;
+  workingCapital_gte?: Maybe<Float>;
+  networkingCapital?: Maybe<Float>;
+  networkingCapital_not?: Maybe<Float>;
+  networkingCapital_in?: Maybe<Float[] | Float>;
+  networkingCapital_not_in?: Maybe<Float[] | Float>;
+  networkingCapital_lt?: Maybe<Float>;
+  networkingCapital_lte?: Maybe<Float>;
+  networkingCapital_gt?: Maybe<Float>;
+  networkingCapital_gte?: Maybe<Float>;
+  investCapital?: Maybe<Float>;
+  investCapital_not?: Maybe<Float>;
+  investCapital_in?: Maybe<Float[] | Float>;
+  investCapital_not_in?: Maybe<Float[] | Float>;
+  investCapital_lt?: Maybe<Float>;
+  investCapital_lte?: Maybe<Float>;
+  investCapital_gt?: Maybe<Float>;
+  investCapital_gte?: Maybe<Float>;
+  retainedEarnings?: Maybe<Float>;
+  retainedEarnings_not?: Maybe<Float>;
+  retainedEarnings_in?: Maybe<Float[] | Float>;
+  retainedEarnings_not_in?: Maybe<Float[] | Float>;
+  retainedEarnings_lt?: Maybe<Float>;
+  retainedEarnings_lte?: Maybe<Float>;
+  retainedEarnings_gt?: Maybe<Float>;
+  retainedEarnings_gte?: Maybe<Float>;
+  diluted2Eps?: Maybe<Float>;
+  diluted2Eps_not?: Maybe<Float>;
+  diluted2Eps_in?: Maybe<Float[] | Float>;
+  diluted2Eps_not_in?: Maybe<Float[] | Float>;
+  diluted2Eps_lt?: Maybe<Float>;
+  diluted2Eps_lte?: Maybe<Float>;
+  diluted2Eps_gt?: Maybe<Float>;
+  diluted2Eps_gte?: Maybe<Float>;
+  bps?: Maybe<Float>;
+  bps_not?: Maybe<Float>;
+  bps_in?: Maybe<Float[] | Float>;
+  bps_not_in?: Maybe<Float[] | Float>;
+  bps_lt?: Maybe<Float>;
+  bps_lte?: Maybe<Float>;
+  bps_gt?: Maybe<Float>;
+  bps_gte?: Maybe<Float>;
+  ocfps?: Maybe<Float>;
+  ocfps_not?: Maybe<Float>;
+  ocfps_in?: Maybe<Float[] | Float>;
+  ocfps_not_in?: Maybe<Float[] | Float>;
+  ocfps_lt?: Maybe<Float>;
+  ocfps_lte?: Maybe<Float>;
+  ocfps_gt?: Maybe<Float>;
+  ocfps_gte?: Maybe<Float>;
+  retainedps?: Maybe<Float>;
+  retainedps_not?: Maybe<Float>;
+  retainedps_in?: Maybe<Float[] | Float>;
+  retainedps_not_in?: Maybe<Float[] | Float>;
+  retainedps_lt?: Maybe<Float>;
+  retainedps_lte?: Maybe<Float>;
+  retainedps_gt?: Maybe<Float>;
+  retainedps_gte?: Maybe<Float>;
+  cfps?: Maybe<Float>;
+  cfps_not?: Maybe<Float>;
+  cfps_in?: Maybe<Float[] | Float>;
+  cfps_not_in?: Maybe<Float[] | Float>;
+  cfps_lt?: Maybe<Float>;
+  cfps_lte?: Maybe<Float>;
+  cfps_gt?: Maybe<Float>;
+  cfps_gte?: Maybe<Float>;
+  ebitPs?: Maybe<Float>;
+  ebitPs_not?: Maybe<Float>;
+  ebitPs_in?: Maybe<Float[] | Float>;
+  ebitPs_not_in?: Maybe<Float[] | Float>;
+  ebitPs_lt?: Maybe<Float>;
+  ebitPs_lte?: Maybe<Float>;
+  ebitPs_gt?: Maybe<Float>;
+  ebitPs_gte?: Maybe<Float>;
+  fcffPs?: Maybe<Float>;
+  fcffPs_not?: Maybe<Float>;
+  fcffPs_in?: Maybe<Float[] | Float>;
+  fcffPs_not_in?: Maybe<Float[] | Float>;
+  fcffPs_lt?: Maybe<Float>;
+  fcffPs_lte?: Maybe<Float>;
+  fcffPs_gt?: Maybe<Float>;
+  fcffPs_gte?: Maybe<Float>;
+  fcfePs?: Maybe<Float>;
+  fcfePs_not?: Maybe<Float>;
+  fcfePs_in?: Maybe<Float[] | Float>;
+  fcfePs_not_in?: Maybe<Float[] | Float>;
+  fcfePs_lt?: Maybe<Float>;
+  fcfePs_lte?: Maybe<Float>;
+  fcfePs_gt?: Maybe<Float>;
+  fcfePs_gte?: Maybe<Float>;
+  netprofitMargin?: Maybe<Float>;
+  netprofitMargin_not?: Maybe<Float>;
+  netprofitMargin_in?: Maybe<Float[] | Float>;
+  netprofitMargin_not_in?: Maybe<Float[] | Float>;
+  netprofitMargin_lt?: Maybe<Float>;
+  netprofitMargin_lte?: Maybe<Float>;
+  netprofitMargin_gt?: Maybe<Float>;
+  netprofitMargin_gte?: Maybe<Float>;
+  grossprofitMargin?: Maybe<Float>;
+  grossprofitMargin_not?: Maybe<Float>;
+  grossprofitMargin_in?: Maybe<Float[] | Float>;
+  grossprofitMargin_not_in?: Maybe<Float[] | Float>;
+  grossprofitMargin_lt?: Maybe<Float>;
+  grossprofitMargin_lte?: Maybe<Float>;
+  grossprofitMargin_gt?: Maybe<Float>;
+  grossprofitMargin_gte?: Maybe<Float>;
+  cogsOfSales?: Maybe<Float>;
+  cogsOfSales_not?: Maybe<Float>;
+  cogsOfSales_in?: Maybe<Float[] | Float>;
+  cogsOfSales_not_in?: Maybe<Float[] | Float>;
+  cogsOfSales_lt?: Maybe<Float>;
+  cogsOfSales_lte?: Maybe<Float>;
+  cogsOfSales_gt?: Maybe<Float>;
+  cogsOfSales_gte?: Maybe<Float>;
+  expenseOfSales?: Maybe<Float>;
+  expenseOfSales_not?: Maybe<Float>;
+  expenseOfSales_in?: Maybe<Float[] | Float>;
+  expenseOfSales_not_in?: Maybe<Float[] | Float>;
+  expenseOfSales_lt?: Maybe<Float>;
+  expenseOfSales_lte?: Maybe<Float>;
+  expenseOfSales_gt?: Maybe<Float>;
+  expenseOfSales_gte?: Maybe<Float>;
+  profitToGr?: Maybe<Float>;
+  profitToGr_not?: Maybe<Float>;
+  profitToGr_in?: Maybe<Float[] | Float>;
+  profitToGr_not_in?: Maybe<Float[] | Float>;
+  profitToGr_lt?: Maybe<Float>;
+  profitToGr_lte?: Maybe<Float>;
+  profitToGr_gt?: Maybe<Float>;
+  profitToGr_gte?: Maybe<Float>;
+  saleexpToGr?: Maybe<Float>;
+  saleexpToGr_not?: Maybe<Float>;
+  saleexpToGr_in?: Maybe<Float[] | Float>;
+  saleexpToGr_not_in?: Maybe<Float[] | Float>;
+  saleexpToGr_lt?: Maybe<Float>;
+  saleexpToGr_lte?: Maybe<Float>;
+  saleexpToGr_gt?: Maybe<Float>;
+  saleexpToGr_gte?: Maybe<Float>;
+  adminexpOfGr?: Maybe<Float>;
+  adminexpOfGr_not?: Maybe<Float>;
+  adminexpOfGr_in?: Maybe<Float[] | Float>;
+  adminexpOfGr_not_in?: Maybe<Float[] | Float>;
+  adminexpOfGr_lt?: Maybe<Float>;
+  adminexpOfGr_lte?: Maybe<Float>;
+  adminexpOfGr_gt?: Maybe<Float>;
+  adminexpOfGr_gte?: Maybe<Float>;
+  finaexpOfGr?: Maybe<Float>;
+  finaexpOfGr_not?: Maybe<Float>;
+  finaexpOfGr_in?: Maybe<Float[] | Float>;
+  finaexpOfGr_not_in?: Maybe<Float[] | Float>;
+  finaexpOfGr_lt?: Maybe<Float>;
+  finaexpOfGr_lte?: Maybe<Float>;
+  finaexpOfGr_gt?: Maybe<Float>;
+  finaexpOfGr_gte?: Maybe<Float>;
+  impaiTtm?: Maybe<Float>;
+  impaiTtm_not?: Maybe<Float>;
+  impaiTtm_in?: Maybe<Float[] | Float>;
+  impaiTtm_not_in?: Maybe<Float[] | Float>;
+  impaiTtm_lt?: Maybe<Float>;
+  impaiTtm_lte?: Maybe<Float>;
+  impaiTtm_gt?: Maybe<Float>;
+  impaiTtm_gte?: Maybe<Float>;
+  gcOfGr?: Maybe<Float>;
+  gcOfGr_not?: Maybe<Float>;
+  gcOfGr_in?: Maybe<Float[] | Float>;
+  gcOfGr_not_in?: Maybe<Float[] | Float>;
+  gcOfGr_lt?: Maybe<Float>;
+  gcOfGr_lte?: Maybe<Float>;
+  gcOfGr_gt?: Maybe<Float>;
+  gcOfGr_gte?: Maybe<Float>;
+  opOfGr?: Maybe<Float>;
+  opOfGr_not?: Maybe<Float>;
+  opOfGr_in?: Maybe<Float[] | Float>;
+  opOfGr_not_in?: Maybe<Float[] | Float>;
+  opOfGr_lt?: Maybe<Float>;
+  opOfGr_lte?: Maybe<Float>;
+  opOfGr_gt?: Maybe<Float>;
+  opOfGr_gte?: Maybe<Float>;
+  ebitOfGr?: Maybe<Float>;
+  ebitOfGr_not?: Maybe<Float>;
+  ebitOfGr_in?: Maybe<Float[] | Float>;
+  ebitOfGr_not_in?: Maybe<Float[] | Float>;
+  ebitOfGr_lt?: Maybe<Float>;
+  ebitOfGr_lte?: Maybe<Float>;
+  ebitOfGr_gt?: Maybe<Float>;
+  ebitOfGr_gte?: Maybe<Float>;
+  roe?: Maybe<Float>;
+  roe_not?: Maybe<Float>;
+  roe_in?: Maybe<Float[] | Float>;
+  roe_not_in?: Maybe<Float[] | Float>;
+  roe_lt?: Maybe<Float>;
+  roe_lte?: Maybe<Float>;
+  roe_gt?: Maybe<Float>;
+  roe_gte?: Maybe<Float>;
+  roeWaa?: Maybe<Float>;
+  roeWaa_not?: Maybe<Float>;
+  roeWaa_in?: Maybe<Float[] | Float>;
+  roeWaa_not_in?: Maybe<Float[] | Float>;
+  roeWaa_lt?: Maybe<Float>;
+  roeWaa_lte?: Maybe<Float>;
+  roeWaa_gt?: Maybe<Float>;
+  roeWaa_gte?: Maybe<Float>;
+  roeDt?: Maybe<Float>;
+  roeDt_not?: Maybe<Float>;
+  roeDt_in?: Maybe<Float[] | Float>;
+  roeDt_not_in?: Maybe<Float[] | Float>;
+  roeDt_lt?: Maybe<Float>;
+  roeDt_lte?: Maybe<Float>;
+  roeDt_gt?: Maybe<Float>;
+  roeDt_gte?: Maybe<Float>;
+  roa?: Maybe<Float>;
+  roa_not?: Maybe<Float>;
+  roa_in?: Maybe<Float[] | Float>;
+  roa_not_in?: Maybe<Float[] | Float>;
+  roa_lt?: Maybe<Float>;
+  roa_lte?: Maybe<Float>;
+  roa_gt?: Maybe<Float>;
+  roa_gte?: Maybe<Float>;
+  npta?: Maybe<Float>;
+  npta_not?: Maybe<Float>;
+  npta_in?: Maybe<Float[] | Float>;
+  npta_not_in?: Maybe<Float[] | Float>;
+  npta_lt?: Maybe<Float>;
+  npta_lte?: Maybe<Float>;
+  npta_gt?: Maybe<Float>;
+  npta_gte?: Maybe<Float>;
+  roic?: Maybe<Float>;
+  roic_not?: Maybe<Float>;
+  roic_in?: Maybe<Float[] | Float>;
+  roic_not_in?: Maybe<Float[] | Float>;
+  roic_lt?: Maybe<Float>;
+  roic_lte?: Maybe<Float>;
+  roic_gt?: Maybe<Float>;
+  roic_gte?: Maybe<Float>;
+  roeYearly?: Maybe<Float>;
+  roeYearly_not?: Maybe<Float>;
+  roeYearly_in?: Maybe<Float[] | Float>;
+  roeYearly_not_in?: Maybe<Float[] | Float>;
+  roeYearly_lt?: Maybe<Float>;
+  roeYearly_lte?: Maybe<Float>;
+  roeYearly_gt?: Maybe<Float>;
+  roeYearly_gte?: Maybe<Float>;
+  roa2Yearly?: Maybe<Float>;
+  roa2Yearly_not?: Maybe<Float>;
+  roa2Yearly_in?: Maybe<Float[] | Float>;
+  roa2Yearly_not_in?: Maybe<Float[] | Float>;
+  roa2Yearly_lt?: Maybe<Float>;
+  roa2Yearly_lte?: Maybe<Float>;
+  roa2Yearly_gt?: Maybe<Float>;
+  roa2Yearly_gte?: Maybe<Float>;
+  roeAvg?: Maybe<Float>;
+  roeAvg_not?: Maybe<Float>;
+  roeAvg_in?: Maybe<Float[] | Float>;
+  roeAvg_not_in?: Maybe<Float[] | Float>;
+  roeAvg_lt?: Maybe<Float>;
+  roeAvg_lte?: Maybe<Float>;
+  roeAvg_gt?: Maybe<Float>;
+  roeAvg_gte?: Maybe<Float>;
+  opincomeOfEbt?: Maybe<Float>;
+  opincomeOfEbt_not?: Maybe<Float>;
+  opincomeOfEbt_in?: Maybe<Float[] | Float>;
+  opincomeOfEbt_not_in?: Maybe<Float[] | Float>;
+  opincomeOfEbt_lt?: Maybe<Float>;
+  opincomeOfEbt_lte?: Maybe<Float>;
+  opincomeOfEbt_gt?: Maybe<Float>;
+  opincomeOfEbt_gte?: Maybe<Float>;
+  investincomeOfEbt?: Maybe<Float>;
+  investincomeOfEbt_not?: Maybe<Float>;
+  investincomeOfEbt_in?: Maybe<Float[] | Float>;
+  investincomeOfEbt_not_in?: Maybe<Float[] | Float>;
+  investincomeOfEbt_lt?: Maybe<Float>;
+  investincomeOfEbt_lte?: Maybe<Float>;
+  investincomeOfEbt_gt?: Maybe<Float>;
+  investincomeOfEbt_gte?: Maybe<Float>;
+  nOpProfitOfEbt?: Maybe<Float>;
+  nOpProfitOfEbt_not?: Maybe<Float>;
+  nOpProfitOfEbt_in?: Maybe<Float[] | Float>;
+  nOpProfitOfEbt_not_in?: Maybe<Float[] | Float>;
+  nOpProfitOfEbt_lt?: Maybe<Float>;
+  nOpProfitOfEbt_lte?: Maybe<Float>;
+  nOpProfitOfEbt_gt?: Maybe<Float>;
+  nOpProfitOfEbt_gte?: Maybe<Float>;
+  taxToEbt?: Maybe<Float>;
+  taxToEbt_not?: Maybe<Float>;
+  taxToEbt_in?: Maybe<Float[] | Float>;
+  taxToEbt_not_in?: Maybe<Float[] | Float>;
+  taxToEbt_lt?: Maybe<Float>;
+  taxToEbt_lte?: Maybe<Float>;
+  taxToEbt_gt?: Maybe<Float>;
+  taxToEbt_gte?: Maybe<Float>;
+  dtprofitToProfit?: Maybe<Float>;
+  dtprofitToProfit_not?: Maybe<Float>;
+  dtprofitToProfit_in?: Maybe<Float[] | Float>;
+  dtprofitToProfit_not_in?: Maybe<Float[] | Float>;
+  dtprofitToProfit_lt?: Maybe<Float>;
+  dtprofitToProfit_lte?: Maybe<Float>;
+  dtprofitToProfit_gt?: Maybe<Float>;
+  dtprofitToProfit_gte?: Maybe<Float>;
+  salescashToOr?: Maybe<Float>;
+  salescashToOr_not?: Maybe<Float>;
+  salescashToOr_in?: Maybe<Float[] | Float>;
+  salescashToOr_not_in?: Maybe<Float[] | Float>;
+  salescashToOr_lt?: Maybe<Float>;
+  salescashToOr_lte?: Maybe<Float>;
+  salescashToOr_gt?: Maybe<Float>;
+  salescashToOr_gte?: Maybe<Float>;
+  ocfToOr?: Maybe<Float>;
+  ocfToOr_not?: Maybe<Float>;
+  ocfToOr_in?: Maybe<Float[] | Float>;
+  ocfToOr_not_in?: Maybe<Float[] | Float>;
+  ocfToOr_lt?: Maybe<Float>;
+  ocfToOr_lte?: Maybe<Float>;
+  ocfToOr_gt?: Maybe<Float>;
+  ocfToOr_gte?: Maybe<Float>;
+  ocfToOpincome?: Maybe<Float>;
+  ocfToOpincome_not?: Maybe<Float>;
+  ocfToOpincome_in?: Maybe<Float[] | Float>;
+  ocfToOpincome_not_in?: Maybe<Float[] | Float>;
+  ocfToOpincome_lt?: Maybe<Float>;
+  ocfToOpincome_lte?: Maybe<Float>;
+  ocfToOpincome_gt?: Maybe<Float>;
+  ocfToOpincome_gte?: Maybe<Float>;
+  capitalizedToDa?: Maybe<Float>;
+  capitalizedToDa_not?: Maybe<Float>;
+  capitalizedToDa_in?: Maybe<Float[] | Float>;
+  capitalizedToDa_not_in?: Maybe<Float[] | Float>;
+  capitalizedToDa_lt?: Maybe<Float>;
+  capitalizedToDa_lte?: Maybe<Float>;
+  capitalizedToDa_gt?: Maybe<Float>;
+  capitalizedToDa_gte?: Maybe<Float>;
+  debtToAssets?: Maybe<Float>;
+  debtToAssets_not?: Maybe<Float>;
+  debtToAssets_in?: Maybe<Float[] | Float>;
+  debtToAssets_not_in?: Maybe<Float[] | Float>;
+  debtToAssets_lt?: Maybe<Float>;
+  debtToAssets_lte?: Maybe<Float>;
+  debtToAssets_gt?: Maybe<Float>;
+  debtToAssets_gte?: Maybe<Float>;
+  assetsToEqt?: Maybe<Float>;
+  assetsToEqt_not?: Maybe<Float>;
+  assetsToEqt_in?: Maybe<Float[] | Float>;
+  assetsToEqt_not_in?: Maybe<Float[] | Float>;
+  assetsToEqt_lt?: Maybe<Float>;
+  assetsToEqt_lte?: Maybe<Float>;
+  assetsToEqt_gt?: Maybe<Float>;
+  assetsToEqt_gte?: Maybe<Float>;
+  dpAssetsToEqt?: Maybe<Float>;
+  dpAssetsToEqt_not?: Maybe<Float>;
+  dpAssetsToEqt_in?: Maybe<Float[] | Float>;
+  dpAssetsToEqt_not_in?: Maybe<Float[] | Float>;
+  dpAssetsToEqt_lt?: Maybe<Float>;
+  dpAssetsToEqt_lte?: Maybe<Float>;
+  dpAssetsToEqt_gt?: Maybe<Float>;
+  dpAssetsToEqt_gte?: Maybe<Float>;
+  caToAssets?: Maybe<Float>;
+  caToAssets_not?: Maybe<Float>;
+  caToAssets_in?: Maybe<Float[] | Float>;
+  caToAssets_not_in?: Maybe<Float[] | Float>;
+  caToAssets_lt?: Maybe<Float>;
+  caToAssets_lte?: Maybe<Float>;
+  caToAssets_gt?: Maybe<Float>;
+  caToAssets_gte?: Maybe<Float>;
+  ncaToAssets?: Maybe<Float>;
+  ncaToAssets_not?: Maybe<Float>;
+  ncaToAssets_in?: Maybe<Float[] | Float>;
+  ncaToAssets_not_in?: Maybe<Float[] | Float>;
+  ncaToAssets_lt?: Maybe<Float>;
+  ncaToAssets_lte?: Maybe<Float>;
+  ncaToAssets_gt?: Maybe<Float>;
+  ncaToAssets_gte?: Maybe<Float>;
+  tbassetsToTotalassets?: Maybe<Float>;
+  tbassetsToTotalassets_not?: Maybe<Float>;
+  tbassetsToTotalassets_in?: Maybe<Float[] | Float>;
+  tbassetsToTotalassets_not_in?: Maybe<Float[] | Float>;
+  tbassetsToTotalassets_lt?: Maybe<Float>;
+  tbassetsToTotalassets_lte?: Maybe<Float>;
+  tbassetsToTotalassets_gt?: Maybe<Float>;
+  tbassetsToTotalassets_gte?: Maybe<Float>;
+  intToTalcap?: Maybe<Float>;
+  intToTalcap_not?: Maybe<Float>;
+  intToTalcap_in?: Maybe<Float[] | Float>;
+  intToTalcap_not_in?: Maybe<Float[] | Float>;
+  intToTalcap_lt?: Maybe<Float>;
+  intToTalcap_lte?: Maybe<Float>;
+  intToTalcap_gt?: Maybe<Float>;
+  intToTalcap_gte?: Maybe<Float>;
+  eqtToTalcapital?: Maybe<Float>;
+  eqtToTalcapital_not?: Maybe<Float>;
+  eqtToTalcapital_in?: Maybe<Float[] | Float>;
+  eqtToTalcapital_not_in?: Maybe<Float[] | Float>;
+  eqtToTalcapital_lt?: Maybe<Float>;
+  eqtToTalcapital_lte?: Maybe<Float>;
+  eqtToTalcapital_gt?: Maybe<Float>;
+  eqtToTalcapital_gte?: Maybe<Float>;
+  currentdebtToDebt?: Maybe<Float>;
+  currentdebtToDebt_not?: Maybe<Float>;
+  currentdebtToDebt_in?: Maybe<Float[] | Float>;
+  currentdebtToDebt_not_in?: Maybe<Float[] | Float>;
+  currentdebtToDebt_lt?: Maybe<Float>;
+  currentdebtToDebt_lte?: Maybe<Float>;
+  currentdebtToDebt_gt?: Maybe<Float>;
+  currentdebtToDebt_gte?: Maybe<Float>;
+  longdebToDebt?: Maybe<Float>;
+  longdebToDebt_not?: Maybe<Float>;
+  longdebToDebt_in?: Maybe<Float[] | Float>;
+  longdebToDebt_not_in?: Maybe<Float[] | Float>;
+  longdebToDebt_lt?: Maybe<Float>;
+  longdebToDebt_lte?: Maybe<Float>;
+  longdebToDebt_gt?: Maybe<Float>;
+  longdebToDebt_gte?: Maybe<Float>;
+  ocfToShortdebt?: Maybe<Float>;
+  ocfToShortdebt_not?: Maybe<Float>;
+  ocfToShortdebt_in?: Maybe<Float[] | Float>;
+  ocfToShortdebt_not_in?: Maybe<Float[] | Float>;
+  ocfToShortdebt_lt?: Maybe<Float>;
+  ocfToShortdebt_lte?: Maybe<Float>;
+  ocfToShortdebt_gt?: Maybe<Float>;
+  ocfToShortdebt_gte?: Maybe<Float>;
+  debtToEqt?: Maybe<Float>;
+  debtToEqt_not?: Maybe<Float>;
+  debtToEqt_in?: Maybe<Float[] | Float>;
+  debtToEqt_not_in?: Maybe<Float[] | Float>;
+  debtToEqt_lt?: Maybe<Float>;
+  debtToEqt_lte?: Maybe<Float>;
+  debtToEqt_gt?: Maybe<Float>;
+  debtToEqt_gte?: Maybe<Float>;
+  eqtToDebt?: Maybe<Float>;
+  eqtToDebt_not?: Maybe<Float>;
+  eqtToDebt_in?: Maybe<Float[] | Float>;
+  eqtToDebt_not_in?: Maybe<Float[] | Float>;
+  eqtToDebt_lt?: Maybe<Float>;
+  eqtToDebt_lte?: Maybe<Float>;
+  eqtToDebt_gt?: Maybe<Float>;
+  eqtToDebt_gte?: Maybe<Float>;
+  eqtToInterestdebt?: Maybe<Float>;
+  eqtToInterestdebt_not?: Maybe<Float>;
+  eqtToInterestdebt_in?: Maybe<Float[] | Float>;
+  eqtToInterestdebt_not_in?: Maybe<Float[] | Float>;
+  eqtToInterestdebt_lt?: Maybe<Float>;
+  eqtToInterestdebt_lte?: Maybe<Float>;
+  eqtToInterestdebt_gt?: Maybe<Float>;
+  eqtToInterestdebt_gte?: Maybe<Float>;
+  tangibleassetToDebt?: Maybe<Float>;
+  tangibleassetToDebt_not?: Maybe<Float>;
+  tangibleassetToDebt_in?: Maybe<Float[] | Float>;
+  tangibleassetToDebt_not_in?: Maybe<Float[] | Float>;
+  tangibleassetToDebt_lt?: Maybe<Float>;
+  tangibleassetToDebt_lte?: Maybe<Float>;
+  tangibleassetToDebt_gt?: Maybe<Float>;
+  tangibleassetToDebt_gte?: Maybe<Float>;
+  tangassetToIntdebt?: Maybe<Float>;
+  tangassetToIntdebt_not?: Maybe<Float>;
+  tangassetToIntdebt_in?: Maybe<Float[] | Float>;
+  tangassetToIntdebt_not_in?: Maybe<Float[] | Float>;
+  tangassetToIntdebt_lt?: Maybe<Float>;
+  tangassetToIntdebt_lte?: Maybe<Float>;
+  tangassetToIntdebt_gt?: Maybe<Float>;
+  tangassetToIntdebt_gte?: Maybe<Float>;
+  tangibleassetToNetdebt?: Maybe<Float>;
+  tangibleassetToNetdebt_not?: Maybe<Float>;
+  tangibleassetToNetdebt_in?: Maybe<Float[] | Float>;
+  tangibleassetToNetdebt_not_in?: Maybe<Float[] | Float>;
+  tangibleassetToNetdebt_lt?: Maybe<Float>;
+  tangibleassetToNetdebt_lte?: Maybe<Float>;
+  tangibleassetToNetdebt_gt?: Maybe<Float>;
+  tangibleassetToNetdebt_gte?: Maybe<Float>;
+  ocfToDebt?: Maybe<Float>;
+  ocfToDebt_not?: Maybe<Float>;
+  ocfToDebt_in?: Maybe<Float[] | Float>;
+  ocfToDebt_not_in?: Maybe<Float[] | Float>;
+  ocfToDebt_lt?: Maybe<Float>;
+  ocfToDebt_lte?: Maybe<Float>;
+  ocfToDebt_gt?: Maybe<Float>;
+  ocfToDebt_gte?: Maybe<Float>;
+  ocfToInterestdebt?: Maybe<Float>;
+  ocfToInterestdebt_not?: Maybe<Float>;
+  ocfToInterestdebt_in?: Maybe<Float[] | Float>;
+  ocfToInterestdebt_not_in?: Maybe<Float[] | Float>;
+  ocfToInterestdebt_lt?: Maybe<Float>;
+  ocfToInterestdebt_lte?: Maybe<Float>;
+  ocfToInterestdebt_gt?: Maybe<Float>;
+  ocfToInterestdebt_gte?: Maybe<Float>;
+  ocfToNetdebt?: Maybe<Float>;
+  ocfToNetdebt_not?: Maybe<Float>;
+  ocfToNetdebt_in?: Maybe<Float[] | Float>;
+  ocfToNetdebt_not_in?: Maybe<Float[] | Float>;
+  ocfToNetdebt_lt?: Maybe<Float>;
+  ocfToNetdebt_lte?: Maybe<Float>;
+  ocfToNetdebt_gt?: Maybe<Float>;
+  ocfToNetdebt_gte?: Maybe<Float>;
+  ebitToInterest?: Maybe<Float>;
+  ebitToInterest_not?: Maybe<Float>;
+  ebitToInterest_in?: Maybe<Float[] | Float>;
+  ebitToInterest_not_in?: Maybe<Float[] | Float>;
+  ebitToInterest_lt?: Maybe<Float>;
+  ebitToInterest_lte?: Maybe<Float>;
+  ebitToInterest_gt?: Maybe<Float>;
+  ebitToInterest_gte?: Maybe<Float>;
+  longdebtToWorkingcapital?: Maybe<Float>;
+  longdebtToWorkingcapital_not?: Maybe<Float>;
+  longdebtToWorkingcapital_in?: Maybe<Float[] | Float>;
+  longdebtToWorkingcapital_not_in?: Maybe<Float[] | Float>;
+  longdebtToWorkingcapital_lt?: Maybe<Float>;
+  longdebtToWorkingcapital_lte?: Maybe<Float>;
+  longdebtToWorkingcapital_gt?: Maybe<Float>;
+  longdebtToWorkingcapital_gte?: Maybe<Float>;
+  ebitdaToDebt?: Maybe<Float>;
+  ebitdaToDebt_not?: Maybe<Float>;
+  ebitdaToDebt_in?: Maybe<Float[] | Float>;
+  ebitdaToDebt_not_in?: Maybe<Float[] | Float>;
+  ebitdaToDebt_lt?: Maybe<Float>;
+  ebitdaToDebt_lte?: Maybe<Float>;
+  ebitdaToDebt_gt?: Maybe<Float>;
+  ebitdaToDebt_gte?: Maybe<Float>;
+  turnDays?: Maybe<Float>;
+  turnDays_not?: Maybe<Float>;
+  turnDays_in?: Maybe<Float[] | Float>;
+  turnDays_not_in?: Maybe<Float[] | Float>;
+  turnDays_lt?: Maybe<Float>;
+  turnDays_lte?: Maybe<Float>;
+  turnDays_gt?: Maybe<Float>;
+  turnDays_gte?: Maybe<Float>;
+  roaYearly?: Maybe<Float>;
+  roaYearly_not?: Maybe<Float>;
+  roaYearly_in?: Maybe<Float[] | Float>;
+  roaYearly_not_in?: Maybe<Float[] | Float>;
+  roaYearly_lt?: Maybe<Float>;
+  roaYearly_lte?: Maybe<Float>;
+  roaYearly_gt?: Maybe<Float>;
+  roaYearly_gte?: Maybe<Float>;
+  roaDp?: Maybe<Float>;
+  roaDp_not?: Maybe<Float>;
+  roaDp_in?: Maybe<Float[] | Float>;
+  roaDp_not_in?: Maybe<Float[] | Float>;
+  roaDp_lt?: Maybe<Float>;
+  roaDp_lte?: Maybe<Float>;
+  roaDp_gt?: Maybe<Float>;
+  roaDp_gte?: Maybe<Float>;
+  fixedAssets?: Maybe<Float>;
+  fixedAssets_not?: Maybe<Float>;
+  fixedAssets_in?: Maybe<Float[] | Float>;
+  fixedAssets_not_in?: Maybe<Float[] | Float>;
+  fixedAssets_lt?: Maybe<Float>;
+  fixedAssets_lte?: Maybe<Float>;
+  fixedAssets_gt?: Maybe<Float>;
+  fixedAssets_gte?: Maybe<Float>;
+  profitPrefinExp?: Maybe<Float>;
+  profitPrefinExp_not?: Maybe<Float>;
+  profitPrefinExp_in?: Maybe<Float[] | Float>;
+  profitPrefinExp_not_in?: Maybe<Float[] | Float>;
+  profitPrefinExp_lt?: Maybe<Float>;
+  profitPrefinExp_lte?: Maybe<Float>;
+  profitPrefinExp_gt?: Maybe<Float>;
+  profitPrefinExp_gte?: Maybe<Float>;
+  nonOpProfit?: Maybe<Float>;
+  nonOpProfit_not?: Maybe<Float>;
+  nonOpProfit_in?: Maybe<Float[] | Float>;
+  nonOpProfit_not_in?: Maybe<Float[] | Float>;
+  nonOpProfit_lt?: Maybe<Float>;
+  nonOpProfit_lte?: Maybe<Float>;
+  nonOpProfit_gt?: Maybe<Float>;
+  nonOpProfit_gte?: Maybe<Float>;
+  opToEbt?: Maybe<Float>;
+  opToEbt_not?: Maybe<Float>;
+  opToEbt_in?: Maybe<Float[] | Float>;
+  opToEbt_not_in?: Maybe<Float[] | Float>;
+  opToEbt_lt?: Maybe<Float>;
+  opToEbt_lte?: Maybe<Float>;
+  opToEbt_gt?: Maybe<Float>;
+  opToEbt_gte?: Maybe<Float>;
+  nopToEbt?: Maybe<Float>;
+  nopToEbt_not?: Maybe<Float>;
+  nopToEbt_in?: Maybe<Float[] | Float>;
+  nopToEbt_not_in?: Maybe<Float[] | Float>;
+  nopToEbt_lt?: Maybe<Float>;
+  nopToEbt_lte?: Maybe<Float>;
+  nopToEbt_gt?: Maybe<Float>;
+  nopToEbt_gte?: Maybe<Float>;
+  ocfToProfit?: Maybe<Float>;
+  ocfToProfit_not?: Maybe<Float>;
+  ocfToProfit_in?: Maybe<Float[] | Float>;
+  ocfToProfit_not_in?: Maybe<Float[] | Float>;
+  ocfToProfit_lt?: Maybe<Float>;
+  ocfToProfit_lte?: Maybe<Float>;
+  ocfToProfit_gt?: Maybe<Float>;
+  ocfToProfit_gte?: Maybe<Float>;
+  cashToLiqdebt?: Maybe<Float>;
+  cashToLiqdebt_not?: Maybe<Float>;
+  cashToLiqdebt_in?: Maybe<Float[] | Float>;
+  cashToLiqdebt_not_in?: Maybe<Float[] | Float>;
+  cashToLiqdebt_lt?: Maybe<Float>;
+  cashToLiqdebt_lte?: Maybe<Float>;
+  cashToLiqdebt_gt?: Maybe<Float>;
+  cashToLiqdebt_gte?: Maybe<Float>;
+  cashToLiqdebtWithinterest?: Maybe<Float>;
+  cashToLiqdebtWithinterest_not?: Maybe<Float>;
+  cashToLiqdebtWithinterest_in?: Maybe<Float[] | Float>;
+  cashToLiqdebtWithinterest_not_in?: Maybe<Float[] | Float>;
+  cashToLiqdebtWithinterest_lt?: Maybe<Float>;
+  cashToLiqdebtWithinterest_lte?: Maybe<Float>;
+  cashToLiqdebtWithinterest_gt?: Maybe<Float>;
+  cashToLiqdebtWithinterest_gte?: Maybe<Float>;
+  opToLiqdebt?: Maybe<Float>;
+  opToLiqdebt_not?: Maybe<Float>;
+  opToLiqdebt_in?: Maybe<Float[] | Float>;
+  opToLiqdebt_not_in?: Maybe<Float[] | Float>;
+  opToLiqdebt_lt?: Maybe<Float>;
+  opToLiqdebt_lte?: Maybe<Float>;
+  opToLiqdebt_gt?: Maybe<Float>;
+  opToLiqdebt_gte?: Maybe<Float>;
+  opToDebt?: Maybe<Float>;
+  opToDebt_not?: Maybe<Float>;
+  opToDebt_in?: Maybe<Float[] | Float>;
+  opToDebt_not_in?: Maybe<Float[] | Float>;
+  opToDebt_lt?: Maybe<Float>;
+  opToDebt_lte?: Maybe<Float>;
+  opToDebt_gt?: Maybe<Float>;
+  opToDebt_gte?: Maybe<Float>;
+  roicYearly?: Maybe<Float>;
+  roicYearly_not?: Maybe<Float>;
+  roicYearly_in?: Maybe<Float[] | Float>;
+  roicYearly_not_in?: Maybe<Float[] | Float>;
+  roicYearly_lt?: Maybe<Float>;
+  roicYearly_lte?: Maybe<Float>;
+  roicYearly_gt?: Maybe<Float>;
+  roicYearly_gte?: Maybe<Float>;
+  totalFaTrun?: Maybe<Float>;
+  totalFaTrun_not?: Maybe<Float>;
+  totalFaTrun_in?: Maybe<Float[] | Float>;
+  totalFaTrun_not_in?: Maybe<Float[] | Float>;
+  totalFaTrun_lt?: Maybe<Float>;
+  totalFaTrun_lte?: Maybe<Float>;
+  totalFaTrun_gt?: Maybe<Float>;
+  totalFaTrun_gte?: Maybe<Float>;
+  profitToOp?: Maybe<Float>;
+  profitToOp_not?: Maybe<Float>;
+  profitToOp_in?: Maybe<Float[] | Float>;
+  profitToOp_not_in?: Maybe<Float[] | Float>;
+  profitToOp_lt?: Maybe<Float>;
+  profitToOp_lte?: Maybe<Float>;
+  profitToOp_gt?: Maybe<Float>;
+  profitToOp_gte?: Maybe<Float>;
+  qOpincome?: Maybe<Float>;
+  qOpincome_not?: Maybe<Float>;
+  qOpincome_in?: Maybe<Float[] | Float>;
+  qOpincome_not_in?: Maybe<Float[] | Float>;
+  qOpincome_lt?: Maybe<Float>;
+  qOpincome_lte?: Maybe<Float>;
+  qOpincome_gt?: Maybe<Float>;
+  qOpincome_gte?: Maybe<Float>;
+  qInvestincome?: Maybe<Float>;
+  qInvestincome_not?: Maybe<Float>;
+  qInvestincome_in?: Maybe<Float[] | Float>;
+  qInvestincome_not_in?: Maybe<Float[] | Float>;
+  qInvestincome_lt?: Maybe<Float>;
+  qInvestincome_lte?: Maybe<Float>;
+  qInvestincome_gt?: Maybe<Float>;
+  qInvestincome_gte?: Maybe<Float>;
+  qDtprofit?: Maybe<Float>;
+  qDtprofit_not?: Maybe<Float>;
+  qDtprofit_in?: Maybe<Float[] | Float>;
+  qDtprofit_not_in?: Maybe<Float[] | Float>;
+  qDtprofit_lt?: Maybe<Float>;
+  qDtprofit_lte?: Maybe<Float>;
+  qDtprofit_gt?: Maybe<Float>;
+  qDtprofit_gte?: Maybe<Float>;
+  qEps?: Maybe<Float>;
+  qEps_not?: Maybe<Float>;
+  qEps_in?: Maybe<Float[] | Float>;
+  qEps_not_in?: Maybe<Float[] | Float>;
+  qEps_lt?: Maybe<Float>;
+  qEps_lte?: Maybe<Float>;
+  qEps_gt?: Maybe<Float>;
+  qEps_gte?: Maybe<Float>;
+  qNetprofitMargin?: Maybe<Float>;
+  qNetprofitMargin_not?: Maybe<Float>;
+  qNetprofitMargin_in?: Maybe<Float[] | Float>;
+  qNetprofitMargin_not_in?: Maybe<Float[] | Float>;
+  qNetprofitMargin_lt?: Maybe<Float>;
+  qNetprofitMargin_lte?: Maybe<Float>;
+  qNetprofitMargin_gt?: Maybe<Float>;
+  qNetprofitMargin_gte?: Maybe<Float>;
+  qGsprofitMargin?: Maybe<Float>;
+  qGsprofitMargin_not?: Maybe<Float>;
+  qGsprofitMargin_in?: Maybe<Float[] | Float>;
+  qGsprofitMargin_not_in?: Maybe<Float[] | Float>;
+  qGsprofitMargin_lt?: Maybe<Float>;
+  qGsprofitMargin_lte?: Maybe<Float>;
+  qGsprofitMargin_gt?: Maybe<Float>;
+  qGsprofitMargin_gte?: Maybe<Float>;
+  qExpToSales?: Maybe<Float>;
+  qExpToSales_not?: Maybe<Float>;
+  qExpToSales_in?: Maybe<Float[] | Float>;
+  qExpToSales_not_in?: Maybe<Float[] | Float>;
+  qExpToSales_lt?: Maybe<Float>;
+  qExpToSales_lte?: Maybe<Float>;
+  qExpToSales_gt?: Maybe<Float>;
+  qExpToSales_gte?: Maybe<Float>;
+  qProfitToGr?: Maybe<Float>;
+  qProfitToGr_not?: Maybe<Float>;
+  qProfitToGr_in?: Maybe<Float[] | Float>;
+  qProfitToGr_not_in?: Maybe<Float[] | Float>;
+  qProfitToGr_lt?: Maybe<Float>;
+  qProfitToGr_lte?: Maybe<Float>;
+  qProfitToGr_gt?: Maybe<Float>;
+  qProfitToGr_gte?: Maybe<Float>;
+  qSaleexpToGr?: Maybe<Float>;
+  qSaleexpToGr_not?: Maybe<Float>;
+  qSaleexpToGr_in?: Maybe<Float[] | Float>;
+  qSaleexpToGr_not_in?: Maybe<Float[] | Float>;
+  qSaleexpToGr_lt?: Maybe<Float>;
+  qSaleexpToGr_lte?: Maybe<Float>;
+  qSaleexpToGr_gt?: Maybe<Float>;
+  qSaleexpToGr_gte?: Maybe<Float>;
+  qAdminexpToGr?: Maybe<Float>;
+  qAdminexpToGr_not?: Maybe<Float>;
+  qAdminexpToGr_in?: Maybe<Float[] | Float>;
+  qAdminexpToGr_not_in?: Maybe<Float[] | Float>;
+  qAdminexpToGr_lt?: Maybe<Float>;
+  qAdminexpToGr_lte?: Maybe<Float>;
+  qAdminexpToGr_gt?: Maybe<Float>;
+  qAdminexpToGr_gte?: Maybe<Float>;
+  qFinaexpToGr?: Maybe<Float>;
+  qFinaexpToGr_not?: Maybe<Float>;
+  qFinaexpToGr_in?: Maybe<Float[] | Float>;
+  qFinaexpToGr_not_in?: Maybe<Float[] | Float>;
+  qFinaexpToGr_lt?: Maybe<Float>;
+  qFinaexpToGr_lte?: Maybe<Float>;
+  qFinaexpToGr_gt?: Maybe<Float>;
+  qFinaexpToGr_gte?: Maybe<Float>;
+  qImpairToGrTtm?: Maybe<Float>;
+  qImpairToGrTtm_not?: Maybe<Float>;
+  qImpairToGrTtm_in?: Maybe<Float[] | Float>;
+  qImpairToGrTtm_not_in?: Maybe<Float[] | Float>;
+  qImpairToGrTtm_lt?: Maybe<Float>;
+  qImpairToGrTtm_lte?: Maybe<Float>;
+  qImpairToGrTtm_gt?: Maybe<Float>;
+  qImpairToGrTtm_gte?: Maybe<Float>;
+  qGcToGr?: Maybe<Float>;
+  qGcToGr_not?: Maybe<Float>;
+  qGcToGr_in?: Maybe<Float[] | Float>;
+  qGcToGr_not_in?: Maybe<Float[] | Float>;
+  qGcToGr_lt?: Maybe<Float>;
+  qGcToGr_lte?: Maybe<Float>;
+  qGcToGr_gt?: Maybe<Float>;
+  qGcToGr_gte?: Maybe<Float>;
+  qOpToGr?: Maybe<Float>;
+  qOpToGr_not?: Maybe<Float>;
+  qOpToGr_in?: Maybe<Float[] | Float>;
+  qOpToGr_not_in?: Maybe<Float[] | Float>;
+  qOpToGr_lt?: Maybe<Float>;
+  qOpToGr_lte?: Maybe<Float>;
+  qOpToGr_gt?: Maybe<Float>;
+  qOpToGr_gte?: Maybe<Float>;
+  qRoe?: Maybe<Float>;
+  qRoe_not?: Maybe<Float>;
+  qRoe_in?: Maybe<Float[] | Float>;
+  qRoe_not_in?: Maybe<Float[] | Float>;
+  qRoe_lt?: Maybe<Float>;
+  qRoe_lte?: Maybe<Float>;
+  qRoe_gt?: Maybe<Float>;
+  qRoe_gte?: Maybe<Float>;
+  qDtRoe?: Maybe<Float>;
+  qDtRoe_not?: Maybe<Float>;
+  qDtRoe_in?: Maybe<Float[] | Float>;
+  qDtRoe_not_in?: Maybe<Float[] | Float>;
+  qDtRoe_lt?: Maybe<Float>;
+  qDtRoe_lte?: Maybe<Float>;
+  qDtRoe_gt?: Maybe<Float>;
+  qDtRoe_gte?: Maybe<Float>;
+  qNpta?: Maybe<Float>;
+  qNpta_not?: Maybe<Float>;
+  qNpta_in?: Maybe<Float[] | Float>;
+  qNpta_not_in?: Maybe<Float[] | Float>;
+  qNpta_lt?: Maybe<Float>;
+  qNpta_lte?: Maybe<Float>;
+  qNpta_gt?: Maybe<Float>;
+  qNpta_gte?: Maybe<Float>;
+  qOpincomeToEbt?: Maybe<Float>;
+  qOpincomeToEbt_not?: Maybe<Float>;
+  qOpincomeToEbt_in?: Maybe<Float[] | Float>;
+  qOpincomeToEbt_not_in?: Maybe<Float[] | Float>;
+  qOpincomeToEbt_lt?: Maybe<Float>;
+  qOpincomeToEbt_lte?: Maybe<Float>;
+  qOpincomeToEbt_gt?: Maybe<Float>;
+  qOpincomeToEbt_gte?: Maybe<Float>;
+  qInvestincomeToEbt?: Maybe<Float>;
+  qInvestincomeToEbt_not?: Maybe<Float>;
+  qInvestincomeToEbt_in?: Maybe<Float[] | Float>;
+  qInvestincomeToEbt_not_in?: Maybe<Float[] | Float>;
+  qInvestincomeToEbt_lt?: Maybe<Float>;
+  qInvestincomeToEbt_lte?: Maybe<Float>;
+  qInvestincomeToEbt_gt?: Maybe<Float>;
+  qInvestincomeToEbt_gte?: Maybe<Float>;
+  qDtprofitToProfit?: Maybe<Float>;
+  qDtprofitToProfit_not?: Maybe<Float>;
+  qDtprofitToProfit_in?: Maybe<Float[] | Float>;
+  qDtprofitToProfit_not_in?: Maybe<Float[] | Float>;
+  qDtprofitToProfit_lt?: Maybe<Float>;
+  qDtprofitToProfit_lte?: Maybe<Float>;
+  qDtprofitToProfit_gt?: Maybe<Float>;
+  qDtprofitToProfit_gte?: Maybe<Float>;
+  qSalescashToOr?: Maybe<Float>;
+  qSalescashToOr_not?: Maybe<Float>;
+  qSalescashToOr_in?: Maybe<Float[] | Float>;
+  qSalescashToOr_not_in?: Maybe<Float[] | Float>;
+  qSalescashToOr_lt?: Maybe<Float>;
+  qSalescashToOr_lte?: Maybe<Float>;
+  qSalescashToOr_gt?: Maybe<Float>;
+  qSalescashToOr_gte?: Maybe<Float>;
+  qOcfToSales?: Maybe<Float>;
+  qOcfToSales_not?: Maybe<Float>;
+  qOcfToSales_in?: Maybe<Float[] | Float>;
+  qOcfToSales_not_in?: Maybe<Float[] | Float>;
+  qOcfToSales_lt?: Maybe<Float>;
+  qOcfToSales_lte?: Maybe<Float>;
+  qOcfToSales_gt?: Maybe<Float>;
+  qOcfToSales_gte?: Maybe<Float>;
+  qOcfToOr?: Maybe<Float>;
+  qOcfToOr_not?: Maybe<Float>;
+  qOcfToOr_in?: Maybe<Float[] | Float>;
+  qOcfToOr_not_in?: Maybe<Float[] | Float>;
+  qOcfToOr_lt?: Maybe<Float>;
+  qOcfToOr_lte?: Maybe<Float>;
+  qOcfToOr_gt?: Maybe<Float>;
+  qOcfToOr_gte?: Maybe<Float>;
+  basicEpsYoy?: Maybe<Float>;
+  basicEpsYoy_not?: Maybe<Float>;
+  basicEpsYoy_in?: Maybe<Float[] | Float>;
+  basicEpsYoy_not_in?: Maybe<Float[] | Float>;
+  basicEpsYoy_lt?: Maybe<Float>;
+  basicEpsYoy_lte?: Maybe<Float>;
+  basicEpsYoy_gt?: Maybe<Float>;
+  basicEpsYoy_gte?: Maybe<Float>;
+  dtEpsYoy?: Maybe<Float>;
+  dtEpsYoy_not?: Maybe<Float>;
+  dtEpsYoy_in?: Maybe<Float[] | Float>;
+  dtEpsYoy_not_in?: Maybe<Float[] | Float>;
+  dtEpsYoy_lt?: Maybe<Float>;
+  dtEpsYoy_lte?: Maybe<Float>;
+  dtEpsYoy_gt?: Maybe<Float>;
+  dtEpsYoy_gte?: Maybe<Float>;
+  cfpsYoy?: Maybe<Float>;
+  cfpsYoy_not?: Maybe<Float>;
+  cfpsYoy_in?: Maybe<Float[] | Float>;
+  cfpsYoy_not_in?: Maybe<Float[] | Float>;
+  cfpsYoy_lt?: Maybe<Float>;
+  cfpsYoy_lte?: Maybe<Float>;
+  cfpsYoy_gt?: Maybe<Float>;
+  cfpsYoy_gte?: Maybe<Float>;
+  opYoy?: Maybe<Float>;
+  opYoy_not?: Maybe<Float>;
+  opYoy_in?: Maybe<Float[] | Float>;
+  opYoy_not_in?: Maybe<Float[] | Float>;
+  opYoy_lt?: Maybe<Float>;
+  opYoy_lte?: Maybe<Float>;
+  opYoy_gt?: Maybe<Float>;
+  opYoy_gte?: Maybe<Float>;
+  ebtYoy?: Maybe<Float>;
+  ebtYoy_not?: Maybe<Float>;
+  ebtYoy_in?: Maybe<Float[] | Float>;
+  ebtYoy_not_in?: Maybe<Float[] | Float>;
+  ebtYoy_lt?: Maybe<Float>;
+  ebtYoy_lte?: Maybe<Float>;
+  ebtYoy_gt?: Maybe<Float>;
+  ebtYoy_gte?: Maybe<Float>;
+  netprofitYoy?: Maybe<Float>;
+  netprofitYoy_not?: Maybe<Float>;
+  netprofitYoy_in?: Maybe<Float[] | Float>;
+  netprofitYoy_not_in?: Maybe<Float[] | Float>;
+  netprofitYoy_lt?: Maybe<Float>;
+  netprofitYoy_lte?: Maybe<Float>;
+  netprofitYoy_gt?: Maybe<Float>;
+  netprofitYoy_gte?: Maybe<Float>;
+  dtNetprofitYoy?: Maybe<Float>;
+  dtNetprofitYoy_not?: Maybe<Float>;
+  dtNetprofitYoy_in?: Maybe<Float[] | Float>;
+  dtNetprofitYoy_not_in?: Maybe<Float[] | Float>;
+  dtNetprofitYoy_lt?: Maybe<Float>;
+  dtNetprofitYoy_lte?: Maybe<Float>;
+  dtNetprofitYoy_gt?: Maybe<Float>;
+  dtNetprofitYoy_gte?: Maybe<Float>;
+  ocfYoy?: Maybe<Float>;
+  ocfYoy_not?: Maybe<Float>;
+  ocfYoy_in?: Maybe<Float[] | Float>;
+  ocfYoy_not_in?: Maybe<Float[] | Float>;
+  ocfYoy_lt?: Maybe<Float>;
+  ocfYoy_lte?: Maybe<Float>;
+  ocfYoy_gt?: Maybe<Float>;
+  ocfYoy_gte?: Maybe<Float>;
+  roeYoy?: Maybe<Float>;
+  roeYoy_not?: Maybe<Float>;
+  roeYoy_in?: Maybe<Float[] | Float>;
+  roeYoy_not_in?: Maybe<Float[] | Float>;
+  roeYoy_lt?: Maybe<Float>;
+  roeYoy_lte?: Maybe<Float>;
+  roeYoy_gt?: Maybe<Float>;
+  roeYoy_gte?: Maybe<Float>;
+  bpsYoy?: Maybe<Float>;
+  bpsYoy_not?: Maybe<Float>;
+  bpsYoy_in?: Maybe<Float[] | Float>;
+  bpsYoy_not_in?: Maybe<Float[] | Float>;
+  bpsYoy_lt?: Maybe<Float>;
+  bpsYoy_lte?: Maybe<Float>;
+  bpsYoy_gt?: Maybe<Float>;
+  bpsYoy_gte?: Maybe<Float>;
+  assetsYoy?: Maybe<Float>;
+  assetsYoy_not?: Maybe<Float>;
+  assetsYoy_in?: Maybe<Float[] | Float>;
+  assetsYoy_not_in?: Maybe<Float[] | Float>;
+  assetsYoy_lt?: Maybe<Float>;
+  assetsYoy_lte?: Maybe<Float>;
+  assetsYoy_gt?: Maybe<Float>;
+  assetsYoy_gte?: Maybe<Float>;
+  eqtYoy?: Maybe<Float>;
+  eqtYoy_not?: Maybe<Float>;
+  eqtYoy_in?: Maybe<Float[] | Float>;
+  eqtYoy_not_in?: Maybe<Float[] | Float>;
+  eqtYoy_lt?: Maybe<Float>;
+  eqtYoy_lte?: Maybe<Float>;
+  eqtYoy_gt?: Maybe<Float>;
+  eqtYoy_gte?: Maybe<Float>;
+  trYoy?: Maybe<Float>;
+  trYoy_not?: Maybe<Float>;
+  trYoy_in?: Maybe<Float[] | Float>;
+  trYoy_not_in?: Maybe<Float[] | Float>;
+  trYoy_lt?: Maybe<Float>;
+  trYoy_lte?: Maybe<Float>;
+  trYoy_gt?: Maybe<Float>;
+  trYoy_gte?: Maybe<Float>;
+  orYoy?: Maybe<Float>;
+  orYoy_not?: Maybe<Float>;
+  orYoy_in?: Maybe<Float[] | Float>;
+  orYoy_not_in?: Maybe<Float[] | Float>;
+  orYoy_lt?: Maybe<Float>;
+  orYoy_lte?: Maybe<Float>;
+  orYoy_gt?: Maybe<Float>;
+  orYoy_gte?: Maybe<Float>;
+  qGrYoy?: Maybe<Float>;
+  qGrYoy_not?: Maybe<Float>;
+  qGrYoy_in?: Maybe<Float[] | Float>;
+  qGrYoy_not_in?: Maybe<Float[] | Float>;
+  qGrYoy_lt?: Maybe<Float>;
+  qGrYoy_lte?: Maybe<Float>;
+  qGrYoy_gt?: Maybe<Float>;
+  qGrYoy_gte?: Maybe<Float>;
+  qGrQoq?: Maybe<Float>;
+  qGrQoq_not?: Maybe<Float>;
+  qGrQoq_in?: Maybe<Float[] | Float>;
+  qGrQoq_not_in?: Maybe<Float[] | Float>;
+  qGrQoq_lt?: Maybe<Float>;
+  qGrQoq_lte?: Maybe<Float>;
+  qGrQoq_gt?: Maybe<Float>;
+  qGrQoq_gte?: Maybe<Float>;
+  qSalesYoy?: Maybe<Float>;
+  qSalesYoy_not?: Maybe<Float>;
+  qSalesYoy_in?: Maybe<Float[] | Float>;
+  qSalesYoy_not_in?: Maybe<Float[] | Float>;
+  qSalesYoy_lt?: Maybe<Float>;
+  qSalesYoy_lte?: Maybe<Float>;
+  qSalesYoy_gt?: Maybe<Float>;
+  qSalesYoy_gte?: Maybe<Float>;
+  qSalesQoq?: Maybe<Float>;
+  qSalesQoq_not?: Maybe<Float>;
+  qSalesQoq_in?: Maybe<Float[] | Float>;
+  qSalesQoq_not_in?: Maybe<Float[] | Float>;
+  qSalesQoq_lt?: Maybe<Float>;
+  qSalesQoq_lte?: Maybe<Float>;
+  qSalesQoq_gt?: Maybe<Float>;
+  qSalesQoq_gte?: Maybe<Float>;
+  qOpYoy?: Maybe<Float>;
+  qOpYoy_not?: Maybe<Float>;
+  qOpYoy_in?: Maybe<Float[] | Float>;
+  qOpYoy_not_in?: Maybe<Float[] | Float>;
+  qOpYoy_lt?: Maybe<Float>;
+  qOpYoy_lte?: Maybe<Float>;
+  qOpYoy_gt?: Maybe<Float>;
+  qOpYoy_gte?: Maybe<Float>;
+  qOpQoq?: Maybe<Float>;
+  qOpQoq_not?: Maybe<Float>;
+  qOpQoq_in?: Maybe<Float[] | Float>;
+  qOpQoq_not_in?: Maybe<Float[] | Float>;
+  qOpQoq_lt?: Maybe<Float>;
+  qOpQoq_lte?: Maybe<Float>;
+  qOpQoq_gt?: Maybe<Float>;
+  qOpQoq_gte?: Maybe<Float>;
+  qProfitYoy?: Maybe<Float>;
+  qProfitYoy_not?: Maybe<Float>;
+  qProfitYoy_in?: Maybe<Float[] | Float>;
+  qProfitYoy_not_in?: Maybe<Float[] | Float>;
+  qProfitYoy_lt?: Maybe<Float>;
+  qProfitYoy_lte?: Maybe<Float>;
+  qProfitYoy_gt?: Maybe<Float>;
+  qProfitYoy_gte?: Maybe<Float>;
+  qProfitQoq?: Maybe<Float>;
+  qProfitQoq_not?: Maybe<Float>;
+  qProfitQoq_in?: Maybe<Float[] | Float>;
+  qProfitQoq_not_in?: Maybe<Float[] | Float>;
+  qProfitQoq_lt?: Maybe<Float>;
+  qProfitQoq_lte?: Maybe<Float>;
+  qProfitQoq_gt?: Maybe<Float>;
+  qProfitQoq_gte?: Maybe<Float>;
+  qNetprofitYoy?: Maybe<Float>;
+  qNetprofitYoy_not?: Maybe<Float>;
+  qNetprofitYoy_in?: Maybe<Float[] | Float>;
+  qNetprofitYoy_not_in?: Maybe<Float[] | Float>;
+  qNetprofitYoy_lt?: Maybe<Float>;
+  qNetprofitYoy_lte?: Maybe<Float>;
+  qNetprofitYoy_gt?: Maybe<Float>;
+  qNetprofitYoy_gte?: Maybe<Float>;
+  qNetprofitQoq?: Maybe<Float>;
+  qNetprofitQoq_not?: Maybe<Float>;
+  qNetprofitQoq_in?: Maybe<Float[] | Float>;
+  qNetprofitQoq_not_in?: Maybe<Float[] | Float>;
+  qNetprofitQoq_lt?: Maybe<Float>;
+  qNetprofitQoq_lte?: Maybe<Float>;
+  qNetprofitQoq_gt?: Maybe<Float>;
+  qNetprofitQoq_gte?: Maybe<Float>;
+  equityYoy?: Maybe<Float>;
+  equityYoy_not?: Maybe<Float>;
+  equityYoy_in?: Maybe<Float[] | Float>;
+  equityYoy_not_in?: Maybe<Float[] | Float>;
+  equityYoy_lt?: Maybe<Float>;
+  equityYoy_lte?: Maybe<Float>;
+  equityYoy_gt?: Maybe<Float>;
+  equityYoy_gte?: Maybe<Float>;
+  rdExp?: Maybe<Float>;
+  rdExp_not?: Maybe<Float>;
+  rdExp_in?: Maybe<Float[] | Float>;
+  rdExp_not_in?: Maybe<Float[] | Float>;
+  rdExp_lt?: Maybe<Float>;
+  rdExp_lte?: Maybe<Float>;
+  rdExp_gt?: Maybe<Float>;
+  rdExp_gte?: Maybe<Float>;
+  updateFlag?: Maybe<String>;
+  updateFlag_not?: Maybe<String>;
+  updateFlag_in?: Maybe<String[] | String>;
+  updateFlag_not_in?: Maybe<String[] | String>;
+  updateFlag_lt?: Maybe<String>;
+  updateFlag_lte?: Maybe<String>;
+  updateFlag_gt?: Maybe<String>;
+  updateFlag_gte?: Maybe<String>;
+  updateFlag_contains?: Maybe<String>;
+  updateFlag_not_contains?: Maybe<String>;
+  updateFlag_starts_with?: Maybe<String>;
+  updateFlag_not_starts_with?: Maybe<String>;
+  updateFlag_ends_with?: Maybe<String>;
+  updateFlag_not_ends_with?: Maybe<String>;
+  AND?: Maybe<FinaIndicatorScalarWhereInput[] | FinaIndicatorScalarWhereInput>;
+  OR?: Maybe<FinaIndicatorScalarWhereInput[] | FinaIndicatorScalarWhereInput>;
+  NOT?: Maybe<FinaIndicatorScalarWhereInput[] | FinaIndicatorScalarWhereInput>;
+}
+
+export interface KeywordUpdateInput {
+  name?: Maybe<String>;
+}
+
+export interface FinaIndicatorUpdateManyWithWhereNestedInput {
+  where: FinaIndicatorScalarWhereInput;
+  data: FinaIndicatorUpdateManyDataInput;
+}
+
+export interface IndustryUpdateWithoutInfluencesDataInput {
+  code?: Maybe<String>;
+  name?: Maybe<String>;
+  desc?: Maybe<String>;
+  researches?: Maybe<ResearchUpdateManyInput>;
+  companies?: Maybe<CompanyUpdateManyWithoutTradesInput>;
+  purchases?: Maybe<ProductUpdateManyWithoutInputsInput>;
+  selles?: Maybe<ProductUpdateManyWithoutOutputsInput>;
+}
+
+export interface FinaIndicatorUpdateManyDataInput {
+  symbol?: Maybe<String>;
+  annDate?: Maybe<String>;
+  endDate?: Maybe<String>;
+  eps?: Maybe<Float>;
+  dtEps?: Maybe<Float>;
+  totalRevenuePs?: Maybe<Float>;
+  revenuePs?: Maybe<Float>;
+  capitalResePs?: Maybe<Float>;
+  surplusResePs?: Maybe<Float>;
+  undistProfitPs?: Maybe<Float>;
+  extraItem?: Maybe<Float>;
+  profitDedt?: Maybe<Float>;
+  grossMargin?: Maybe<Float>;
+  currentRatio?: Maybe<Float>;
+  quickRatio?: Maybe<Float>;
+  cashRatio?: Maybe<Float>;
+  invturnDays?: Maybe<Float>;
+  arturnDays?: Maybe<Float>;
+  invTurn?: Maybe<Float>;
+  arTurn?: Maybe<Float>;
+  caTurn?: Maybe<Float>;
+  faTurn?: Maybe<Float>;
+  assetsTurn?: Maybe<Float>;
+  opIncome?: Maybe<Float>;
+  valuechangeIncome?: Maybe<Float>;
+  interstIncome?: Maybe<Float>;
+  daa?: Maybe<Float>;
+  ebit?: Maybe<Float>;
+  ebitda?: Maybe<Float>;
+  fcff?: Maybe<Float>;
+  fcfe?: Maybe<Float>;
+  currentExint?: Maybe<Float>;
+  noncurrentExint?: Maybe<Float>;
+  interestdebt?: Maybe<Float>;
+  netdebt?: Maybe<Float>;
+  tangibleAsset?: Maybe<Float>;
+  workingCapital?: Maybe<Float>;
+  networkingCapital?: Maybe<Float>;
+  investCapital?: Maybe<Float>;
+  retainedEarnings?: Maybe<Float>;
+  diluted2Eps?: Maybe<Float>;
+  bps?: Maybe<Float>;
+  ocfps?: Maybe<Float>;
+  retainedps?: Maybe<Float>;
+  cfps?: Maybe<Float>;
+  ebitPs?: Maybe<Float>;
+  fcffPs?: Maybe<Float>;
+  fcfePs?: Maybe<Float>;
+  netprofitMargin?: Maybe<Float>;
+  grossprofitMargin?: Maybe<Float>;
+  cogsOfSales?: Maybe<Float>;
+  expenseOfSales?: Maybe<Float>;
+  profitToGr?: Maybe<Float>;
+  saleexpToGr?: Maybe<Float>;
+  adminexpOfGr?: Maybe<Float>;
+  finaexpOfGr?: Maybe<Float>;
+  impaiTtm?: Maybe<Float>;
+  gcOfGr?: Maybe<Float>;
+  opOfGr?: Maybe<Float>;
+  ebitOfGr?: Maybe<Float>;
+  roe?: Maybe<Float>;
+  roeWaa?: Maybe<Float>;
+  roeDt?: Maybe<Float>;
+  roa?: Maybe<Float>;
+  npta?: Maybe<Float>;
+  roic?: Maybe<Float>;
+  roeYearly?: Maybe<Float>;
+  roa2Yearly?: Maybe<Float>;
+  roeAvg?: Maybe<Float>;
+  opincomeOfEbt?: Maybe<Float>;
+  investincomeOfEbt?: Maybe<Float>;
+  nOpProfitOfEbt?: Maybe<Float>;
+  taxToEbt?: Maybe<Float>;
+  dtprofitToProfit?: Maybe<Float>;
+  salescashToOr?: Maybe<Float>;
+  ocfToOr?: Maybe<Float>;
+  ocfToOpincome?: Maybe<Float>;
+  capitalizedToDa?: Maybe<Float>;
+  debtToAssets?: Maybe<Float>;
+  assetsToEqt?: Maybe<Float>;
+  dpAssetsToEqt?: Maybe<Float>;
+  caToAssets?: Maybe<Float>;
+  ncaToAssets?: Maybe<Float>;
+  tbassetsToTotalassets?: Maybe<Float>;
+  intToTalcap?: Maybe<Float>;
+  eqtToTalcapital?: Maybe<Float>;
+  currentdebtToDebt?: Maybe<Float>;
+  longdebToDebt?: Maybe<Float>;
+  ocfToShortdebt?: Maybe<Float>;
+  debtToEqt?: Maybe<Float>;
+  eqtToDebt?: Maybe<Float>;
+  eqtToInterestdebt?: Maybe<Float>;
+  tangibleassetToDebt?: Maybe<Float>;
+  tangassetToIntdebt?: Maybe<Float>;
+  tangibleassetToNetdebt?: Maybe<Float>;
+  ocfToDebt?: Maybe<Float>;
+  ocfToInterestdebt?: Maybe<Float>;
+  ocfToNetdebt?: Maybe<Float>;
+  ebitToInterest?: Maybe<Float>;
+  longdebtToWorkingcapital?: Maybe<Float>;
+  ebitdaToDebt?: Maybe<Float>;
+  turnDays?: Maybe<Float>;
+  roaYearly?: Maybe<Float>;
+  roaDp?: Maybe<Float>;
+  fixedAssets?: Maybe<Float>;
+  profitPrefinExp?: Maybe<Float>;
+  nonOpProfit?: Maybe<Float>;
+  opToEbt?: Maybe<Float>;
+  nopToEbt?: Maybe<Float>;
+  ocfToProfit?: Maybe<Float>;
+  cashToLiqdebt?: Maybe<Float>;
+  cashToLiqdebtWithinterest?: Maybe<Float>;
+  opToLiqdebt?: Maybe<Float>;
+  opToDebt?: Maybe<Float>;
+  roicYearly?: Maybe<Float>;
+  totalFaTrun?: Maybe<Float>;
+  profitToOp?: Maybe<Float>;
+  qOpincome?: Maybe<Float>;
+  qInvestincome?: Maybe<Float>;
+  qDtprofit?: Maybe<Float>;
+  qEps?: Maybe<Float>;
+  qNetprofitMargin?: Maybe<Float>;
+  qGsprofitMargin?: Maybe<Float>;
+  qExpToSales?: Maybe<Float>;
+  qProfitToGr?: Maybe<Float>;
+  qSaleexpToGr?: Maybe<Float>;
+  qAdminexpToGr?: Maybe<Float>;
+  qFinaexpToGr?: Maybe<Float>;
+  qImpairToGrTtm?: Maybe<Float>;
+  qGcToGr?: Maybe<Float>;
+  qOpToGr?: Maybe<Float>;
+  qRoe?: Maybe<Float>;
+  qDtRoe?: Maybe<Float>;
+  qNpta?: Maybe<Float>;
+  qOpincomeToEbt?: Maybe<Float>;
+  qInvestincomeToEbt?: Maybe<Float>;
+  qDtprofitToProfit?: Maybe<Float>;
+  qSalescashToOr?: Maybe<Float>;
+  qOcfToSales?: Maybe<Float>;
+  qOcfToOr?: Maybe<Float>;
+  basicEpsYoy?: Maybe<Float>;
+  dtEpsYoy?: Maybe<Float>;
+  cfpsYoy?: Maybe<Float>;
+  opYoy?: Maybe<Float>;
+  ebtYoy?: Maybe<Float>;
+  netprofitYoy?: Maybe<Float>;
+  dtNetprofitYoy?: Maybe<Float>;
+  ocfYoy?: Maybe<Float>;
+  roeYoy?: Maybe<Float>;
+  bpsYoy?: Maybe<Float>;
+  assetsYoy?: Maybe<Float>;
+  eqtYoy?: Maybe<Float>;
+  trYoy?: Maybe<Float>;
+  orYoy?: Maybe<Float>;
+  qGrYoy?: Maybe<Float>;
+  qGrQoq?: Maybe<Float>;
+  qSalesYoy?: Maybe<Float>;
+  qSalesQoq?: Maybe<Float>;
+  qOpYoy?: Maybe<Float>;
+  qOpQoq?: Maybe<Float>;
+  qProfitYoy?: Maybe<Float>;
+  qProfitQoq?: Maybe<Float>;
+  qNetprofitYoy?: Maybe<Float>;
+  qNetprofitQoq?: Maybe<Float>;
+  equityYoy?: Maybe<Float>;
+  rdExp?: Maybe<Float>;
+  updateFlag?: Maybe<String>;
+}
+
+export interface IndustryCreateWithoutInfluencesInput {
+  id?: Maybe<ID_Input>;
+  code?: Maybe<String>;
+  name: String;
+  desc: String;
+  researches?: Maybe<ResearchCreateManyInput>;
+  companies?: Maybe<CompanyCreateManyWithoutTradesInput>;
+  purchases?: Maybe<ProductCreateManyWithoutInputsInput>;
+  selles?: Maybe<ProductCreateManyWithoutOutputsInput>;
+}
+
+export interface CompanyUpsertWithWhereUniqueWithoutPurchasesInput {
+  where: CompanyWhereUniqueInput;
+  update: CompanyUpdateWithoutPurchasesDataInput;
+  create: CompanyCreateWithoutPurchasesInput;
 }
 
 export interface IndustryEventUpdateManyMutationInput {
@@ -4157,6 +6954,1367 @@ export interface IndustryEventUpdateManyMutationInput {
   happen?: Maybe<TimeKind>;
   happenTime?: Maybe<DateTimeInput>;
   content?: Maybe<String>;
+}
+
+export interface CompanyScalarWhereInput {
+  id?: Maybe<ID_Input>;
+  id_not?: Maybe<ID_Input>;
+  id_in?: Maybe<ID_Input[] | ID_Input>;
+  id_not_in?: Maybe<ID_Input[] | ID_Input>;
+  id_lt?: Maybe<ID_Input>;
+  id_lte?: Maybe<ID_Input>;
+  id_gt?: Maybe<ID_Input>;
+  id_gte?: Maybe<ID_Input>;
+  id_contains?: Maybe<ID_Input>;
+  id_not_contains?: Maybe<ID_Input>;
+  id_starts_with?: Maybe<ID_Input>;
+  id_not_starts_with?: Maybe<ID_Input>;
+  id_ends_with?: Maybe<ID_Input>;
+  id_not_ends_with?: Maybe<ID_Input>;
+  symbol?: Maybe<String>;
+  symbol_not?: Maybe<String>;
+  symbol_in?: Maybe<String[] | String>;
+  symbol_not_in?: Maybe<String[] | String>;
+  symbol_lt?: Maybe<String>;
+  symbol_lte?: Maybe<String>;
+  symbol_gt?: Maybe<String>;
+  symbol_gte?: Maybe<String>;
+  symbol_contains?: Maybe<String>;
+  symbol_not_contains?: Maybe<String>;
+  symbol_starts_with?: Maybe<String>;
+  symbol_not_starts_with?: Maybe<String>;
+  symbol_ends_with?: Maybe<String>;
+  symbol_not_ends_with?: Maybe<String>;
+  name?: Maybe<String>;
+  name_not?: Maybe<String>;
+  name_in?: Maybe<String[] | String>;
+  name_not_in?: Maybe<String[] | String>;
+  name_lt?: Maybe<String>;
+  name_lte?: Maybe<String>;
+  name_gt?: Maybe<String>;
+  name_gte?: Maybe<String>;
+  name_contains?: Maybe<String>;
+  name_not_contains?: Maybe<String>;
+  name_starts_with?: Maybe<String>;
+  name_not_starts_with?: Maybe<String>;
+  name_ends_with?: Maybe<String>;
+  name_not_ends_with?: Maybe<String>;
+  area?: Maybe<String>;
+  area_not?: Maybe<String>;
+  area_in?: Maybe<String[] | String>;
+  area_not_in?: Maybe<String[] | String>;
+  area_lt?: Maybe<String>;
+  area_lte?: Maybe<String>;
+  area_gt?: Maybe<String>;
+  area_gte?: Maybe<String>;
+  area_contains?: Maybe<String>;
+  area_not_contains?: Maybe<String>;
+  area_starts_with?: Maybe<String>;
+  area_not_starts_with?: Maybe<String>;
+  area_ends_with?: Maybe<String>;
+  area_not_ends_with?: Maybe<String>;
+  industry?: Maybe<String>;
+  industry_not?: Maybe<String>;
+  industry_in?: Maybe<String[] | String>;
+  industry_not_in?: Maybe<String[] | String>;
+  industry_lt?: Maybe<String>;
+  industry_lte?: Maybe<String>;
+  industry_gt?: Maybe<String>;
+  industry_gte?: Maybe<String>;
+  industry_contains?: Maybe<String>;
+  industry_not_contains?: Maybe<String>;
+  industry_starts_with?: Maybe<String>;
+  industry_not_starts_with?: Maybe<String>;
+  industry_ends_with?: Maybe<String>;
+  industry_not_ends_with?: Maybe<String>;
+  fullname?: Maybe<String>;
+  fullname_not?: Maybe<String>;
+  fullname_in?: Maybe<String[] | String>;
+  fullname_not_in?: Maybe<String[] | String>;
+  fullname_lt?: Maybe<String>;
+  fullname_lte?: Maybe<String>;
+  fullname_gt?: Maybe<String>;
+  fullname_gte?: Maybe<String>;
+  fullname_contains?: Maybe<String>;
+  fullname_not_contains?: Maybe<String>;
+  fullname_starts_with?: Maybe<String>;
+  fullname_not_starts_with?: Maybe<String>;
+  fullname_ends_with?: Maybe<String>;
+  fullname_not_ends_with?: Maybe<String>;
+  enname?: Maybe<String>;
+  enname_not?: Maybe<String>;
+  enname_in?: Maybe<String[] | String>;
+  enname_not_in?: Maybe<String[] | String>;
+  enname_lt?: Maybe<String>;
+  enname_lte?: Maybe<String>;
+  enname_gt?: Maybe<String>;
+  enname_gte?: Maybe<String>;
+  enname_contains?: Maybe<String>;
+  enname_not_contains?: Maybe<String>;
+  enname_starts_with?: Maybe<String>;
+  enname_not_starts_with?: Maybe<String>;
+  enname_ends_with?: Maybe<String>;
+  enname_not_ends_with?: Maybe<String>;
+  market?: Maybe<String>;
+  market_not?: Maybe<String>;
+  market_in?: Maybe<String[] | String>;
+  market_not_in?: Maybe<String[] | String>;
+  market_lt?: Maybe<String>;
+  market_lte?: Maybe<String>;
+  market_gt?: Maybe<String>;
+  market_gte?: Maybe<String>;
+  market_contains?: Maybe<String>;
+  market_not_contains?: Maybe<String>;
+  market_starts_with?: Maybe<String>;
+  market_not_starts_with?: Maybe<String>;
+  market_ends_with?: Maybe<String>;
+  market_not_ends_with?: Maybe<String>;
+  exchange?: Maybe<String>;
+  exchange_not?: Maybe<String>;
+  exchange_in?: Maybe<String[] | String>;
+  exchange_not_in?: Maybe<String[] | String>;
+  exchange_lt?: Maybe<String>;
+  exchange_lte?: Maybe<String>;
+  exchange_gt?: Maybe<String>;
+  exchange_gte?: Maybe<String>;
+  exchange_contains?: Maybe<String>;
+  exchange_not_contains?: Maybe<String>;
+  exchange_starts_with?: Maybe<String>;
+  exchange_not_starts_with?: Maybe<String>;
+  exchange_ends_with?: Maybe<String>;
+  exchange_not_ends_with?: Maybe<String>;
+  currType?: Maybe<String>;
+  currType_not?: Maybe<String>;
+  currType_in?: Maybe<String[] | String>;
+  currType_not_in?: Maybe<String[] | String>;
+  currType_lt?: Maybe<String>;
+  currType_lte?: Maybe<String>;
+  currType_gt?: Maybe<String>;
+  currType_gte?: Maybe<String>;
+  currType_contains?: Maybe<String>;
+  currType_not_contains?: Maybe<String>;
+  currType_starts_with?: Maybe<String>;
+  currType_not_starts_with?: Maybe<String>;
+  currType_ends_with?: Maybe<String>;
+  currType_not_ends_with?: Maybe<String>;
+  listStatus?: Maybe<String>;
+  listStatus_not?: Maybe<String>;
+  listStatus_in?: Maybe<String[] | String>;
+  listStatus_not_in?: Maybe<String[] | String>;
+  listStatus_lt?: Maybe<String>;
+  listStatus_lte?: Maybe<String>;
+  listStatus_gt?: Maybe<String>;
+  listStatus_gte?: Maybe<String>;
+  listStatus_contains?: Maybe<String>;
+  listStatus_not_contains?: Maybe<String>;
+  listStatus_starts_with?: Maybe<String>;
+  listStatus_not_starts_with?: Maybe<String>;
+  listStatus_ends_with?: Maybe<String>;
+  listStatus_not_ends_with?: Maybe<String>;
+  listDate?: Maybe<String>;
+  listDate_not?: Maybe<String>;
+  listDate_in?: Maybe<String[] | String>;
+  listDate_not_in?: Maybe<String[] | String>;
+  listDate_lt?: Maybe<String>;
+  listDate_lte?: Maybe<String>;
+  listDate_gt?: Maybe<String>;
+  listDate_gte?: Maybe<String>;
+  listDate_contains?: Maybe<String>;
+  listDate_not_contains?: Maybe<String>;
+  listDate_starts_with?: Maybe<String>;
+  listDate_not_starts_with?: Maybe<String>;
+  listDate_ends_with?: Maybe<String>;
+  listDate_not_ends_with?: Maybe<String>;
+  delistDate?: Maybe<String>;
+  delistDate_not?: Maybe<String>;
+  delistDate_in?: Maybe<String[] | String>;
+  delistDate_not_in?: Maybe<String[] | String>;
+  delistDate_lt?: Maybe<String>;
+  delistDate_lte?: Maybe<String>;
+  delistDate_gt?: Maybe<String>;
+  delistDate_gte?: Maybe<String>;
+  delistDate_contains?: Maybe<String>;
+  delistDate_not_contains?: Maybe<String>;
+  delistDate_starts_with?: Maybe<String>;
+  delistDate_not_starts_with?: Maybe<String>;
+  delistDate_ends_with?: Maybe<String>;
+  delistDate_not_ends_with?: Maybe<String>;
+  isHS?: Maybe<String>;
+  isHS_not?: Maybe<String>;
+  isHS_in?: Maybe<String[] | String>;
+  isHS_not_in?: Maybe<String[] | String>;
+  isHS_lt?: Maybe<String>;
+  isHS_lte?: Maybe<String>;
+  isHS_gt?: Maybe<String>;
+  isHS_gte?: Maybe<String>;
+  isHS_contains?: Maybe<String>;
+  isHS_not_contains?: Maybe<String>;
+  isHS_starts_with?: Maybe<String>;
+  isHS_not_starts_with?: Maybe<String>;
+  isHS_ends_with?: Maybe<String>;
+  isHS_not_ends_with?: Maybe<String>;
+  scope?: Maybe<String>;
+  scope_not?: Maybe<String>;
+  scope_in?: Maybe<String[] | String>;
+  scope_not_in?: Maybe<String[] | String>;
+  scope_lt?: Maybe<String>;
+  scope_lte?: Maybe<String>;
+  scope_gt?: Maybe<String>;
+  scope_gte?: Maybe<String>;
+  scope_contains?: Maybe<String>;
+  scope_not_contains?: Maybe<String>;
+  scope_starts_with?: Maybe<String>;
+  scope_not_starts_with?: Maybe<String>;
+  scope_ends_with?: Maybe<String>;
+  scope_not_ends_with?: Maybe<String>;
+  desc?: Maybe<String>;
+  desc_not?: Maybe<String>;
+  desc_in?: Maybe<String[] | String>;
+  desc_not_in?: Maybe<String[] | String>;
+  desc_lt?: Maybe<String>;
+  desc_lte?: Maybe<String>;
+  desc_gt?: Maybe<String>;
+  desc_gte?: Maybe<String>;
+  desc_contains?: Maybe<String>;
+  desc_not_contains?: Maybe<String>;
+  desc_starts_with?: Maybe<String>;
+  desc_not_starts_with?: Maybe<String>;
+  desc_ends_with?: Maybe<String>;
+  desc_not_ends_with?: Maybe<String>;
+  pool?: Maybe<Boolean>;
+  pool_not?: Maybe<Boolean>;
+  AND?: Maybe<CompanyScalarWhereInput[] | CompanyScalarWhereInput>;
+  OR?: Maybe<CompanyScalarWhereInput[] | CompanyScalarWhereInput>;
+  NOT?: Maybe<CompanyScalarWhereInput[] | CompanyScalarWhereInput>;
+}
+
+export interface CompanyProductWhereInput {
+  id?: Maybe<ID_Input>;
+  id_not?: Maybe<ID_Input>;
+  id_in?: Maybe<ID_Input[] | ID_Input>;
+  id_not_in?: Maybe<ID_Input[] | ID_Input>;
+  id_lt?: Maybe<ID_Input>;
+  id_lte?: Maybe<ID_Input>;
+  id_gt?: Maybe<ID_Input>;
+  id_gte?: Maybe<ID_Input>;
+  id_contains?: Maybe<ID_Input>;
+  id_not_contains?: Maybe<ID_Input>;
+  id_starts_with?: Maybe<ID_Input>;
+  id_not_starts_with?: Maybe<ID_Input>;
+  id_ends_with?: Maybe<ID_Input>;
+  id_not_ends_with?: Maybe<ID_Input>;
+  name?: Maybe<String>;
+  name_not?: Maybe<String>;
+  name_in?: Maybe<String[] | String>;
+  name_not_in?: Maybe<String[] | String>;
+  name_lt?: Maybe<String>;
+  name_lte?: Maybe<String>;
+  name_gt?: Maybe<String>;
+  name_gte?: Maybe<String>;
+  name_contains?: Maybe<String>;
+  name_not_contains?: Maybe<String>;
+  name_starts_with?: Maybe<String>;
+  name_not_starts_with?: Maybe<String>;
+  name_ends_with?: Maybe<String>;
+  name_not_ends_with?: Maybe<String>;
+  introduce?: Maybe<String>;
+  introduce_not?: Maybe<String>;
+  introduce_in?: Maybe<String[] | String>;
+  introduce_not_in?: Maybe<String[] | String>;
+  introduce_lt?: Maybe<String>;
+  introduce_lte?: Maybe<String>;
+  introduce_gt?: Maybe<String>;
+  introduce_gte?: Maybe<String>;
+  introduce_contains?: Maybe<String>;
+  introduce_not_contains?: Maybe<String>;
+  introduce_starts_with?: Maybe<String>;
+  introduce_not_starts_with?: Maybe<String>;
+  introduce_ends_with?: Maybe<String>;
+  introduce_not_ends_with?: Maybe<String>;
+  inputs_every?: Maybe<CompanyWhereInput>;
+  inputs_some?: Maybe<CompanyWhereInput>;
+  inputs_none?: Maybe<CompanyWhereInput>;
+  outputs_every?: Maybe<CompanyWhereInput>;
+  outputs_some?: Maybe<CompanyWhereInput>;
+  outputs_none?: Maybe<CompanyWhereInput>;
+  AND?: Maybe<CompanyProductWhereInput[] | CompanyProductWhereInput>;
+  OR?: Maybe<CompanyProductWhereInput[] | CompanyProductWhereInput>;
+  NOT?: Maybe<CompanyProductWhereInput[] | CompanyProductWhereInput>;
+}
+
+export interface CompanyUpdateManyWithWhereNestedInput {
+  where: CompanyScalarWhereInput;
+  data: CompanyUpdateManyDataInput;
+}
+
+export interface KeywordUpdateWithWhereUniqueNestedInput {
+  where: KeywordWhereUniqueInput;
+  data: KeywordUpdateDataInput;
+}
+
+export interface CompanyUpdateManyDataInput {
+  symbol?: Maybe<String>;
+  name?: Maybe<String>;
+  area?: Maybe<String>;
+  industry?: Maybe<String>;
+  fullname?: Maybe<String>;
+  enname?: Maybe<String>;
+  market?: Maybe<String>;
+  exchange?: Maybe<String>;
+  currType?: Maybe<String>;
+  listStatus?: Maybe<String>;
+  listDate?: Maybe<String>;
+  delistDate?: Maybe<String>;
+  isHS?: Maybe<String>;
+  scope?: Maybe<String>;
+  desc?: Maybe<String>;
+  pool?: Maybe<Boolean>;
+}
+
+export interface KeywordCreateManyInput {
+  create?: Maybe<KeywordCreateInput[] | KeywordCreateInput>;
+  connect?: Maybe<KeywordWhereUniqueInput[] | KeywordWhereUniqueInput>;
+}
+
+export interface CompanyProductUpsertWithWhereUniqueWithoutOutputsInput {
+  where: CompanyProductWhereUniqueInput;
+  update: CompanyProductUpdateWithoutOutputsDataInput;
+  create: CompanyProductCreateWithoutOutputsInput;
+}
+
+export interface IndustryUpdateInput {
+  code?: Maybe<String>;
+  name?: Maybe<String>;
+  desc?: Maybe<String>;
+  researches?: Maybe<ResearchUpdateManyInput>;
+  companies?: Maybe<CompanyUpdateManyWithoutTradesInput>;
+  influences?: Maybe<IndustryInfluenceUpdateManyWithoutIndustryInput>;
+  purchases?: Maybe<ProductUpdateManyWithoutInputsInput>;
+  selles?: Maybe<ProductUpdateManyWithoutOutputsInput>;
+}
+
+export interface CompanyProductScalarWhereInput {
+  id?: Maybe<ID_Input>;
+  id_not?: Maybe<ID_Input>;
+  id_in?: Maybe<ID_Input[] | ID_Input>;
+  id_not_in?: Maybe<ID_Input[] | ID_Input>;
+  id_lt?: Maybe<ID_Input>;
+  id_lte?: Maybe<ID_Input>;
+  id_gt?: Maybe<ID_Input>;
+  id_gte?: Maybe<ID_Input>;
+  id_contains?: Maybe<ID_Input>;
+  id_not_contains?: Maybe<ID_Input>;
+  id_starts_with?: Maybe<ID_Input>;
+  id_not_starts_with?: Maybe<ID_Input>;
+  id_ends_with?: Maybe<ID_Input>;
+  id_not_ends_with?: Maybe<ID_Input>;
+  name?: Maybe<String>;
+  name_not?: Maybe<String>;
+  name_in?: Maybe<String[] | String>;
+  name_not_in?: Maybe<String[] | String>;
+  name_lt?: Maybe<String>;
+  name_lte?: Maybe<String>;
+  name_gt?: Maybe<String>;
+  name_gte?: Maybe<String>;
+  name_contains?: Maybe<String>;
+  name_not_contains?: Maybe<String>;
+  name_starts_with?: Maybe<String>;
+  name_not_starts_with?: Maybe<String>;
+  name_ends_with?: Maybe<String>;
+  name_not_ends_with?: Maybe<String>;
+  introduce?: Maybe<String>;
+  introduce_not?: Maybe<String>;
+  introduce_in?: Maybe<String[] | String>;
+  introduce_not_in?: Maybe<String[] | String>;
+  introduce_lt?: Maybe<String>;
+  introduce_lte?: Maybe<String>;
+  introduce_gt?: Maybe<String>;
+  introduce_gte?: Maybe<String>;
+  introduce_contains?: Maybe<String>;
+  introduce_not_contains?: Maybe<String>;
+  introduce_starts_with?: Maybe<String>;
+  introduce_not_starts_with?: Maybe<String>;
+  introduce_ends_with?: Maybe<String>;
+  introduce_not_ends_with?: Maybe<String>;
+  AND?: Maybe<
+    CompanyProductScalarWhereInput[] | CompanyProductScalarWhereInput
+  >;
+  OR?: Maybe<CompanyProductScalarWhereInput[] | CompanyProductScalarWhereInput>;
+  NOT?: Maybe<
+    CompanyProductScalarWhereInput[] | CompanyProductScalarWhereInput
+  >;
+}
+
+export interface CompanyUpsertWithoutFinaIndicatorsInput {
+  update: CompanyUpdateWithoutFinaIndicatorsDataInput;
+  create: CompanyCreateWithoutFinaIndicatorsInput;
+}
+
+export interface CompanyProductUpdateManyWithWhereNestedInput {
+  where: CompanyProductScalarWhereInput;
+  data: CompanyProductUpdateManyDataInput;
+}
+
+export interface FinaIndicatorUpdateInput {
+  company?: Maybe<CompanyUpdateOneRequiredWithoutFinaIndicatorsInput>;
+  symbol?: Maybe<String>;
+  annDate?: Maybe<String>;
+  endDate?: Maybe<String>;
+  eps?: Maybe<Float>;
+  dtEps?: Maybe<Float>;
+  totalRevenuePs?: Maybe<Float>;
+  revenuePs?: Maybe<Float>;
+  capitalResePs?: Maybe<Float>;
+  surplusResePs?: Maybe<Float>;
+  undistProfitPs?: Maybe<Float>;
+  extraItem?: Maybe<Float>;
+  profitDedt?: Maybe<Float>;
+  grossMargin?: Maybe<Float>;
+  currentRatio?: Maybe<Float>;
+  quickRatio?: Maybe<Float>;
+  cashRatio?: Maybe<Float>;
+  invturnDays?: Maybe<Float>;
+  arturnDays?: Maybe<Float>;
+  invTurn?: Maybe<Float>;
+  arTurn?: Maybe<Float>;
+  caTurn?: Maybe<Float>;
+  faTurn?: Maybe<Float>;
+  assetsTurn?: Maybe<Float>;
+  opIncome?: Maybe<Float>;
+  valuechangeIncome?: Maybe<Float>;
+  interstIncome?: Maybe<Float>;
+  daa?: Maybe<Float>;
+  ebit?: Maybe<Float>;
+  ebitda?: Maybe<Float>;
+  fcff?: Maybe<Float>;
+  fcfe?: Maybe<Float>;
+  currentExint?: Maybe<Float>;
+  noncurrentExint?: Maybe<Float>;
+  interestdebt?: Maybe<Float>;
+  netdebt?: Maybe<Float>;
+  tangibleAsset?: Maybe<Float>;
+  workingCapital?: Maybe<Float>;
+  networkingCapital?: Maybe<Float>;
+  investCapital?: Maybe<Float>;
+  retainedEarnings?: Maybe<Float>;
+  diluted2Eps?: Maybe<Float>;
+  bps?: Maybe<Float>;
+  ocfps?: Maybe<Float>;
+  retainedps?: Maybe<Float>;
+  cfps?: Maybe<Float>;
+  ebitPs?: Maybe<Float>;
+  fcffPs?: Maybe<Float>;
+  fcfePs?: Maybe<Float>;
+  netprofitMargin?: Maybe<Float>;
+  grossprofitMargin?: Maybe<Float>;
+  cogsOfSales?: Maybe<Float>;
+  expenseOfSales?: Maybe<Float>;
+  profitToGr?: Maybe<Float>;
+  saleexpToGr?: Maybe<Float>;
+  adminexpOfGr?: Maybe<Float>;
+  finaexpOfGr?: Maybe<Float>;
+  impaiTtm?: Maybe<Float>;
+  gcOfGr?: Maybe<Float>;
+  opOfGr?: Maybe<Float>;
+  ebitOfGr?: Maybe<Float>;
+  roe?: Maybe<Float>;
+  roeWaa?: Maybe<Float>;
+  roeDt?: Maybe<Float>;
+  roa?: Maybe<Float>;
+  npta?: Maybe<Float>;
+  roic?: Maybe<Float>;
+  roeYearly?: Maybe<Float>;
+  roa2Yearly?: Maybe<Float>;
+  roeAvg?: Maybe<Float>;
+  opincomeOfEbt?: Maybe<Float>;
+  investincomeOfEbt?: Maybe<Float>;
+  nOpProfitOfEbt?: Maybe<Float>;
+  taxToEbt?: Maybe<Float>;
+  dtprofitToProfit?: Maybe<Float>;
+  salescashToOr?: Maybe<Float>;
+  ocfToOr?: Maybe<Float>;
+  ocfToOpincome?: Maybe<Float>;
+  capitalizedToDa?: Maybe<Float>;
+  debtToAssets?: Maybe<Float>;
+  assetsToEqt?: Maybe<Float>;
+  dpAssetsToEqt?: Maybe<Float>;
+  caToAssets?: Maybe<Float>;
+  ncaToAssets?: Maybe<Float>;
+  tbassetsToTotalassets?: Maybe<Float>;
+  intToTalcap?: Maybe<Float>;
+  eqtToTalcapital?: Maybe<Float>;
+  currentdebtToDebt?: Maybe<Float>;
+  longdebToDebt?: Maybe<Float>;
+  ocfToShortdebt?: Maybe<Float>;
+  debtToEqt?: Maybe<Float>;
+  eqtToDebt?: Maybe<Float>;
+  eqtToInterestdebt?: Maybe<Float>;
+  tangibleassetToDebt?: Maybe<Float>;
+  tangassetToIntdebt?: Maybe<Float>;
+  tangibleassetToNetdebt?: Maybe<Float>;
+  ocfToDebt?: Maybe<Float>;
+  ocfToInterestdebt?: Maybe<Float>;
+  ocfToNetdebt?: Maybe<Float>;
+  ebitToInterest?: Maybe<Float>;
+  longdebtToWorkingcapital?: Maybe<Float>;
+  ebitdaToDebt?: Maybe<Float>;
+  turnDays?: Maybe<Float>;
+  roaYearly?: Maybe<Float>;
+  roaDp?: Maybe<Float>;
+  fixedAssets?: Maybe<Float>;
+  profitPrefinExp?: Maybe<Float>;
+  nonOpProfit?: Maybe<Float>;
+  opToEbt?: Maybe<Float>;
+  nopToEbt?: Maybe<Float>;
+  ocfToProfit?: Maybe<Float>;
+  cashToLiqdebt?: Maybe<Float>;
+  cashToLiqdebtWithinterest?: Maybe<Float>;
+  opToLiqdebt?: Maybe<Float>;
+  opToDebt?: Maybe<Float>;
+  roicYearly?: Maybe<Float>;
+  totalFaTrun?: Maybe<Float>;
+  profitToOp?: Maybe<Float>;
+  qOpincome?: Maybe<Float>;
+  qInvestincome?: Maybe<Float>;
+  qDtprofit?: Maybe<Float>;
+  qEps?: Maybe<Float>;
+  qNetprofitMargin?: Maybe<Float>;
+  qGsprofitMargin?: Maybe<Float>;
+  qExpToSales?: Maybe<Float>;
+  qProfitToGr?: Maybe<Float>;
+  qSaleexpToGr?: Maybe<Float>;
+  qAdminexpToGr?: Maybe<Float>;
+  qFinaexpToGr?: Maybe<Float>;
+  qImpairToGrTtm?: Maybe<Float>;
+  qGcToGr?: Maybe<Float>;
+  qOpToGr?: Maybe<Float>;
+  qRoe?: Maybe<Float>;
+  qDtRoe?: Maybe<Float>;
+  qNpta?: Maybe<Float>;
+  qOpincomeToEbt?: Maybe<Float>;
+  qInvestincomeToEbt?: Maybe<Float>;
+  qDtprofitToProfit?: Maybe<Float>;
+  qSalescashToOr?: Maybe<Float>;
+  qOcfToSales?: Maybe<Float>;
+  qOcfToOr?: Maybe<Float>;
+  basicEpsYoy?: Maybe<Float>;
+  dtEpsYoy?: Maybe<Float>;
+  cfpsYoy?: Maybe<Float>;
+  opYoy?: Maybe<Float>;
+  ebtYoy?: Maybe<Float>;
+  netprofitYoy?: Maybe<Float>;
+  dtNetprofitYoy?: Maybe<Float>;
+  ocfYoy?: Maybe<Float>;
+  roeYoy?: Maybe<Float>;
+  bpsYoy?: Maybe<Float>;
+  assetsYoy?: Maybe<Float>;
+  eqtYoy?: Maybe<Float>;
+  trYoy?: Maybe<Float>;
+  orYoy?: Maybe<Float>;
+  qGrYoy?: Maybe<Float>;
+  qGrQoq?: Maybe<Float>;
+  qSalesYoy?: Maybe<Float>;
+  qSalesQoq?: Maybe<Float>;
+  qOpYoy?: Maybe<Float>;
+  qOpQoq?: Maybe<Float>;
+  qProfitYoy?: Maybe<Float>;
+  qProfitQoq?: Maybe<Float>;
+  qNetprofitYoy?: Maybe<Float>;
+  qNetprofitQoq?: Maybe<Float>;
+  equityYoy?: Maybe<Float>;
+  rdExp?: Maybe<Float>;
+  updateFlag?: Maybe<String>;
+}
+
+export interface CompanyProductUpdateManyDataInput {
+  name?: Maybe<String>;
+  introduce?: Maybe<String>;
+}
+
+export interface FinaIndicatorCreateInput {
+  id?: Maybe<ID_Input>;
+  company: CompanyCreateOneWithoutFinaIndicatorsInput;
+  symbol?: Maybe<String>;
+  annDate?: Maybe<String>;
+  endDate?: Maybe<String>;
+  eps?: Maybe<Float>;
+  dtEps?: Maybe<Float>;
+  totalRevenuePs?: Maybe<Float>;
+  revenuePs?: Maybe<Float>;
+  capitalResePs?: Maybe<Float>;
+  surplusResePs?: Maybe<Float>;
+  undistProfitPs?: Maybe<Float>;
+  extraItem?: Maybe<Float>;
+  profitDedt?: Maybe<Float>;
+  grossMargin?: Maybe<Float>;
+  currentRatio?: Maybe<Float>;
+  quickRatio?: Maybe<Float>;
+  cashRatio?: Maybe<Float>;
+  invturnDays?: Maybe<Float>;
+  arturnDays?: Maybe<Float>;
+  invTurn?: Maybe<Float>;
+  arTurn?: Maybe<Float>;
+  caTurn?: Maybe<Float>;
+  faTurn?: Maybe<Float>;
+  assetsTurn?: Maybe<Float>;
+  opIncome?: Maybe<Float>;
+  valuechangeIncome?: Maybe<Float>;
+  interstIncome?: Maybe<Float>;
+  daa?: Maybe<Float>;
+  ebit?: Maybe<Float>;
+  ebitda?: Maybe<Float>;
+  fcff?: Maybe<Float>;
+  fcfe?: Maybe<Float>;
+  currentExint?: Maybe<Float>;
+  noncurrentExint?: Maybe<Float>;
+  interestdebt?: Maybe<Float>;
+  netdebt?: Maybe<Float>;
+  tangibleAsset?: Maybe<Float>;
+  workingCapital?: Maybe<Float>;
+  networkingCapital?: Maybe<Float>;
+  investCapital?: Maybe<Float>;
+  retainedEarnings?: Maybe<Float>;
+  diluted2Eps?: Maybe<Float>;
+  bps?: Maybe<Float>;
+  ocfps?: Maybe<Float>;
+  retainedps?: Maybe<Float>;
+  cfps?: Maybe<Float>;
+  ebitPs?: Maybe<Float>;
+  fcffPs?: Maybe<Float>;
+  fcfePs?: Maybe<Float>;
+  netprofitMargin?: Maybe<Float>;
+  grossprofitMargin?: Maybe<Float>;
+  cogsOfSales?: Maybe<Float>;
+  expenseOfSales?: Maybe<Float>;
+  profitToGr?: Maybe<Float>;
+  saleexpToGr?: Maybe<Float>;
+  adminexpOfGr?: Maybe<Float>;
+  finaexpOfGr?: Maybe<Float>;
+  impaiTtm?: Maybe<Float>;
+  gcOfGr?: Maybe<Float>;
+  opOfGr?: Maybe<Float>;
+  ebitOfGr?: Maybe<Float>;
+  roe?: Maybe<Float>;
+  roeWaa?: Maybe<Float>;
+  roeDt?: Maybe<Float>;
+  roa?: Maybe<Float>;
+  npta?: Maybe<Float>;
+  roic?: Maybe<Float>;
+  roeYearly?: Maybe<Float>;
+  roa2Yearly?: Maybe<Float>;
+  roeAvg?: Maybe<Float>;
+  opincomeOfEbt?: Maybe<Float>;
+  investincomeOfEbt?: Maybe<Float>;
+  nOpProfitOfEbt?: Maybe<Float>;
+  taxToEbt?: Maybe<Float>;
+  dtprofitToProfit?: Maybe<Float>;
+  salescashToOr?: Maybe<Float>;
+  ocfToOr?: Maybe<Float>;
+  ocfToOpincome?: Maybe<Float>;
+  capitalizedToDa?: Maybe<Float>;
+  debtToAssets?: Maybe<Float>;
+  assetsToEqt?: Maybe<Float>;
+  dpAssetsToEqt?: Maybe<Float>;
+  caToAssets?: Maybe<Float>;
+  ncaToAssets?: Maybe<Float>;
+  tbassetsToTotalassets?: Maybe<Float>;
+  intToTalcap?: Maybe<Float>;
+  eqtToTalcapital?: Maybe<Float>;
+  currentdebtToDebt?: Maybe<Float>;
+  longdebToDebt?: Maybe<Float>;
+  ocfToShortdebt?: Maybe<Float>;
+  debtToEqt?: Maybe<Float>;
+  eqtToDebt?: Maybe<Float>;
+  eqtToInterestdebt?: Maybe<Float>;
+  tangibleassetToDebt?: Maybe<Float>;
+  tangassetToIntdebt?: Maybe<Float>;
+  tangibleassetToNetdebt?: Maybe<Float>;
+  ocfToDebt?: Maybe<Float>;
+  ocfToInterestdebt?: Maybe<Float>;
+  ocfToNetdebt?: Maybe<Float>;
+  ebitToInterest?: Maybe<Float>;
+  longdebtToWorkingcapital?: Maybe<Float>;
+  ebitdaToDebt?: Maybe<Float>;
+  turnDays?: Maybe<Float>;
+  roaYearly?: Maybe<Float>;
+  roaDp?: Maybe<Float>;
+  fixedAssets?: Maybe<Float>;
+  profitPrefinExp?: Maybe<Float>;
+  nonOpProfit?: Maybe<Float>;
+  opToEbt?: Maybe<Float>;
+  nopToEbt?: Maybe<Float>;
+  ocfToProfit?: Maybe<Float>;
+  cashToLiqdebt?: Maybe<Float>;
+  cashToLiqdebtWithinterest?: Maybe<Float>;
+  opToLiqdebt?: Maybe<Float>;
+  opToDebt?: Maybe<Float>;
+  roicYearly?: Maybe<Float>;
+  totalFaTrun?: Maybe<Float>;
+  profitToOp?: Maybe<Float>;
+  qOpincome?: Maybe<Float>;
+  qInvestincome?: Maybe<Float>;
+  qDtprofit?: Maybe<Float>;
+  qEps?: Maybe<Float>;
+  qNetprofitMargin?: Maybe<Float>;
+  qGsprofitMargin?: Maybe<Float>;
+  qExpToSales?: Maybe<Float>;
+  qProfitToGr?: Maybe<Float>;
+  qSaleexpToGr?: Maybe<Float>;
+  qAdminexpToGr?: Maybe<Float>;
+  qFinaexpToGr?: Maybe<Float>;
+  qImpairToGrTtm?: Maybe<Float>;
+  qGcToGr?: Maybe<Float>;
+  qOpToGr?: Maybe<Float>;
+  qRoe?: Maybe<Float>;
+  qDtRoe?: Maybe<Float>;
+  qNpta?: Maybe<Float>;
+  qOpincomeToEbt?: Maybe<Float>;
+  qInvestincomeToEbt?: Maybe<Float>;
+  qDtprofitToProfit?: Maybe<Float>;
+  qSalescashToOr?: Maybe<Float>;
+  qOcfToSales?: Maybe<Float>;
+  qOcfToOr?: Maybe<Float>;
+  basicEpsYoy?: Maybe<Float>;
+  dtEpsYoy?: Maybe<Float>;
+  cfpsYoy?: Maybe<Float>;
+  opYoy?: Maybe<Float>;
+  ebtYoy?: Maybe<Float>;
+  netprofitYoy?: Maybe<Float>;
+  dtNetprofitYoy?: Maybe<Float>;
+  ocfYoy?: Maybe<Float>;
+  roeYoy?: Maybe<Float>;
+  bpsYoy?: Maybe<Float>;
+  assetsYoy?: Maybe<Float>;
+  eqtYoy?: Maybe<Float>;
+  trYoy?: Maybe<Float>;
+  orYoy?: Maybe<Float>;
+  qGrYoy?: Maybe<Float>;
+  qGrQoq?: Maybe<Float>;
+  qSalesYoy?: Maybe<Float>;
+  qSalesQoq?: Maybe<Float>;
+  qOpYoy?: Maybe<Float>;
+  qOpQoq?: Maybe<Float>;
+  qProfitYoy?: Maybe<Float>;
+  qProfitQoq?: Maybe<Float>;
+  qNetprofitYoy?: Maybe<Float>;
+  qNetprofitQoq?: Maybe<Float>;
+  equityYoy?: Maybe<Float>;
+  rdExp?: Maybe<Float>;
+  updateFlag?: Maybe<String>;
+}
+
+export interface CompanyUpsertWithWhereUniqueWithoutTradesInput {
+  where: CompanyWhereUniqueInput;
+  update: CompanyUpdateWithoutTradesDataInput;
+  create: CompanyCreateWithoutTradesInput;
+}
+
+export interface CompanyUpdateWithoutDailiesDataInput {
+  symbol?: Maybe<String>;
+  name?: Maybe<String>;
+  area?: Maybe<String>;
+  industry?: Maybe<String>;
+  fullname?: Maybe<String>;
+  enname?: Maybe<String>;
+  market?: Maybe<String>;
+  exchange?: Maybe<String>;
+  currType?: Maybe<String>;
+  listStatus?: Maybe<String>;
+  listDate?: Maybe<String>;
+  delistDate?: Maybe<String>;
+  isHS?: Maybe<String>;
+  scope?: Maybe<String>;
+  desc?: Maybe<String>;
+  purchases?: Maybe<CompanyProductUpdateManyWithoutInputsInput>;
+  selles?: Maybe<CompanyProductUpdateManyWithoutOutputsInput>;
+  comments?: Maybe<CommentUpdateManyWithoutCompanyInput>;
+  pool?: Maybe<Boolean>;
+  trades?: Maybe<IndustryUpdateManyWithoutCompaniesInput>;
+  events?: Maybe<CompanyEventUpdateManyWithoutCompanyInput>;
+  finaIndicators?: Maybe<FinaIndicatorUpdateManyWithoutCompanyInput>;
+}
+
+export interface IndustryUpsertWithWhereUniqueWithoutSellesInput {
+  where: IndustryWhereUniqueInput;
+  update: IndustryUpdateWithoutSellesDataInput;
+  create: IndustryCreateWithoutSellesInput;
+}
+
+export interface CompanyCreateOneWithoutCommentsInput {
+  create?: Maybe<CompanyCreateWithoutCommentsInput>;
+  connect?: Maybe<CompanyWhereUniqueInput>;
+}
+
+export interface IndustryScalarWhereInput {
+  id?: Maybe<ID_Input>;
+  id_not?: Maybe<ID_Input>;
+  id_in?: Maybe<ID_Input[] | ID_Input>;
+  id_not_in?: Maybe<ID_Input[] | ID_Input>;
+  id_lt?: Maybe<ID_Input>;
+  id_lte?: Maybe<ID_Input>;
+  id_gt?: Maybe<ID_Input>;
+  id_gte?: Maybe<ID_Input>;
+  id_contains?: Maybe<ID_Input>;
+  id_not_contains?: Maybe<ID_Input>;
+  id_starts_with?: Maybe<ID_Input>;
+  id_not_starts_with?: Maybe<ID_Input>;
+  id_ends_with?: Maybe<ID_Input>;
+  id_not_ends_with?: Maybe<ID_Input>;
+  code?: Maybe<String>;
+  code_not?: Maybe<String>;
+  code_in?: Maybe<String[] | String>;
+  code_not_in?: Maybe<String[] | String>;
+  code_lt?: Maybe<String>;
+  code_lte?: Maybe<String>;
+  code_gt?: Maybe<String>;
+  code_gte?: Maybe<String>;
+  code_contains?: Maybe<String>;
+  code_not_contains?: Maybe<String>;
+  code_starts_with?: Maybe<String>;
+  code_not_starts_with?: Maybe<String>;
+  code_ends_with?: Maybe<String>;
+  code_not_ends_with?: Maybe<String>;
+  name?: Maybe<String>;
+  name_not?: Maybe<String>;
+  name_in?: Maybe<String[] | String>;
+  name_not_in?: Maybe<String[] | String>;
+  name_lt?: Maybe<String>;
+  name_lte?: Maybe<String>;
+  name_gt?: Maybe<String>;
+  name_gte?: Maybe<String>;
+  name_contains?: Maybe<String>;
+  name_not_contains?: Maybe<String>;
+  name_starts_with?: Maybe<String>;
+  name_not_starts_with?: Maybe<String>;
+  name_ends_with?: Maybe<String>;
+  name_not_ends_with?: Maybe<String>;
+  desc?: Maybe<String>;
+  desc_not?: Maybe<String>;
+  desc_in?: Maybe<String[] | String>;
+  desc_not_in?: Maybe<String[] | String>;
+  desc_lt?: Maybe<String>;
+  desc_lte?: Maybe<String>;
+  desc_gt?: Maybe<String>;
+  desc_gte?: Maybe<String>;
+  desc_contains?: Maybe<String>;
+  desc_not_contains?: Maybe<String>;
+  desc_starts_with?: Maybe<String>;
+  desc_not_starts_with?: Maybe<String>;
+  desc_ends_with?: Maybe<String>;
+  desc_not_ends_with?: Maybe<String>;
+  AND?: Maybe<IndustryScalarWhereInput[] | IndustryScalarWhereInput>;
+  OR?: Maybe<IndustryScalarWhereInput[] | IndustryScalarWhereInput>;
+  NOT?: Maybe<IndustryScalarWhereInput[] | IndustryScalarWhereInput>;
+}
+
+export interface CompanyCreateManyWithoutSellesInput {
+  create?: Maybe<
+    CompanyCreateWithoutSellesInput[] | CompanyCreateWithoutSellesInput
+  >;
+  connect?: Maybe<CompanyWhereUniqueInput[] | CompanyWhereUniqueInput>;
+}
+
+export interface IndustryUpdateManyWithWhereNestedInput {
+  where: IndustryScalarWhereInput;
+  data: IndustryUpdateManyDataInput;
+}
+
+export interface IndustryCreateManyWithoutCompaniesInput {
+  create?: Maybe<
+    IndustryCreateWithoutCompaniesInput[] | IndustryCreateWithoutCompaniesInput
+  >;
+  connect?: Maybe<IndustryWhereUniqueInput[] | IndustryWhereUniqueInput>;
+}
+
+export interface IndustryUpdateManyDataInput {
+  code?: Maybe<String>;
+  name?: Maybe<String>;
+  desc?: Maybe<String>;
+}
+
+export interface IndustryInfluenceCreateManyWithoutIndustryInput {
+  create?: Maybe<
+    | IndustryInfluenceCreateWithoutIndustryInput[]
+    | IndustryInfluenceCreateWithoutIndustryInput
+  >;
+  connect?: Maybe<
+    IndustryInfluenceWhereUniqueInput[] | IndustryInfluenceWhereUniqueInput
+  >;
+}
+
+export interface ProductUpsertWithWhereUniqueWithoutInputsInput {
+  where: ProductWhereUniqueInput;
+  update: ProductUpdateWithoutInputsDataInput;
+  create: ProductCreateWithoutInputsInput;
+}
+
+export interface ProductCreateManyWithoutInputsInput {
+  create?: Maybe<
+    ProductCreateWithoutInputsInput[] | ProductCreateWithoutInputsInput
+  >;
+  connect?: Maybe<ProductWhereUniqueInput[] | ProductWhereUniqueInput>;
+}
+
+export interface ProductScalarWhereInput {
+  id?: Maybe<ID_Input>;
+  id_not?: Maybe<ID_Input>;
+  id_in?: Maybe<ID_Input[] | ID_Input>;
+  id_not_in?: Maybe<ID_Input[] | ID_Input>;
+  id_lt?: Maybe<ID_Input>;
+  id_lte?: Maybe<ID_Input>;
+  id_gt?: Maybe<ID_Input>;
+  id_gte?: Maybe<ID_Input>;
+  id_contains?: Maybe<ID_Input>;
+  id_not_contains?: Maybe<ID_Input>;
+  id_starts_with?: Maybe<ID_Input>;
+  id_not_starts_with?: Maybe<ID_Input>;
+  id_ends_with?: Maybe<ID_Input>;
+  id_not_ends_with?: Maybe<ID_Input>;
+  name?: Maybe<String>;
+  name_not?: Maybe<String>;
+  name_in?: Maybe<String[] | String>;
+  name_not_in?: Maybe<String[] | String>;
+  name_lt?: Maybe<String>;
+  name_lte?: Maybe<String>;
+  name_gt?: Maybe<String>;
+  name_gte?: Maybe<String>;
+  name_contains?: Maybe<String>;
+  name_not_contains?: Maybe<String>;
+  name_starts_with?: Maybe<String>;
+  name_not_starts_with?: Maybe<String>;
+  name_ends_with?: Maybe<String>;
+  name_not_ends_with?: Maybe<String>;
+  introduce?: Maybe<String>;
+  introduce_not?: Maybe<String>;
+  introduce_in?: Maybe<String[] | String>;
+  introduce_not_in?: Maybe<String[] | String>;
+  introduce_lt?: Maybe<String>;
+  introduce_lte?: Maybe<String>;
+  introduce_gt?: Maybe<String>;
+  introduce_gte?: Maybe<String>;
+  introduce_contains?: Maybe<String>;
+  introduce_not_contains?: Maybe<String>;
+  introduce_starts_with?: Maybe<String>;
+  introduce_not_starts_with?: Maybe<String>;
+  introduce_ends_with?: Maybe<String>;
+  introduce_not_ends_with?: Maybe<String>;
+  AND?: Maybe<ProductScalarWhereInput[] | ProductScalarWhereInput>;
+  OR?: Maybe<ProductScalarWhereInput[] | ProductScalarWhereInput>;
+  NOT?: Maybe<ProductScalarWhereInput[] | ProductScalarWhereInput>;
+}
+
+export interface CompanyCreateManyWithoutTradesInput {
+  create?: Maybe<
+    CompanyCreateWithoutTradesInput[] | CompanyCreateWithoutTradesInput
+  >;
+  connect?: Maybe<CompanyWhereUniqueInput[] | CompanyWhereUniqueInput>;
+}
+
+export interface ProductUpdateManyWithWhereNestedInput {
+  where: ProductScalarWhereInput;
+  data: ProductUpdateManyDataInput;
+}
+
+export interface CompanyCreateManyWithoutPurchasesInput {
+  create?: Maybe<
+    CompanyCreateWithoutPurchasesInput[] | CompanyCreateWithoutPurchasesInput
+  >;
+  connect?: Maybe<CompanyWhereUniqueInput[] | CompanyWhereUniqueInput>;
+}
+
+export interface ProductUpdateManyDataInput {
+  name?: Maybe<String>;
+  introduce?: Maybe<String>;
+}
+
+export interface DailyCreateManyWithoutCompanyInput {
+  create?: Maybe<
+    DailyCreateWithoutCompanyInput[] | DailyCreateWithoutCompanyInput
+  >;
+  connect?: Maybe<DailyWhereUniqueInput[] | DailyWhereUniqueInput>;
+}
+
+export interface ProductUpdateManyWithoutOutputsInput {
+  create?: Maybe<
+    ProductCreateWithoutOutputsInput[] | ProductCreateWithoutOutputsInput
+  >;
+  delete?: Maybe<ProductWhereUniqueInput[] | ProductWhereUniqueInput>;
+  connect?: Maybe<ProductWhereUniqueInput[] | ProductWhereUniqueInput>;
+  set?: Maybe<ProductWhereUniqueInput[] | ProductWhereUniqueInput>;
+  disconnect?: Maybe<ProductWhereUniqueInput[] | ProductWhereUniqueInput>;
+  update?: Maybe<
+    | ProductUpdateWithWhereUniqueWithoutOutputsInput[]
+    | ProductUpdateWithWhereUniqueWithoutOutputsInput
+  >;
+  upsert?: Maybe<
+    | ProductUpsertWithWhereUniqueWithoutOutputsInput[]
+    | ProductUpsertWithWhereUniqueWithoutOutputsInput
+  >;
+  deleteMany?: Maybe<ProductScalarWhereInput[] | ProductScalarWhereInput>;
+  updateMany?: Maybe<
+    | ProductUpdateManyWithWhereNestedInput[]
+    | ProductUpdateManyWithWhereNestedInput
+  >;
+}
+
+export interface ProductCreateManyWithoutOutputsInput {
+  create?: Maybe<
+    ProductCreateWithoutOutputsInput[] | ProductCreateWithoutOutputsInput
+  >;
+  connect?: Maybe<ProductWhereUniqueInput[] | ProductWhereUniqueInput>;
+}
+
+export interface ProductUpdateWithWhereUniqueWithoutOutputsInput {
+  where: ProductWhereUniqueInput;
+  data: ProductUpdateWithoutOutputsDataInput;
+}
+
+export interface DailyWhereInput {
+  id?: Maybe<ID_Input>;
+  id_not?: Maybe<ID_Input>;
+  id_in?: Maybe<ID_Input[] | ID_Input>;
+  id_not_in?: Maybe<ID_Input[] | ID_Input>;
+  id_lt?: Maybe<ID_Input>;
+  id_lte?: Maybe<ID_Input>;
+  id_gt?: Maybe<ID_Input>;
+  id_gte?: Maybe<ID_Input>;
+  id_contains?: Maybe<ID_Input>;
+  id_not_contains?: Maybe<ID_Input>;
+  id_starts_with?: Maybe<ID_Input>;
+  id_not_starts_with?: Maybe<ID_Input>;
+  id_ends_with?: Maybe<ID_Input>;
+  id_not_ends_with?: Maybe<ID_Input>;
+  company?: Maybe<CompanyWhereInput>;
+  symbol?: Maybe<String>;
+  symbol_not?: Maybe<String>;
+  symbol_in?: Maybe<String[] | String>;
+  symbol_not_in?: Maybe<String[] | String>;
+  symbol_lt?: Maybe<String>;
+  symbol_lte?: Maybe<String>;
+  symbol_gt?: Maybe<String>;
+  symbol_gte?: Maybe<String>;
+  symbol_contains?: Maybe<String>;
+  symbol_not_contains?: Maybe<String>;
+  symbol_starts_with?: Maybe<String>;
+  symbol_not_starts_with?: Maybe<String>;
+  symbol_ends_with?: Maybe<String>;
+  symbol_not_ends_with?: Maybe<String>;
+  tradeDate?: Maybe<DateTimeInput>;
+  tradeDate_not?: Maybe<DateTimeInput>;
+  tradeDate_in?: Maybe<DateTimeInput[] | DateTimeInput>;
+  tradeDate_not_in?: Maybe<DateTimeInput[] | DateTimeInput>;
+  tradeDate_lt?: Maybe<DateTimeInput>;
+  tradeDate_lte?: Maybe<DateTimeInput>;
+  tradeDate_gt?: Maybe<DateTimeInput>;
+  tradeDate_gte?: Maybe<DateTimeInput>;
+  open?: Maybe<Float>;
+  open_not?: Maybe<Float>;
+  open_in?: Maybe<Float[] | Float>;
+  open_not_in?: Maybe<Float[] | Float>;
+  open_lt?: Maybe<Float>;
+  open_lte?: Maybe<Float>;
+  open_gt?: Maybe<Float>;
+  open_gte?: Maybe<Float>;
+  high?: Maybe<Float>;
+  high_not?: Maybe<Float>;
+  high_in?: Maybe<Float[] | Float>;
+  high_not_in?: Maybe<Float[] | Float>;
+  high_lt?: Maybe<Float>;
+  high_lte?: Maybe<Float>;
+  high_gt?: Maybe<Float>;
+  high_gte?: Maybe<Float>;
+  low?: Maybe<Float>;
+  low_not?: Maybe<Float>;
+  low_in?: Maybe<Float[] | Float>;
+  low_not_in?: Maybe<Float[] | Float>;
+  low_lt?: Maybe<Float>;
+  low_lte?: Maybe<Float>;
+  low_gt?: Maybe<Float>;
+  low_gte?: Maybe<Float>;
+  close?: Maybe<Float>;
+  close_not?: Maybe<Float>;
+  close_in?: Maybe<Float[] | Float>;
+  close_not_in?: Maybe<Float[] | Float>;
+  close_lt?: Maybe<Float>;
+  close_lte?: Maybe<Float>;
+  close_gt?: Maybe<Float>;
+  close_gte?: Maybe<Float>;
+  preClose?: Maybe<Float>;
+  preClose_not?: Maybe<Float>;
+  preClose_in?: Maybe<Float[] | Float>;
+  preClose_not_in?: Maybe<Float[] | Float>;
+  preClose_lt?: Maybe<Float>;
+  preClose_lte?: Maybe<Float>;
+  preClose_gt?: Maybe<Float>;
+  preClose_gte?: Maybe<Float>;
+  change?: Maybe<Float>;
+  change_not?: Maybe<Float>;
+  change_in?: Maybe<Float[] | Float>;
+  change_not_in?: Maybe<Float[] | Float>;
+  change_lt?: Maybe<Float>;
+  change_lte?: Maybe<Float>;
+  change_gt?: Maybe<Float>;
+  change_gte?: Maybe<Float>;
+  pctChg?: Maybe<Float>;
+  pctChg_not?: Maybe<Float>;
+  pctChg_in?: Maybe<Float[] | Float>;
+  pctChg_not_in?: Maybe<Float[] | Float>;
+  pctChg_lt?: Maybe<Float>;
+  pctChg_lte?: Maybe<Float>;
+  pctChg_gt?: Maybe<Float>;
+  pctChg_gte?: Maybe<Float>;
+  vol?: Maybe<Float>;
+  vol_not?: Maybe<Float>;
+  vol_in?: Maybe<Float[] | Float>;
+  vol_not_in?: Maybe<Float[] | Float>;
+  vol_lt?: Maybe<Float>;
+  vol_lte?: Maybe<Float>;
+  vol_gt?: Maybe<Float>;
+  vol_gte?: Maybe<Float>;
+  amount?: Maybe<Float>;
+  amount_not?: Maybe<Float>;
+  amount_in?: Maybe<Float[] | Float>;
+  amount_not_in?: Maybe<Float[] | Float>;
+  amount_lt?: Maybe<Float>;
+  amount_lte?: Maybe<Float>;
+  amount_gt?: Maybe<Float>;
+  amount_gte?: Maybe<Float>;
+  AND?: Maybe<DailyWhereInput[] | DailyWhereInput>;
+  OR?: Maybe<DailyWhereInput[] | DailyWhereInput>;
+  NOT?: Maybe<DailyWhereInput[] | DailyWhereInput>;
+}
+
+export interface ProductUpdateWithoutOutputsDataInput {
+  name?: Maybe<String>;
+  introduce?: Maybe<String>;
+  inputs?: Maybe<IndustryUpdateManyWithoutPurchasesInput>;
+}
+
+export interface KeywordSubscriptionWhereInput {
+  mutation_in?: Maybe<MutationType[] | MutationType>;
+  updatedFields_contains?: Maybe<String>;
+  updatedFields_contains_every?: Maybe<String[] | String>;
+  updatedFields_contains_some?: Maybe<String[] | String>;
+  node?: Maybe<KeywordWhereInput>;
+  AND?: Maybe<KeywordSubscriptionWhereInput[] | KeywordSubscriptionWhereInput>;
+  OR?: Maybe<KeywordSubscriptionWhereInput[] | KeywordSubscriptionWhereInput>;
+  NOT?: Maybe<KeywordSubscriptionWhereInput[] | KeywordSubscriptionWhereInput>;
+}
+
+export interface IndustryUpdateManyWithoutPurchasesInput {
+  create?: Maybe<
+    IndustryCreateWithoutPurchasesInput[] | IndustryCreateWithoutPurchasesInput
+  >;
+  delete?: Maybe<IndustryWhereUniqueInput[] | IndustryWhereUniqueInput>;
+  connect?: Maybe<IndustryWhereUniqueInput[] | IndustryWhereUniqueInput>;
+  set?: Maybe<IndustryWhereUniqueInput[] | IndustryWhereUniqueInput>;
+  disconnect?: Maybe<IndustryWhereUniqueInput[] | IndustryWhereUniqueInput>;
+  update?: Maybe<
+    | IndustryUpdateWithWhereUniqueWithoutPurchasesInput[]
+    | IndustryUpdateWithWhereUniqueWithoutPurchasesInput
+  >;
+  upsert?: Maybe<
+    | IndustryUpsertWithWhereUniqueWithoutPurchasesInput[]
+    | IndustryUpsertWithWhereUniqueWithoutPurchasesInput
+  >;
+  deleteMany?: Maybe<IndustryScalarWhereInput[] | IndustryScalarWhereInput>;
+  updateMany?: Maybe<
+    | IndustryUpdateManyWithWhereNestedInput[]
+    | IndustryUpdateManyWithWhereNestedInput
+  >;
+}
+
+export interface CommentWhereInput {
+  id?: Maybe<ID_Input>;
+  id_not?: Maybe<ID_Input>;
+  id_in?: Maybe<ID_Input[] | ID_Input>;
+  id_not_in?: Maybe<ID_Input[] | ID_Input>;
+  id_lt?: Maybe<ID_Input>;
+  id_lte?: Maybe<ID_Input>;
+  id_gt?: Maybe<ID_Input>;
+  id_gte?: Maybe<ID_Input>;
+  id_contains?: Maybe<ID_Input>;
+  id_not_contains?: Maybe<ID_Input>;
+  id_starts_with?: Maybe<ID_Input>;
+  id_not_starts_with?: Maybe<ID_Input>;
+  id_ends_with?: Maybe<ID_Input>;
+  id_not_ends_with?: Maybe<ID_Input>;
+  createTime?: Maybe<DateTimeInput>;
+  createTime_not?: Maybe<DateTimeInput>;
+  createTime_in?: Maybe<DateTimeInput[] | DateTimeInput>;
+  createTime_not_in?: Maybe<DateTimeInput[] | DateTimeInput>;
+  createTime_lt?: Maybe<DateTimeInput>;
+  createTime_lte?: Maybe<DateTimeInput>;
+  createTime_gt?: Maybe<DateTimeInput>;
+  createTime_gte?: Maybe<DateTimeInput>;
+  desc?: Maybe<String>;
+  desc_not?: Maybe<String>;
+  desc_in?: Maybe<String[] | String>;
+  desc_not_in?: Maybe<String[] | String>;
+  desc_lt?: Maybe<String>;
+  desc_lte?: Maybe<String>;
+  desc_gt?: Maybe<String>;
+  desc_gte?: Maybe<String>;
+  desc_contains?: Maybe<String>;
+  desc_not_contains?: Maybe<String>;
+  desc_starts_with?: Maybe<String>;
+  desc_not_starts_with?: Maybe<String>;
+  desc_ends_with?: Maybe<String>;
+  desc_not_ends_with?: Maybe<String>;
+  company?: Maybe<CompanyWhereInput>;
+  AND?: Maybe<CommentWhereInput[] | CommentWhereInput>;
+  OR?: Maybe<CommentWhereInput[] | CommentWhereInput>;
+  NOT?: Maybe<CommentWhereInput[] | CommentWhereInput>;
+}
+
+export interface IndustryUpdateWithWhereUniqueWithoutPurchasesInput {
+  where: IndustryWhereUniqueInput;
+  data: IndustryUpdateWithoutPurchasesDataInput;
+}
+
+export type CompanyWhereUniqueInput = AtLeastOne<{
+  id: Maybe<ID_Input>;
+  symbol?: Maybe<String>;
+  name?: Maybe<String>;
+}>;
+
+export interface IndustryUpdateWithoutPurchasesDataInput {
+  code?: Maybe<String>;
+  name?: Maybe<String>;
+  desc?: Maybe<String>;
+  researches?: Maybe<ResearchUpdateManyInput>;
+  companies?: Maybe<CompanyUpdateManyWithoutTradesInput>;
+  influences?: Maybe<IndustryInfluenceUpdateManyWithoutIndustryInput>;
+  selles?: Maybe<ProductUpdateManyWithoutOutputsInput>;
+}
+
+export type CompanyProductWhereUniqueInput = AtLeastOne<{
+  id: Maybe<ID_Input>;
+  name?: Maybe<String>;
+}>;
+
+export interface IndustryUpsertWithWhereUniqueWithoutPurchasesInput {
+  where: IndustryWhereUniqueInput;
+  update: IndustryUpdateWithoutPurchasesDataInput;
+  create: IndustryCreateWithoutPurchasesInput;
+}
+
+export type FinaIndicatorWhereUniqueInput = AtLeastOne<{
+  id: Maybe<ID_Input>;
+}>;
+
+export interface ProductUpsertWithWhereUniqueWithoutOutputsInput {
+  where: ProductWhereUniqueInput;
+  update: ProductUpdateWithoutOutputsDataInput;
+  create: ProductCreateWithoutOutputsInput;
+}
+
+export type IndustryEventWhereUniqueInput = AtLeastOne<{
+  id: Maybe<ID_Input>;
+}>;
+
+export interface IndustryUpsertWithWhereUniqueWithoutCompaniesInput {
+  where: IndustryWhereUniqueInput;
+  update: IndustryUpdateWithoutCompaniesDataInput;
+  create: IndustryCreateWithoutCompaniesInput;
+}
+
+export type IndustryInfluenceWhereUniqueInput = AtLeastOne<{
+  id: Maybe<ID_Input>;
+}>;
+
+export interface CompanyUpsertWithWhereUniqueWithoutSellesInput {
+  where: CompanyWhereUniqueInput;
+  update: CompanyUpdateWithoutSellesDataInput;
+  create: CompanyCreateWithoutSellesInput;
+}
+
+export type ProductWhereUniqueInput = AtLeastOne<{
+  id: Maybe<ID_Input>;
+  name?: Maybe<String>;
+}>;
+
+export interface CompanyProductUpsertWithWhereUniqueWithoutInputsInput {
+  where: CompanyProductWhereUniqueInput;
+  update: CompanyProductUpdateWithoutInputsDataInput;
+  create: CompanyProductCreateWithoutInputsInput;
+}
+
+export type UserWhereUniqueInput = AtLeastOne<{
+  id: Maybe<ID_Input>;
+  username?: Maybe<String>;
+}>;
+
+export interface CompanyUpsertWithoutCommentsInput {
+  update: CompanyUpdateWithoutCommentsDataInput;
+  create: CompanyCreateWithoutCommentsInput;
+}
+
+export interface CommentCreateManyWithoutCompanyInput {
+  create?: Maybe<
+    CommentCreateWithoutCompanyInput[] | CommentCreateWithoutCompanyInput
+  >;
+  connect?: Maybe<CommentWhereUniqueInput[] | CommentWhereUniqueInput>;
+}
+
+export interface CommentUpdateManyMutationInput {
+  desc?: Maybe<String>;
+}
+
+export interface KeywordCreateOneInput {
+  create?: Maybe<KeywordCreateInput>;
+  connect?: Maybe<KeywordWhereUniqueInput>;
+}
+
+export interface CompanyCreateWithoutDailiesInput {
+  id?: Maybe<ID_Input>;
+  symbol: String;
+  name: String;
+  area?: Maybe<String>;
+  industry?: Maybe<String>;
+  fullname?: Maybe<String>;
+  enname?: Maybe<String>;
+  market?: Maybe<String>;
+  exchange?: Maybe<String>;
+  currType?: Maybe<String>;
+  listStatus?: Maybe<String>;
+  listDate?: Maybe<String>;
+  delistDate?: Maybe<String>;
+  isHS?: Maybe<String>;
+  scope?: Maybe<String>;
+  desc?: Maybe<String>;
+  purchases?: Maybe<CompanyProductCreateManyWithoutInputsInput>;
+  selles?: Maybe<CompanyProductCreateManyWithoutOutputsInput>;
+  comments?: Maybe<CommentCreateManyWithoutCompanyInput>;
+  pool?: Maybe<Boolean>;
+  trades?: Maybe<IndustryCreateManyWithoutCompaniesInput>;
+  events?: Maybe<CompanyEventCreateManyWithoutCompanyInput>;
+  finaIndicators?: Maybe<FinaIndicatorCreateManyWithoutCompanyInput>;
+}
+
+export interface CompanyProductCreateManyWithoutOutputsInput {
+  create?: Maybe<
+    | CompanyProductCreateWithoutOutputsInput[]
+    | CompanyProductCreateWithoutOutputsInput
+  >;
+  connect?: Maybe<
+    CompanyProductWhereUniqueInput[] | CompanyProductWhereUniqueInput
+  >;
+}
+
+export interface CompanyCreateOneWithoutDailiesInput {
+  create?: Maybe<CompanyCreateWithoutDailiesInput>;
+  connect?: Maybe<CompanyWhereUniqueInput>;
+}
+
+export interface FinaIndicatorCreateManyWithoutCompanyInput {
+  create?: Maybe<
+    | FinaIndicatorCreateWithoutCompanyInput[]
+    | FinaIndicatorCreateWithoutCompanyInput
+  >;
+  connect?: Maybe<
+    FinaIndicatorWhereUniqueInput[] | FinaIndicatorWhereUniqueInput
+  >;
 }
 
 export interface CompanyCreateInput {
@@ -4183,18 +8341,61 @@ export interface CompanyCreateInput {
   trades?: Maybe<IndustryCreateManyWithoutCompaniesInput>;
   events?: Maybe<CompanyEventCreateManyWithoutCompanyInput>;
   dailies?: Maybe<DailyCreateManyWithoutCompanyInput>;
+  finaIndicators?: Maybe<FinaIndicatorCreateManyWithoutCompanyInput>;
 }
 
-export interface IndustryCreateInput {
+export interface ProductWhereInput {
   id?: Maybe<ID_Input>;
-  code?: Maybe<String>;
-  name: String;
-  desc: String;
-  researches?: Maybe<ResearchCreateManyInput>;
-  companies?: Maybe<CompanyCreateManyWithoutTradesInput>;
-  influences?: Maybe<IndustryInfluenceCreateManyWithoutIndustryInput>;
-  purchases?: Maybe<ProductCreateManyWithoutInputsInput>;
-  selles?: Maybe<ProductCreateManyWithoutOutputsInput>;
+  id_not?: Maybe<ID_Input>;
+  id_in?: Maybe<ID_Input[] | ID_Input>;
+  id_not_in?: Maybe<ID_Input[] | ID_Input>;
+  id_lt?: Maybe<ID_Input>;
+  id_lte?: Maybe<ID_Input>;
+  id_gt?: Maybe<ID_Input>;
+  id_gte?: Maybe<ID_Input>;
+  id_contains?: Maybe<ID_Input>;
+  id_not_contains?: Maybe<ID_Input>;
+  id_starts_with?: Maybe<ID_Input>;
+  id_not_starts_with?: Maybe<ID_Input>;
+  id_ends_with?: Maybe<ID_Input>;
+  id_not_ends_with?: Maybe<ID_Input>;
+  name?: Maybe<String>;
+  name_not?: Maybe<String>;
+  name_in?: Maybe<String[] | String>;
+  name_not_in?: Maybe<String[] | String>;
+  name_lt?: Maybe<String>;
+  name_lte?: Maybe<String>;
+  name_gt?: Maybe<String>;
+  name_gte?: Maybe<String>;
+  name_contains?: Maybe<String>;
+  name_not_contains?: Maybe<String>;
+  name_starts_with?: Maybe<String>;
+  name_not_starts_with?: Maybe<String>;
+  name_ends_with?: Maybe<String>;
+  name_not_ends_with?: Maybe<String>;
+  introduce?: Maybe<String>;
+  introduce_not?: Maybe<String>;
+  introduce_in?: Maybe<String[] | String>;
+  introduce_not_in?: Maybe<String[] | String>;
+  introduce_lt?: Maybe<String>;
+  introduce_lte?: Maybe<String>;
+  introduce_gt?: Maybe<String>;
+  introduce_gte?: Maybe<String>;
+  introduce_contains?: Maybe<String>;
+  introduce_not_contains?: Maybe<String>;
+  introduce_starts_with?: Maybe<String>;
+  introduce_not_starts_with?: Maybe<String>;
+  introduce_ends_with?: Maybe<String>;
+  introduce_not_ends_with?: Maybe<String>;
+  inputs_every?: Maybe<IndustryWhereInput>;
+  inputs_some?: Maybe<IndustryWhereInput>;
+  inputs_none?: Maybe<IndustryWhereInput>;
+  outputs_every?: Maybe<IndustryWhereInput>;
+  outputs_some?: Maybe<IndustryWhereInput>;
+  outputs_none?: Maybe<IndustryWhereInput>;
+  AND?: Maybe<ProductWhereInput[] | ProductWhereInput>;
+  OR?: Maybe<ProductWhereInput[] | ProductWhereInput>;
+  NOT?: Maybe<ProductWhereInput[] | ProductWhereInput>;
 }
 
 export interface CompanyUpdateInput {
@@ -4220,13 +8421,18 @@ export interface CompanyUpdateInput {
   trades?: Maybe<IndustryUpdateManyWithoutCompaniesInput>;
   events?: Maybe<CompanyEventUpdateManyWithoutCompanyInput>;
   dailies?: Maybe<DailyUpdateManyWithoutCompanyInput>;
+  finaIndicators?: Maybe<FinaIndicatorUpdateManyWithoutCompanyInput>;
 }
 
-export interface CompanyCreateManyWithoutSellesInput {
-  create?: Maybe<
-    CompanyCreateWithoutSellesInput[] | CompanyCreateWithoutSellesInput
-  >;
-  connect?: Maybe<CompanyWhereUniqueInput[] | CompanyWhereUniqueInput>;
+export interface CompanySubscriptionWhereInput {
+  mutation_in?: Maybe<MutationType[] | MutationType>;
+  updatedFields_contains?: Maybe<String>;
+  updatedFields_contains_every?: Maybe<String[] | String>;
+  updatedFields_contains_some?: Maybe<String[] | String>;
+  node?: Maybe<CompanyWhereInput>;
+  AND?: Maybe<CompanySubscriptionWhereInput[] | CompanySubscriptionWhereInput>;
+  OR?: Maybe<CompanySubscriptionWhereInput[] | CompanySubscriptionWhereInput>;
+  NOT?: Maybe<CompanySubscriptionWhereInput[] | CompanySubscriptionWhereInput>;
 }
 
 export interface CompanyUpdateManyMutationInput {
@@ -4248,12 +8454,9 @@ export interface CompanyUpdateManyMutationInput {
   pool?: Maybe<Boolean>;
 }
 
-export interface CompanyCreateManyWithoutTradesInput {
-  create?: Maybe<
-    CompanyCreateWithoutTradesInput[] | CompanyCreateWithoutTradesInput
-  >;
-  connect?: Maybe<CompanyWhereUniqueInput[] | CompanyWhereUniqueInput>;
-}
+export type DailyWhereUniqueInput = AtLeastOne<{
+  id: Maybe<ID_Input>;
+}>;
 
 export interface CompanyEventCreateInput {
   id?: Maybe<ID_Input>;
@@ -4268,19 +8471,38 @@ export interface CompanyEventCreateInput {
   company: CompanyCreateOneWithoutEventsInput;
 }
 
-export interface ResearchSubscriptionWhereInput {
-  mutation_in?: Maybe<MutationType[] | MutationType>;
-  updatedFields_contains?: Maybe<String>;
-  updatedFields_contains_every?: Maybe<String[] | String>;
-  updatedFields_contains_some?: Maybe<String[] | String>;
-  node?: Maybe<ResearchWhereInput>;
-  AND?: Maybe<
-    ResearchSubscriptionWhereInput[] | ResearchSubscriptionWhereInput
-  >;
-  OR?: Maybe<ResearchSubscriptionWhereInput[] | ResearchSubscriptionWhereInput>;
-  NOT?: Maybe<
-    ResearchSubscriptionWhereInput[] | ResearchSubscriptionWhereInput
-  >;
+export interface KeywordScalarWhereInput {
+  id?: Maybe<ID_Input>;
+  id_not?: Maybe<ID_Input>;
+  id_in?: Maybe<ID_Input[] | ID_Input>;
+  id_not_in?: Maybe<ID_Input[] | ID_Input>;
+  id_lt?: Maybe<ID_Input>;
+  id_lte?: Maybe<ID_Input>;
+  id_gt?: Maybe<ID_Input>;
+  id_gte?: Maybe<ID_Input>;
+  id_contains?: Maybe<ID_Input>;
+  id_not_contains?: Maybe<ID_Input>;
+  id_starts_with?: Maybe<ID_Input>;
+  id_not_starts_with?: Maybe<ID_Input>;
+  id_ends_with?: Maybe<ID_Input>;
+  id_not_ends_with?: Maybe<ID_Input>;
+  name?: Maybe<String>;
+  name_not?: Maybe<String>;
+  name_in?: Maybe<String[] | String>;
+  name_not_in?: Maybe<String[] | String>;
+  name_lt?: Maybe<String>;
+  name_lte?: Maybe<String>;
+  name_gt?: Maybe<String>;
+  name_gte?: Maybe<String>;
+  name_contains?: Maybe<String>;
+  name_not_contains?: Maybe<String>;
+  name_starts_with?: Maybe<String>;
+  name_not_starts_with?: Maybe<String>;
+  name_ends_with?: Maybe<String>;
+  name_not_ends_with?: Maybe<String>;
+  AND?: Maybe<KeywordScalarWhereInput[] | KeywordScalarWhereInput>;
+  OR?: Maybe<KeywordScalarWhereInput[] | KeywordScalarWhereInput>;
+  NOT?: Maybe<KeywordScalarWhereInput[] | KeywordScalarWhereInput>;
 }
 
 export interface CompanyCreateOneWithoutEventsInput {
@@ -4288,55 +8510,9 @@ export interface CompanyCreateOneWithoutEventsInput {
   connect?: Maybe<CompanyWhereUniqueInput>;
 }
 
-export interface IndustryUpdateOneRequiredWithoutInfluencesInput {
-  create?: Maybe<IndustryCreateWithoutInfluencesInput>;
-  update?: Maybe<IndustryUpdateWithoutInfluencesDataInput>;
-  upsert?: Maybe<IndustryUpsertWithoutInfluencesInput>;
-  connect?: Maybe<IndustryWhereUniqueInput>;
-}
-
-export interface CompanyUpdateWithoutEventsDataInput {
-  symbol?: Maybe<String>;
-  name?: Maybe<String>;
-  area?: Maybe<String>;
-  industry?: Maybe<String>;
-  fullname?: Maybe<String>;
-  enname?: Maybe<String>;
-  market?: Maybe<String>;
-  exchange?: Maybe<String>;
-  currType?: Maybe<String>;
-  listStatus?: Maybe<String>;
-  listDate?: Maybe<String>;
-  delistDate?: Maybe<String>;
-  isHS?: Maybe<String>;
-  scope?: Maybe<String>;
-  desc?: Maybe<String>;
-  purchases?: Maybe<CompanyProductUpdateManyWithoutInputsInput>;
-  selles?: Maybe<CompanyProductUpdateManyWithoutOutputsInput>;
-  comments?: Maybe<CommentUpdateManyWithoutCompanyInput>;
-  pool?: Maybe<Boolean>;
-  trades?: Maybe<IndustryUpdateManyWithoutCompaniesInput>;
-  dailies?: Maybe<DailyUpdateManyWithoutCompanyInput>;
-}
-
-export interface CompanyUpdateOneRequiredWithoutEventsInput {
-  create?: Maybe<CompanyCreateWithoutEventsInput>;
-  update?: Maybe<CompanyUpdateWithoutEventsDataInput>;
-  upsert?: Maybe<CompanyUpsertWithoutEventsInput>;
-  connect?: Maybe<CompanyWhereUniqueInput>;
-}
-
-export interface CompanyEventUpdateInput {
-  title?: Maybe<String>;
-  content?: Maybe<String>;
-  reportTime?: Maybe<DateTimeInput>;
-  happen?: Maybe<TimeKind>;
-  happenTime?: Maybe<DateTimeInput>;
-  influence?: Maybe<String>;
-  kind?: Maybe<FactorKind>;
-  dierction?: Maybe<Direction>;
-  company?: Maybe<CompanyUpdateOneRequiredWithoutEventsInput>;
-}
+export type ResearchWhereUniqueInput = AtLeastOne<{
+  id: Maybe<ID_Input>;
+}>;
 
 export interface CompanyCreateWithoutEventsInput {
   id?: Maybe<ID_Input>;
@@ -4361,56 +8537,55 @@ export interface CompanyCreateWithoutEventsInput {
   pool?: Maybe<Boolean>;
   trades?: Maybe<IndustryCreateManyWithoutCompaniesInput>;
   dailies?: Maybe<DailyCreateManyWithoutCompanyInput>;
+  finaIndicators?: Maybe<FinaIndicatorCreateManyWithoutCompanyInput>;
 }
 
-export interface KeywordUpdateManyInput {
-  create?: Maybe<KeywordCreateInput[] | KeywordCreateInput>;
-  update?: Maybe<
-    | KeywordUpdateWithWhereUniqueNestedInput[]
-    | KeywordUpdateWithWhereUniqueNestedInput
-  >;
-  upsert?: Maybe<
-    | KeywordUpsertWithWhereUniqueNestedInput[]
-    | KeywordUpsertWithWhereUniqueNestedInput
-  >;
-  delete?: Maybe<KeywordWhereUniqueInput[] | KeywordWhereUniqueInput>;
-  connect?: Maybe<KeywordWhereUniqueInput[] | KeywordWhereUniqueInput>;
-  set?: Maybe<KeywordWhereUniqueInput[] | KeywordWhereUniqueInput>;
-  disconnect?: Maybe<KeywordWhereUniqueInput[] | KeywordWhereUniqueInput>;
-  deleteMany?: Maybe<KeywordScalarWhereInput[] | KeywordScalarWhereInput>;
-  updateMany?: Maybe<
-    | KeywordUpdateManyWithWhereNestedInput[]
-    | KeywordUpdateManyWithWhereNestedInput
-  >;
-}
-
-export interface UserUpdateInput {
-  username?: Maybe<String>;
-  password?: Maybe<String>;
-  role?: Maybe<Role>;
-}
-
-export interface DailyCreateManyWithoutCompanyInput {
+export interface CompanyProductCreateManyWithoutInputsInput {
   create?: Maybe<
-    DailyCreateWithoutCompanyInput[] | DailyCreateWithoutCompanyInput
-  >;
-  connect?: Maybe<DailyWhereUniqueInput[] | DailyWhereUniqueInput>;
-}
-
-export interface IndustryInfluenceCreateManyWithoutIndustryInput {
-  create?: Maybe<
-    | IndustryInfluenceCreateWithoutIndustryInput[]
-    | IndustryInfluenceCreateWithoutIndustryInput
+    | CompanyProductCreateWithoutInputsInput[]
+    | CompanyProductCreateWithoutInputsInput
   >;
   connect?: Maybe<
-    IndustryInfluenceWhereUniqueInput[] | IndustryInfluenceWhereUniqueInput
+    CompanyProductWhereUniqueInput[] | CompanyProductWhereUniqueInput
   >;
 }
 
-export interface CompanyCreateWithoutDailiesInput {
-  id?: Maybe<ID_Input>;
-  symbol: String;
-  name: String;
+export interface CompanyEventUpdateInput {
+  title?: Maybe<String>;
+  content?: Maybe<String>;
+  reportTime?: Maybe<DateTimeInput>;
+  happen?: Maybe<TimeKind>;
+  happenTime?: Maybe<DateTimeInput>;
+  influence?: Maybe<String>;
+  kind?: Maybe<FactorKind>;
+  dierction?: Maybe<Direction>;
+  company?: Maybe<CompanyUpdateOneRequiredWithoutEventsInput>;
+}
+
+export interface IndustryCreateManyWithoutSellesInput {
+  create?: Maybe<
+    IndustryCreateWithoutSellesInput[] | IndustryCreateWithoutSellesInput
+  >;
+  connect?: Maybe<IndustryWhereUniqueInput[] | IndustryWhereUniqueInput>;
+}
+
+export interface CompanyUpdateOneRequiredWithoutEventsInput {
+  create?: Maybe<CompanyCreateWithoutEventsInput>;
+  update?: Maybe<CompanyUpdateWithoutEventsDataInput>;
+  upsert?: Maybe<CompanyUpsertWithoutEventsInput>;
+  connect?: Maybe<CompanyWhereUniqueInput>;
+}
+
+export interface IndustryCreateManyWithoutPurchasesInput {
+  create?: Maybe<
+    IndustryCreateWithoutPurchasesInput[] | IndustryCreateWithoutPurchasesInput
+  >;
+  connect?: Maybe<IndustryWhereUniqueInput[] | IndustryWhereUniqueInput>;
+}
+
+export interface CompanyUpdateWithoutEventsDataInput {
+  symbol?: Maybe<String>;
+  name?: Maybe<String>;
   area?: Maybe<String>;
   industry?: Maybe<String>;
   fullname?: Maybe<String>;
@@ -4424,12 +8599,169 @@ export interface CompanyCreateWithoutDailiesInput {
   isHS?: Maybe<String>;
   scope?: Maybe<String>;
   desc?: Maybe<String>;
-  purchases?: Maybe<CompanyProductCreateManyWithoutInputsInput>;
-  selles?: Maybe<CompanyProductCreateManyWithoutOutputsInput>;
-  comments?: Maybe<CommentCreateManyWithoutCompanyInput>;
+  purchases?: Maybe<CompanyProductUpdateManyWithoutInputsInput>;
+  selles?: Maybe<CompanyProductUpdateManyWithoutOutputsInput>;
+  comments?: Maybe<CommentUpdateManyWithoutCompanyInput>;
   pool?: Maybe<Boolean>;
-  trades?: Maybe<IndustryCreateManyWithoutCompaniesInput>;
-  events?: Maybe<CompanyEventCreateManyWithoutCompanyInput>;
+  trades?: Maybe<IndustryUpdateManyWithoutCompaniesInput>;
+  dailies?: Maybe<DailyUpdateManyWithoutCompanyInput>;
+  finaIndicators?: Maybe<FinaIndicatorUpdateManyWithoutCompanyInput>;
+}
+
+export type CompanyEventWhereUniqueInput = AtLeastOne<{
+  id: Maybe<ID_Input>;
+}>;
+
+export interface CompanyUpsertWithoutEventsInput {
+  update: CompanyUpdateWithoutEventsDataInput;
+  create: CompanyCreateWithoutEventsInput;
+}
+
+export type KeywordWhereUniqueInput = AtLeastOne<{
+  id: Maybe<ID_Input>;
+  name?: Maybe<String>;
+}>;
+
+export interface CompanyProductUpdateManyMutationInput {
+  name?: Maybe<String>;
+  introduce?: Maybe<String>;
+}
+
+export interface CompanyProductUpdateInput {
+  name?: Maybe<String>;
+  introduce?: Maybe<String>;
+  inputs?: Maybe<CompanyUpdateManyWithoutPurchasesInput>;
+  outputs?: Maybe<CompanyUpdateManyWithoutSellesInput>;
+}
+
+export interface CompanyProductCreateInput {
+  id?: Maybe<ID_Input>;
+  name: String;
+  introduce: String;
+  inputs?: Maybe<CompanyCreateManyWithoutPurchasesInput>;
+  outputs?: Maybe<CompanyCreateManyWithoutSellesInput>;
+}
+
+export interface CompanyEventUpdateManyMutationInput {
+  title?: Maybe<String>;
+  content?: Maybe<String>;
+  reportTime?: Maybe<DateTimeInput>;
+  happen?: Maybe<TimeKind>;
+  happenTime?: Maybe<DateTimeInput>;
+  influence?: Maybe<String>;
+  kind?: Maybe<FactorKind>;
+  dierction?: Maybe<Direction>;
+}
+
+export interface DailyUpdateManyMutationInput {
+  symbol?: Maybe<String>;
+  tradeDate?: Maybe<DateTimeInput>;
+  open?: Maybe<Float>;
+  high?: Maybe<Float>;
+  low?: Maybe<Float>;
+  close?: Maybe<Float>;
+  preClose?: Maybe<Float>;
+  change?: Maybe<Float>;
+  pctChg?: Maybe<Float>;
+  vol?: Maybe<Float>;
+  amount?: Maybe<Float>;
+}
+
+export type IndustryWhereUniqueInput = AtLeastOne<{
+  id: Maybe<ID_Input>;
+  name?: Maybe<String>;
+}>;
+
+export interface IndustryWhereInput {
+  id?: Maybe<ID_Input>;
+  id_not?: Maybe<ID_Input>;
+  id_in?: Maybe<ID_Input[] | ID_Input>;
+  id_not_in?: Maybe<ID_Input[] | ID_Input>;
+  id_lt?: Maybe<ID_Input>;
+  id_lte?: Maybe<ID_Input>;
+  id_gt?: Maybe<ID_Input>;
+  id_gte?: Maybe<ID_Input>;
+  id_contains?: Maybe<ID_Input>;
+  id_not_contains?: Maybe<ID_Input>;
+  id_starts_with?: Maybe<ID_Input>;
+  id_not_starts_with?: Maybe<ID_Input>;
+  id_ends_with?: Maybe<ID_Input>;
+  id_not_ends_with?: Maybe<ID_Input>;
+  code?: Maybe<String>;
+  code_not?: Maybe<String>;
+  code_in?: Maybe<String[] | String>;
+  code_not_in?: Maybe<String[] | String>;
+  code_lt?: Maybe<String>;
+  code_lte?: Maybe<String>;
+  code_gt?: Maybe<String>;
+  code_gte?: Maybe<String>;
+  code_contains?: Maybe<String>;
+  code_not_contains?: Maybe<String>;
+  code_starts_with?: Maybe<String>;
+  code_not_starts_with?: Maybe<String>;
+  code_ends_with?: Maybe<String>;
+  code_not_ends_with?: Maybe<String>;
+  name?: Maybe<String>;
+  name_not?: Maybe<String>;
+  name_in?: Maybe<String[] | String>;
+  name_not_in?: Maybe<String[] | String>;
+  name_lt?: Maybe<String>;
+  name_lte?: Maybe<String>;
+  name_gt?: Maybe<String>;
+  name_gte?: Maybe<String>;
+  name_contains?: Maybe<String>;
+  name_not_contains?: Maybe<String>;
+  name_starts_with?: Maybe<String>;
+  name_not_starts_with?: Maybe<String>;
+  name_ends_with?: Maybe<String>;
+  name_not_ends_with?: Maybe<String>;
+  desc?: Maybe<String>;
+  desc_not?: Maybe<String>;
+  desc_in?: Maybe<String[] | String>;
+  desc_not_in?: Maybe<String[] | String>;
+  desc_lt?: Maybe<String>;
+  desc_lte?: Maybe<String>;
+  desc_gt?: Maybe<String>;
+  desc_gte?: Maybe<String>;
+  desc_contains?: Maybe<String>;
+  desc_not_contains?: Maybe<String>;
+  desc_starts_with?: Maybe<String>;
+  desc_not_starts_with?: Maybe<String>;
+  desc_ends_with?: Maybe<String>;
+  desc_not_ends_with?: Maybe<String>;
+  researches_every?: Maybe<ResearchWhereInput>;
+  researches_some?: Maybe<ResearchWhereInput>;
+  researches_none?: Maybe<ResearchWhereInput>;
+  companies_every?: Maybe<CompanyWhereInput>;
+  companies_some?: Maybe<CompanyWhereInput>;
+  companies_none?: Maybe<CompanyWhereInput>;
+  influences_every?: Maybe<IndustryInfluenceWhereInput>;
+  influences_some?: Maybe<IndustryInfluenceWhereInput>;
+  influences_none?: Maybe<IndustryInfluenceWhereInput>;
+  purchases_every?: Maybe<ProductWhereInput>;
+  purchases_some?: Maybe<ProductWhereInput>;
+  purchases_none?: Maybe<ProductWhereInput>;
+  selles_every?: Maybe<ProductWhereInput>;
+  selles_some?: Maybe<ProductWhereInput>;
+  selles_none?: Maybe<ProductWhereInput>;
+  AND?: Maybe<IndustryWhereInput[] | IndustryWhereInput>;
+  OR?: Maybe<IndustryWhereInput[] | IndustryWhereInput>;
+  NOT?: Maybe<IndustryWhereInput[] | IndustryWhereInput>;
+}
+
+export interface CompanyEventCreateManyWithoutCompanyInput {
+  create?: Maybe<
+    | CompanyEventCreateWithoutCompanyInput[]
+    | CompanyEventCreateWithoutCompanyInput
+  >;
+  connect?: Maybe<
+    CompanyEventWhereUniqueInput[] | CompanyEventWhereUniqueInput
+  >;
+}
+
+export interface ResearchCreateManyInput {
+  create?: Maybe<ResearchCreateInput[] | ResearchCreateInput>;
+  connect?: Maybe<ResearchWhereUniqueInput[] | ResearchWhereUniqueInput>;
 }
 
 export interface NodeNode {
@@ -4461,6 +8793,49 @@ export interface UserPreviousValuesSubscription
   role: () => Promise<AsyncIterator<Role>>;
 }
 
+export interface CompanyEventConnection {
+  pageInfo: PageInfo;
+  edges: CompanyEventEdge[];
+}
+
+export interface CompanyEventConnectionPromise
+  extends Promise<CompanyEventConnection>,
+    Fragmentable {
+  pageInfo: <T = PageInfoPromise>() => T;
+  edges: <T = FragmentableArray<CompanyEventEdge>>() => T;
+  aggregate: <T = AggregateCompanyEventPromise>() => T;
+}
+
+export interface CompanyEventConnectionSubscription
+  extends Promise<AsyncIterator<CompanyEventConnection>>,
+    Fragmentable {
+  pageInfo: <T = PageInfoSubscription>() => T;
+  edges: <T = Promise<AsyncIterator<CompanyEventEdgeSubscription>>>() => T;
+  aggregate: <T = AggregateCompanyEventSubscription>() => T;
+}
+
+export interface ProductPreviousValues {
+  id: ID_Output;
+  name: String;
+  introduce: String;
+}
+
+export interface ProductPreviousValuesPromise
+  extends Promise<ProductPreviousValues>,
+    Fragmentable {
+  id: () => Promise<ID_Output>;
+  name: () => Promise<String>;
+  introduce: () => Promise<String>;
+}
+
+export interface ProductPreviousValuesSubscription
+  extends Promise<AsyncIterator<ProductPreviousValues>>,
+    Fragmentable {
+  id: () => Promise<AsyncIterator<ID_Output>>;
+  name: () => Promise<AsyncIterator<String>>;
+  introduce: () => Promise<AsyncIterator<String>>;
+}
+
 export interface AggregateCompany {
   count: Int;
 }
@@ -4475,6 +8850,1735 @@ export interface AggregateCompanySubscription
   extends Promise<AsyncIterator<AggregateCompany>>,
     Fragmentable {
   count: () => Promise<AsyncIterator<Int>>;
+}
+
+export interface CompanyConnection {
+  pageInfo: PageInfo;
+  edges: CompanyEdge[];
+}
+
+export interface CompanyConnectionPromise
+  extends Promise<CompanyConnection>,
+    Fragmentable {
+  pageInfo: <T = PageInfoPromise>() => T;
+  edges: <T = FragmentableArray<CompanyEdge>>() => T;
+  aggregate: <T = AggregateCompanyPromise>() => T;
+}
+
+export interface CompanyConnectionSubscription
+  extends Promise<AsyncIterator<CompanyConnection>>,
+    Fragmentable {
+  pageInfo: <T = PageInfoSubscription>() => T;
+  edges: <T = Promise<AsyncIterator<CompanyEdgeSubscription>>>() => T;
+  aggregate: <T = AggregateCompanySubscription>() => T;
+}
+
+export interface CompanyEdge {
+  node: Company;
+  cursor: String;
+}
+
+export interface CompanyEdgePromise extends Promise<CompanyEdge>, Fragmentable {
+  node: <T = CompanyPromise>() => T;
+  cursor: () => Promise<String>;
+}
+
+export interface CompanyEdgeSubscription
+  extends Promise<AsyncIterator<CompanyEdge>>,
+    Fragmentable {
+  node: <T = CompanySubscription>() => T;
+  cursor: () => Promise<AsyncIterator<String>>;
+}
+
+export interface AggregateUser {
+  count: Int;
+}
+
+export interface AggregateUserPromise
+  extends Promise<AggregateUser>,
+    Fragmentable {
+  count: () => Promise<Int>;
+}
+
+export interface AggregateUserSubscription
+  extends Promise<AsyncIterator<AggregateUser>>,
+    Fragmentable {
+  count: () => Promise<AsyncIterator<Int>>;
+}
+
+export interface BatchPayload {
+  count: Long;
+}
+
+export interface BatchPayloadPromise
+  extends Promise<BatchPayload>,
+    Fragmentable {
+  count: () => Promise<Long>;
+}
+
+export interface BatchPayloadSubscription
+  extends Promise<AsyncIterator<BatchPayload>>,
+    Fragmentable {
+  count: () => Promise<AsyncIterator<Long>>;
+}
+
+export interface UserConnection {
+  pageInfo: PageInfo;
+  edges: UserEdge[];
+}
+
+export interface UserConnectionPromise
+  extends Promise<UserConnection>,
+    Fragmentable {
+  pageInfo: <T = PageInfoPromise>() => T;
+  edges: <T = FragmentableArray<UserEdge>>() => T;
+  aggregate: <T = AggregateUserPromise>() => T;
+}
+
+export interface UserConnectionSubscription
+  extends Promise<AsyncIterator<UserConnection>>,
+    Fragmentable {
+  pageInfo: <T = PageInfoSubscription>() => T;
+  edges: <T = Promise<AsyncIterator<UserEdgeSubscription>>>() => T;
+  aggregate: <T = AggregateUserSubscription>() => T;
+}
+
+export interface AggregateComment {
+  count: Int;
+}
+
+export interface AggregateCommentPromise
+  extends Promise<AggregateComment>,
+    Fragmentable {
+  count: () => Promise<Int>;
+}
+
+export interface AggregateCommentSubscription
+  extends Promise<AsyncIterator<AggregateComment>>,
+    Fragmentable {
+  count: () => Promise<AsyncIterator<Int>>;
+}
+
+export interface ResearchSubscriptionPayload {
+  mutation: MutationType;
+  node: Research;
+  updatedFields: String[];
+  previousValues: ResearchPreviousValues;
+}
+
+export interface ResearchSubscriptionPayloadPromise
+  extends Promise<ResearchSubscriptionPayload>,
+    Fragmentable {
+  mutation: () => Promise<MutationType>;
+  node: <T = ResearchPromise>() => T;
+  updatedFields: () => Promise<String[]>;
+  previousValues: <T = ResearchPreviousValuesPromise>() => T;
+}
+
+export interface ResearchSubscriptionPayloadSubscription
+  extends Promise<AsyncIterator<ResearchSubscriptionPayload>>,
+    Fragmentable {
+  mutation: () => Promise<AsyncIterator<MutationType>>;
+  node: <T = ResearchSubscription>() => T;
+  updatedFields: () => Promise<AsyncIterator<String[]>>;
+  previousValues: <T = ResearchPreviousValuesSubscription>() => T;
+}
+
+export interface CommentEdge {
+  node: Comment;
+  cursor: String;
+}
+
+export interface CommentEdgePromise extends Promise<CommentEdge>, Fragmentable {
+  node: <T = CommentPromise>() => T;
+  cursor: () => Promise<String>;
+}
+
+export interface CommentEdgeSubscription
+  extends Promise<AsyncIterator<CommentEdge>>,
+    Fragmentable {
+  node: <T = CommentSubscription>() => T;
+  cursor: () => Promise<AsyncIterator<String>>;
+}
+
+export interface AggregateResearch {
+  count: Int;
+}
+
+export interface AggregateResearchPromise
+  extends Promise<AggregateResearch>,
+    Fragmentable {
+  count: () => Promise<Int>;
+}
+
+export interface AggregateResearchSubscription
+  extends Promise<AsyncIterator<AggregateResearch>>,
+    Fragmentable {
+  count: () => Promise<AsyncIterator<Int>>;
+}
+
+export interface PageInfo {
+  hasNextPage: Boolean;
+  hasPreviousPage: Boolean;
+  startCursor?: String;
+  endCursor?: String;
+}
+
+export interface PageInfoPromise extends Promise<PageInfo>, Fragmentable {
+  hasNextPage: () => Promise<Boolean>;
+  hasPreviousPage: () => Promise<Boolean>;
+  startCursor: () => Promise<String>;
+  endCursor: () => Promise<String>;
+}
+
+export interface PageInfoSubscription
+  extends Promise<AsyncIterator<PageInfo>>,
+    Fragmentable {
+  hasNextPage: () => Promise<AsyncIterator<Boolean>>;
+  hasPreviousPage: () => Promise<AsyncIterator<Boolean>>;
+  startCursor: () => Promise<AsyncIterator<String>>;
+  endCursor: () => Promise<AsyncIterator<String>>;
+}
+
+export interface ResearchConnection {
+  pageInfo: PageInfo;
+  edges: ResearchEdge[];
+}
+
+export interface ResearchConnectionPromise
+  extends Promise<ResearchConnection>,
+    Fragmentable {
+  pageInfo: <T = PageInfoPromise>() => T;
+  edges: <T = FragmentableArray<ResearchEdge>>() => T;
+  aggregate: <T = AggregateResearchPromise>() => T;
+}
+
+export interface ResearchConnectionSubscription
+  extends Promise<AsyncIterator<ResearchConnection>>,
+    Fragmentable {
+  pageInfo: <T = PageInfoSubscription>() => T;
+  edges: <T = Promise<AsyncIterator<ResearchEdgeSubscription>>>() => T;
+  aggregate: <T = AggregateResearchSubscription>() => T;
+}
+
+export interface Comment {
+  id: ID_Output;
+  createTime?: DateTimeOutput;
+  desc: String;
+}
+
+export interface CommentPromise extends Promise<Comment>, Fragmentable {
+  id: () => Promise<ID_Output>;
+  createTime: () => Promise<DateTimeOutput>;
+  desc: () => Promise<String>;
+  company: <T = CompanyPromise>() => T;
+}
+
+export interface CommentSubscription
+  extends Promise<AsyncIterator<Comment>>,
+    Fragmentable {
+  id: () => Promise<AsyncIterator<ID_Output>>;
+  createTime: () => Promise<AsyncIterator<DateTimeOutput>>;
+  desc: () => Promise<AsyncIterator<String>>;
+  company: <T = CompanySubscription>() => T;
+}
+
+export interface CommentNullablePromise
+  extends Promise<Comment | null>,
+    Fragmentable {
+  id: () => Promise<ID_Output>;
+  createTime: () => Promise<DateTimeOutput>;
+  desc: () => Promise<String>;
+  company: <T = CompanyPromise>() => T;
+}
+
+export interface ProductEdge {
+  node: Product;
+  cursor: String;
+}
+
+export interface ProductEdgePromise extends Promise<ProductEdge>, Fragmentable {
+  node: <T = ProductPromise>() => T;
+  cursor: () => Promise<String>;
+}
+
+export interface ProductEdgeSubscription
+  extends Promise<AsyncIterator<ProductEdge>>,
+    Fragmentable {
+  node: <T = ProductSubscription>() => T;
+  cursor: () => Promise<AsyncIterator<String>>;
+}
+
+export interface CommentSubscriptionPayload {
+  mutation: MutationType;
+  node: Comment;
+  updatedFields: String[];
+  previousValues: CommentPreviousValues;
+}
+
+export interface CommentSubscriptionPayloadPromise
+  extends Promise<CommentSubscriptionPayload>,
+    Fragmentable {
+  mutation: () => Promise<MutationType>;
+  node: <T = CommentPromise>() => T;
+  updatedFields: () => Promise<String[]>;
+  previousValues: <T = CommentPreviousValuesPromise>() => T;
+}
+
+export interface CommentSubscriptionPayloadSubscription
+  extends Promise<AsyncIterator<CommentSubscriptionPayload>>,
+    Fragmentable {
+  mutation: () => Promise<AsyncIterator<MutationType>>;
+  node: <T = CommentSubscription>() => T;
+  updatedFields: () => Promise<AsyncIterator<String[]>>;
+  previousValues: <T = CommentPreviousValuesSubscription>() => T;
+}
+
+export interface AggregateKeyword {
+  count: Int;
+}
+
+export interface AggregateKeywordPromise
+  extends Promise<AggregateKeyword>,
+    Fragmentable {
+  count: () => Promise<Int>;
+}
+
+export interface AggregateKeywordSubscription
+  extends Promise<AsyncIterator<AggregateKeyword>>,
+    Fragmentable {
+  count: () => Promise<AsyncIterator<Int>>;
+}
+
+export interface CommentPreviousValues {
+  id: ID_Output;
+  createTime?: DateTimeOutput;
+  desc: String;
+}
+
+export interface CommentPreviousValuesPromise
+  extends Promise<CommentPreviousValues>,
+    Fragmentable {
+  id: () => Promise<ID_Output>;
+  createTime: () => Promise<DateTimeOutput>;
+  desc: () => Promise<String>;
+}
+
+export interface CommentPreviousValuesSubscription
+  extends Promise<AsyncIterator<CommentPreviousValues>>,
+    Fragmentable {
+  id: () => Promise<AsyncIterator<ID_Output>>;
+  createTime: () => Promise<AsyncIterator<DateTimeOutput>>;
+  desc: () => Promise<AsyncIterator<String>>;
+}
+
+export interface KeywordConnection {
+  pageInfo: PageInfo;
+  edges: KeywordEdge[];
+}
+
+export interface KeywordConnectionPromise
+  extends Promise<KeywordConnection>,
+    Fragmentable {
+  pageInfo: <T = PageInfoPromise>() => T;
+  edges: <T = FragmentableArray<KeywordEdge>>() => T;
+  aggregate: <T = AggregateKeywordPromise>() => T;
+}
+
+export interface KeywordConnectionSubscription
+  extends Promise<AsyncIterator<KeywordConnection>>,
+    Fragmentable {
+  pageInfo: <T = PageInfoSubscription>() => T;
+  edges: <T = Promise<AsyncIterator<KeywordEdgeSubscription>>>() => T;
+  aggregate: <T = AggregateKeywordSubscription>() => T;
+}
+
+export interface CommentConnection {
+  pageInfo: PageInfo;
+  edges: CommentEdge[];
+}
+
+export interface CommentConnectionPromise
+  extends Promise<CommentConnection>,
+    Fragmentable {
+  pageInfo: <T = PageInfoPromise>() => T;
+  edges: <T = FragmentableArray<CommentEdge>>() => T;
+  aggregate: <T = AggregateCommentPromise>() => T;
+}
+
+export interface CommentConnectionSubscription
+  extends Promise<AsyncIterator<CommentConnection>>,
+    Fragmentable {
+  pageInfo: <T = PageInfoSubscription>() => T;
+  edges: <T = Promise<AsyncIterator<CommentEdgeSubscription>>>() => T;
+  aggregate: <T = AggregateCommentSubscription>() => T;
+}
+
+export interface IndustryInfluenceEdge {
+  node: IndustryInfluence;
+  cursor: String;
+}
+
+export interface IndustryInfluenceEdgePromise
+  extends Promise<IndustryInfluenceEdge>,
+    Fragmentable {
+  node: <T = IndustryInfluencePromise>() => T;
+  cursor: () => Promise<String>;
+}
+
+export interface IndustryInfluenceEdgeSubscription
+  extends Promise<AsyncIterator<IndustryInfluenceEdge>>,
+    Fragmentable {
+  node: <T = IndustryInfluenceSubscription>() => T;
+  cursor: () => Promise<AsyncIterator<String>>;
+}
+
+export interface CompanySubscriptionPayload {
+  mutation: MutationType;
+  node: Company;
+  updatedFields: String[];
+  previousValues: CompanyPreviousValues;
+}
+
+export interface CompanySubscriptionPayloadPromise
+  extends Promise<CompanySubscriptionPayload>,
+    Fragmentable {
+  mutation: () => Promise<MutationType>;
+  node: <T = CompanyPromise>() => T;
+  updatedFields: () => Promise<String[]>;
+  previousValues: <T = CompanyPreviousValuesPromise>() => T;
+}
+
+export interface CompanySubscriptionPayloadSubscription
+  extends Promise<AsyncIterator<CompanySubscriptionPayload>>,
+    Fragmentable {
+  mutation: () => Promise<AsyncIterator<MutationType>>;
+  node: <T = CompanySubscription>() => T;
+  updatedFields: () => Promise<AsyncIterator<String[]>>;
+  previousValues: <T = CompanyPreviousValuesSubscription>() => T;
+}
+
+export interface AggregateIndustryEvent {
+  count: Int;
+}
+
+export interface AggregateIndustryEventPromise
+  extends Promise<AggregateIndustryEvent>,
+    Fragmentable {
+  count: () => Promise<Int>;
+}
+
+export interface AggregateIndustryEventSubscription
+  extends Promise<AsyncIterator<AggregateIndustryEvent>>,
+    Fragmentable {
+  count: () => Promise<AsyncIterator<Int>>;
+}
+
+export interface CompanyPreviousValues {
+  id: ID_Output;
+  symbol: String;
+  name: String;
+  area?: String;
+  industry?: String;
+  fullname?: String;
+  enname?: String;
+  market?: String;
+  exchange?: String;
+  currType?: String;
+  listStatus?: String;
+  listDate?: String;
+  delistDate?: String;
+  isHS?: String;
+  scope?: String;
+  desc?: String;
+  pool?: Boolean;
+}
+
+export interface CompanyPreviousValuesPromise
+  extends Promise<CompanyPreviousValues>,
+    Fragmentable {
+  id: () => Promise<ID_Output>;
+  symbol: () => Promise<String>;
+  name: () => Promise<String>;
+  area: () => Promise<String>;
+  industry: () => Promise<String>;
+  fullname: () => Promise<String>;
+  enname: () => Promise<String>;
+  market: () => Promise<String>;
+  exchange: () => Promise<String>;
+  currType: () => Promise<String>;
+  listStatus: () => Promise<String>;
+  listDate: () => Promise<String>;
+  delistDate: () => Promise<String>;
+  isHS: () => Promise<String>;
+  scope: () => Promise<String>;
+  desc: () => Promise<String>;
+  pool: () => Promise<Boolean>;
+}
+
+export interface CompanyPreviousValuesSubscription
+  extends Promise<AsyncIterator<CompanyPreviousValues>>,
+    Fragmentable {
+  id: () => Promise<AsyncIterator<ID_Output>>;
+  symbol: () => Promise<AsyncIterator<String>>;
+  name: () => Promise<AsyncIterator<String>>;
+  area: () => Promise<AsyncIterator<String>>;
+  industry: () => Promise<AsyncIterator<String>>;
+  fullname: () => Promise<AsyncIterator<String>>;
+  enname: () => Promise<AsyncIterator<String>>;
+  market: () => Promise<AsyncIterator<String>>;
+  exchange: () => Promise<AsyncIterator<String>>;
+  currType: () => Promise<AsyncIterator<String>>;
+  listStatus: () => Promise<AsyncIterator<String>>;
+  listDate: () => Promise<AsyncIterator<String>>;
+  delistDate: () => Promise<AsyncIterator<String>>;
+  isHS: () => Promise<AsyncIterator<String>>;
+  scope: () => Promise<AsyncIterator<String>>;
+  desc: () => Promise<AsyncIterator<String>>;
+  pool: () => Promise<AsyncIterator<Boolean>>;
+}
+
+export interface IndustryEventConnection {
+  pageInfo: PageInfo;
+  edges: IndustryEventEdge[];
+}
+
+export interface IndustryEventConnectionPromise
+  extends Promise<IndustryEventConnection>,
+    Fragmentable {
+  pageInfo: <T = PageInfoPromise>() => T;
+  edges: <T = FragmentableArray<IndustryEventEdge>>() => T;
+  aggregate: <T = AggregateIndustryEventPromise>() => T;
+}
+
+export interface IndustryEventConnectionSubscription
+  extends Promise<AsyncIterator<IndustryEventConnection>>,
+    Fragmentable {
+  pageInfo: <T = PageInfoSubscription>() => T;
+  edges: <T = Promise<AsyncIterator<IndustryEventEdgeSubscription>>>() => T;
+  aggregate: <T = AggregateIndustryEventSubscription>() => T;
+}
+
+export interface FinaIndicator {
+  id: ID_Output;
+  symbol?: String;
+  annDate?: String;
+  endDate?: String;
+  eps?: Float;
+  dtEps?: Float;
+  totalRevenuePs?: Float;
+  revenuePs?: Float;
+  capitalResePs?: Float;
+  surplusResePs?: Float;
+  undistProfitPs?: Float;
+  extraItem?: Float;
+  profitDedt?: Float;
+  grossMargin?: Float;
+  currentRatio?: Float;
+  quickRatio?: Float;
+  cashRatio?: Float;
+  invturnDays?: Float;
+  arturnDays?: Float;
+  invTurn?: Float;
+  arTurn?: Float;
+  caTurn?: Float;
+  faTurn?: Float;
+  assetsTurn?: Float;
+  opIncome?: Float;
+  valuechangeIncome?: Float;
+  interstIncome?: Float;
+  daa?: Float;
+  ebit?: Float;
+  ebitda?: Float;
+  fcff?: Float;
+  fcfe?: Float;
+  currentExint?: Float;
+  noncurrentExint?: Float;
+  interestdebt?: Float;
+  netdebt?: Float;
+  tangibleAsset?: Float;
+  workingCapital?: Float;
+  networkingCapital?: Float;
+  investCapital?: Float;
+  retainedEarnings?: Float;
+  diluted2Eps?: Float;
+  bps?: Float;
+  ocfps?: Float;
+  retainedps?: Float;
+  cfps?: Float;
+  ebitPs?: Float;
+  fcffPs?: Float;
+  fcfePs?: Float;
+  netprofitMargin?: Float;
+  grossprofitMargin?: Float;
+  cogsOfSales?: Float;
+  expenseOfSales?: Float;
+  profitToGr?: Float;
+  saleexpToGr?: Float;
+  adminexpOfGr?: Float;
+  finaexpOfGr?: Float;
+  impaiTtm?: Float;
+  gcOfGr?: Float;
+  opOfGr?: Float;
+  ebitOfGr?: Float;
+  roe?: Float;
+  roeWaa?: Float;
+  roeDt?: Float;
+  roa?: Float;
+  npta?: Float;
+  roic?: Float;
+  roeYearly?: Float;
+  roa2Yearly?: Float;
+  roeAvg?: Float;
+  opincomeOfEbt?: Float;
+  investincomeOfEbt?: Float;
+  nOpProfitOfEbt?: Float;
+  taxToEbt?: Float;
+  dtprofitToProfit?: Float;
+  salescashToOr?: Float;
+  ocfToOr?: Float;
+  ocfToOpincome?: Float;
+  capitalizedToDa?: Float;
+  debtToAssets?: Float;
+  assetsToEqt?: Float;
+  dpAssetsToEqt?: Float;
+  caToAssets?: Float;
+  ncaToAssets?: Float;
+  tbassetsToTotalassets?: Float;
+  intToTalcap?: Float;
+  eqtToTalcapital?: Float;
+  currentdebtToDebt?: Float;
+  longdebToDebt?: Float;
+  ocfToShortdebt?: Float;
+  debtToEqt?: Float;
+  eqtToDebt?: Float;
+  eqtToInterestdebt?: Float;
+  tangibleassetToDebt?: Float;
+  tangassetToIntdebt?: Float;
+  tangibleassetToNetdebt?: Float;
+  ocfToDebt?: Float;
+  ocfToInterestdebt?: Float;
+  ocfToNetdebt?: Float;
+  ebitToInterest?: Float;
+  longdebtToWorkingcapital?: Float;
+  ebitdaToDebt?: Float;
+  turnDays?: Float;
+  roaYearly?: Float;
+  roaDp?: Float;
+  fixedAssets?: Float;
+  profitPrefinExp?: Float;
+  nonOpProfit?: Float;
+  opToEbt?: Float;
+  nopToEbt?: Float;
+  ocfToProfit?: Float;
+  cashToLiqdebt?: Float;
+  cashToLiqdebtWithinterest?: Float;
+  opToLiqdebt?: Float;
+  opToDebt?: Float;
+  roicYearly?: Float;
+  totalFaTrun?: Float;
+  profitToOp?: Float;
+  qOpincome?: Float;
+  qInvestincome?: Float;
+  qDtprofit?: Float;
+  qEps?: Float;
+  qNetprofitMargin?: Float;
+  qGsprofitMargin?: Float;
+  qExpToSales?: Float;
+  qProfitToGr?: Float;
+  qSaleexpToGr?: Float;
+  qAdminexpToGr?: Float;
+  qFinaexpToGr?: Float;
+  qImpairToGrTtm?: Float;
+  qGcToGr?: Float;
+  qOpToGr?: Float;
+  qRoe?: Float;
+  qDtRoe?: Float;
+  qNpta?: Float;
+  qOpincomeToEbt?: Float;
+  qInvestincomeToEbt?: Float;
+  qDtprofitToProfit?: Float;
+  qSalescashToOr?: Float;
+  qOcfToSales?: Float;
+  qOcfToOr?: Float;
+  basicEpsYoy?: Float;
+  dtEpsYoy?: Float;
+  cfpsYoy?: Float;
+  opYoy?: Float;
+  ebtYoy?: Float;
+  netprofitYoy?: Float;
+  dtNetprofitYoy?: Float;
+  ocfYoy?: Float;
+  roeYoy?: Float;
+  bpsYoy?: Float;
+  assetsYoy?: Float;
+  eqtYoy?: Float;
+  trYoy?: Float;
+  orYoy?: Float;
+  qGrYoy?: Float;
+  qGrQoq?: Float;
+  qSalesYoy?: Float;
+  qSalesQoq?: Float;
+  qOpYoy?: Float;
+  qOpQoq?: Float;
+  qProfitYoy?: Float;
+  qProfitQoq?: Float;
+  qNetprofitYoy?: Float;
+  qNetprofitQoq?: Float;
+  equityYoy?: Float;
+  rdExp?: Float;
+  updateFlag?: String;
+}
+
+export interface FinaIndicatorPromise
+  extends Promise<FinaIndicator>,
+    Fragmentable {
+  id: () => Promise<ID_Output>;
+  company: <T = CompanyPromise>() => T;
+  symbol: () => Promise<String>;
+  annDate: () => Promise<String>;
+  endDate: () => Promise<String>;
+  eps: () => Promise<Float>;
+  dtEps: () => Promise<Float>;
+  totalRevenuePs: () => Promise<Float>;
+  revenuePs: () => Promise<Float>;
+  capitalResePs: () => Promise<Float>;
+  surplusResePs: () => Promise<Float>;
+  undistProfitPs: () => Promise<Float>;
+  extraItem: () => Promise<Float>;
+  profitDedt: () => Promise<Float>;
+  grossMargin: () => Promise<Float>;
+  currentRatio: () => Promise<Float>;
+  quickRatio: () => Promise<Float>;
+  cashRatio: () => Promise<Float>;
+  invturnDays: () => Promise<Float>;
+  arturnDays: () => Promise<Float>;
+  invTurn: () => Promise<Float>;
+  arTurn: () => Promise<Float>;
+  caTurn: () => Promise<Float>;
+  faTurn: () => Promise<Float>;
+  assetsTurn: () => Promise<Float>;
+  opIncome: () => Promise<Float>;
+  valuechangeIncome: () => Promise<Float>;
+  interstIncome: () => Promise<Float>;
+  daa: () => Promise<Float>;
+  ebit: () => Promise<Float>;
+  ebitda: () => Promise<Float>;
+  fcff: () => Promise<Float>;
+  fcfe: () => Promise<Float>;
+  currentExint: () => Promise<Float>;
+  noncurrentExint: () => Promise<Float>;
+  interestdebt: () => Promise<Float>;
+  netdebt: () => Promise<Float>;
+  tangibleAsset: () => Promise<Float>;
+  workingCapital: () => Promise<Float>;
+  networkingCapital: () => Promise<Float>;
+  investCapital: () => Promise<Float>;
+  retainedEarnings: () => Promise<Float>;
+  diluted2Eps: () => Promise<Float>;
+  bps: () => Promise<Float>;
+  ocfps: () => Promise<Float>;
+  retainedps: () => Promise<Float>;
+  cfps: () => Promise<Float>;
+  ebitPs: () => Promise<Float>;
+  fcffPs: () => Promise<Float>;
+  fcfePs: () => Promise<Float>;
+  netprofitMargin: () => Promise<Float>;
+  grossprofitMargin: () => Promise<Float>;
+  cogsOfSales: () => Promise<Float>;
+  expenseOfSales: () => Promise<Float>;
+  profitToGr: () => Promise<Float>;
+  saleexpToGr: () => Promise<Float>;
+  adminexpOfGr: () => Promise<Float>;
+  finaexpOfGr: () => Promise<Float>;
+  impaiTtm: () => Promise<Float>;
+  gcOfGr: () => Promise<Float>;
+  opOfGr: () => Promise<Float>;
+  ebitOfGr: () => Promise<Float>;
+  roe: () => Promise<Float>;
+  roeWaa: () => Promise<Float>;
+  roeDt: () => Promise<Float>;
+  roa: () => Promise<Float>;
+  npta: () => Promise<Float>;
+  roic: () => Promise<Float>;
+  roeYearly: () => Promise<Float>;
+  roa2Yearly: () => Promise<Float>;
+  roeAvg: () => Promise<Float>;
+  opincomeOfEbt: () => Promise<Float>;
+  investincomeOfEbt: () => Promise<Float>;
+  nOpProfitOfEbt: () => Promise<Float>;
+  taxToEbt: () => Promise<Float>;
+  dtprofitToProfit: () => Promise<Float>;
+  salescashToOr: () => Promise<Float>;
+  ocfToOr: () => Promise<Float>;
+  ocfToOpincome: () => Promise<Float>;
+  capitalizedToDa: () => Promise<Float>;
+  debtToAssets: () => Promise<Float>;
+  assetsToEqt: () => Promise<Float>;
+  dpAssetsToEqt: () => Promise<Float>;
+  caToAssets: () => Promise<Float>;
+  ncaToAssets: () => Promise<Float>;
+  tbassetsToTotalassets: () => Promise<Float>;
+  intToTalcap: () => Promise<Float>;
+  eqtToTalcapital: () => Promise<Float>;
+  currentdebtToDebt: () => Promise<Float>;
+  longdebToDebt: () => Promise<Float>;
+  ocfToShortdebt: () => Promise<Float>;
+  debtToEqt: () => Promise<Float>;
+  eqtToDebt: () => Promise<Float>;
+  eqtToInterestdebt: () => Promise<Float>;
+  tangibleassetToDebt: () => Promise<Float>;
+  tangassetToIntdebt: () => Promise<Float>;
+  tangibleassetToNetdebt: () => Promise<Float>;
+  ocfToDebt: () => Promise<Float>;
+  ocfToInterestdebt: () => Promise<Float>;
+  ocfToNetdebt: () => Promise<Float>;
+  ebitToInterest: () => Promise<Float>;
+  longdebtToWorkingcapital: () => Promise<Float>;
+  ebitdaToDebt: () => Promise<Float>;
+  turnDays: () => Promise<Float>;
+  roaYearly: () => Promise<Float>;
+  roaDp: () => Promise<Float>;
+  fixedAssets: () => Promise<Float>;
+  profitPrefinExp: () => Promise<Float>;
+  nonOpProfit: () => Promise<Float>;
+  opToEbt: () => Promise<Float>;
+  nopToEbt: () => Promise<Float>;
+  ocfToProfit: () => Promise<Float>;
+  cashToLiqdebt: () => Promise<Float>;
+  cashToLiqdebtWithinterest: () => Promise<Float>;
+  opToLiqdebt: () => Promise<Float>;
+  opToDebt: () => Promise<Float>;
+  roicYearly: () => Promise<Float>;
+  totalFaTrun: () => Promise<Float>;
+  profitToOp: () => Promise<Float>;
+  qOpincome: () => Promise<Float>;
+  qInvestincome: () => Promise<Float>;
+  qDtprofit: () => Promise<Float>;
+  qEps: () => Promise<Float>;
+  qNetprofitMargin: () => Promise<Float>;
+  qGsprofitMargin: () => Promise<Float>;
+  qExpToSales: () => Promise<Float>;
+  qProfitToGr: () => Promise<Float>;
+  qSaleexpToGr: () => Promise<Float>;
+  qAdminexpToGr: () => Promise<Float>;
+  qFinaexpToGr: () => Promise<Float>;
+  qImpairToGrTtm: () => Promise<Float>;
+  qGcToGr: () => Promise<Float>;
+  qOpToGr: () => Promise<Float>;
+  qRoe: () => Promise<Float>;
+  qDtRoe: () => Promise<Float>;
+  qNpta: () => Promise<Float>;
+  qOpincomeToEbt: () => Promise<Float>;
+  qInvestincomeToEbt: () => Promise<Float>;
+  qDtprofitToProfit: () => Promise<Float>;
+  qSalescashToOr: () => Promise<Float>;
+  qOcfToSales: () => Promise<Float>;
+  qOcfToOr: () => Promise<Float>;
+  basicEpsYoy: () => Promise<Float>;
+  dtEpsYoy: () => Promise<Float>;
+  cfpsYoy: () => Promise<Float>;
+  opYoy: () => Promise<Float>;
+  ebtYoy: () => Promise<Float>;
+  netprofitYoy: () => Promise<Float>;
+  dtNetprofitYoy: () => Promise<Float>;
+  ocfYoy: () => Promise<Float>;
+  roeYoy: () => Promise<Float>;
+  bpsYoy: () => Promise<Float>;
+  assetsYoy: () => Promise<Float>;
+  eqtYoy: () => Promise<Float>;
+  trYoy: () => Promise<Float>;
+  orYoy: () => Promise<Float>;
+  qGrYoy: () => Promise<Float>;
+  qGrQoq: () => Promise<Float>;
+  qSalesYoy: () => Promise<Float>;
+  qSalesQoq: () => Promise<Float>;
+  qOpYoy: () => Promise<Float>;
+  qOpQoq: () => Promise<Float>;
+  qProfitYoy: () => Promise<Float>;
+  qProfitQoq: () => Promise<Float>;
+  qNetprofitYoy: () => Promise<Float>;
+  qNetprofitQoq: () => Promise<Float>;
+  equityYoy: () => Promise<Float>;
+  rdExp: () => Promise<Float>;
+  updateFlag: () => Promise<String>;
+}
+
+export interface FinaIndicatorSubscription
+  extends Promise<AsyncIterator<FinaIndicator>>,
+    Fragmentable {
+  id: () => Promise<AsyncIterator<ID_Output>>;
+  company: <T = CompanySubscription>() => T;
+  symbol: () => Promise<AsyncIterator<String>>;
+  annDate: () => Promise<AsyncIterator<String>>;
+  endDate: () => Promise<AsyncIterator<String>>;
+  eps: () => Promise<AsyncIterator<Float>>;
+  dtEps: () => Promise<AsyncIterator<Float>>;
+  totalRevenuePs: () => Promise<AsyncIterator<Float>>;
+  revenuePs: () => Promise<AsyncIterator<Float>>;
+  capitalResePs: () => Promise<AsyncIterator<Float>>;
+  surplusResePs: () => Promise<AsyncIterator<Float>>;
+  undistProfitPs: () => Promise<AsyncIterator<Float>>;
+  extraItem: () => Promise<AsyncIterator<Float>>;
+  profitDedt: () => Promise<AsyncIterator<Float>>;
+  grossMargin: () => Promise<AsyncIterator<Float>>;
+  currentRatio: () => Promise<AsyncIterator<Float>>;
+  quickRatio: () => Promise<AsyncIterator<Float>>;
+  cashRatio: () => Promise<AsyncIterator<Float>>;
+  invturnDays: () => Promise<AsyncIterator<Float>>;
+  arturnDays: () => Promise<AsyncIterator<Float>>;
+  invTurn: () => Promise<AsyncIterator<Float>>;
+  arTurn: () => Promise<AsyncIterator<Float>>;
+  caTurn: () => Promise<AsyncIterator<Float>>;
+  faTurn: () => Promise<AsyncIterator<Float>>;
+  assetsTurn: () => Promise<AsyncIterator<Float>>;
+  opIncome: () => Promise<AsyncIterator<Float>>;
+  valuechangeIncome: () => Promise<AsyncIterator<Float>>;
+  interstIncome: () => Promise<AsyncIterator<Float>>;
+  daa: () => Promise<AsyncIterator<Float>>;
+  ebit: () => Promise<AsyncIterator<Float>>;
+  ebitda: () => Promise<AsyncIterator<Float>>;
+  fcff: () => Promise<AsyncIterator<Float>>;
+  fcfe: () => Promise<AsyncIterator<Float>>;
+  currentExint: () => Promise<AsyncIterator<Float>>;
+  noncurrentExint: () => Promise<AsyncIterator<Float>>;
+  interestdebt: () => Promise<AsyncIterator<Float>>;
+  netdebt: () => Promise<AsyncIterator<Float>>;
+  tangibleAsset: () => Promise<AsyncIterator<Float>>;
+  workingCapital: () => Promise<AsyncIterator<Float>>;
+  networkingCapital: () => Promise<AsyncIterator<Float>>;
+  investCapital: () => Promise<AsyncIterator<Float>>;
+  retainedEarnings: () => Promise<AsyncIterator<Float>>;
+  diluted2Eps: () => Promise<AsyncIterator<Float>>;
+  bps: () => Promise<AsyncIterator<Float>>;
+  ocfps: () => Promise<AsyncIterator<Float>>;
+  retainedps: () => Promise<AsyncIterator<Float>>;
+  cfps: () => Promise<AsyncIterator<Float>>;
+  ebitPs: () => Promise<AsyncIterator<Float>>;
+  fcffPs: () => Promise<AsyncIterator<Float>>;
+  fcfePs: () => Promise<AsyncIterator<Float>>;
+  netprofitMargin: () => Promise<AsyncIterator<Float>>;
+  grossprofitMargin: () => Promise<AsyncIterator<Float>>;
+  cogsOfSales: () => Promise<AsyncIterator<Float>>;
+  expenseOfSales: () => Promise<AsyncIterator<Float>>;
+  profitToGr: () => Promise<AsyncIterator<Float>>;
+  saleexpToGr: () => Promise<AsyncIterator<Float>>;
+  adminexpOfGr: () => Promise<AsyncIterator<Float>>;
+  finaexpOfGr: () => Promise<AsyncIterator<Float>>;
+  impaiTtm: () => Promise<AsyncIterator<Float>>;
+  gcOfGr: () => Promise<AsyncIterator<Float>>;
+  opOfGr: () => Promise<AsyncIterator<Float>>;
+  ebitOfGr: () => Promise<AsyncIterator<Float>>;
+  roe: () => Promise<AsyncIterator<Float>>;
+  roeWaa: () => Promise<AsyncIterator<Float>>;
+  roeDt: () => Promise<AsyncIterator<Float>>;
+  roa: () => Promise<AsyncIterator<Float>>;
+  npta: () => Promise<AsyncIterator<Float>>;
+  roic: () => Promise<AsyncIterator<Float>>;
+  roeYearly: () => Promise<AsyncIterator<Float>>;
+  roa2Yearly: () => Promise<AsyncIterator<Float>>;
+  roeAvg: () => Promise<AsyncIterator<Float>>;
+  opincomeOfEbt: () => Promise<AsyncIterator<Float>>;
+  investincomeOfEbt: () => Promise<AsyncIterator<Float>>;
+  nOpProfitOfEbt: () => Promise<AsyncIterator<Float>>;
+  taxToEbt: () => Promise<AsyncIterator<Float>>;
+  dtprofitToProfit: () => Promise<AsyncIterator<Float>>;
+  salescashToOr: () => Promise<AsyncIterator<Float>>;
+  ocfToOr: () => Promise<AsyncIterator<Float>>;
+  ocfToOpincome: () => Promise<AsyncIterator<Float>>;
+  capitalizedToDa: () => Promise<AsyncIterator<Float>>;
+  debtToAssets: () => Promise<AsyncIterator<Float>>;
+  assetsToEqt: () => Promise<AsyncIterator<Float>>;
+  dpAssetsToEqt: () => Promise<AsyncIterator<Float>>;
+  caToAssets: () => Promise<AsyncIterator<Float>>;
+  ncaToAssets: () => Promise<AsyncIterator<Float>>;
+  tbassetsToTotalassets: () => Promise<AsyncIterator<Float>>;
+  intToTalcap: () => Promise<AsyncIterator<Float>>;
+  eqtToTalcapital: () => Promise<AsyncIterator<Float>>;
+  currentdebtToDebt: () => Promise<AsyncIterator<Float>>;
+  longdebToDebt: () => Promise<AsyncIterator<Float>>;
+  ocfToShortdebt: () => Promise<AsyncIterator<Float>>;
+  debtToEqt: () => Promise<AsyncIterator<Float>>;
+  eqtToDebt: () => Promise<AsyncIterator<Float>>;
+  eqtToInterestdebt: () => Promise<AsyncIterator<Float>>;
+  tangibleassetToDebt: () => Promise<AsyncIterator<Float>>;
+  tangassetToIntdebt: () => Promise<AsyncIterator<Float>>;
+  tangibleassetToNetdebt: () => Promise<AsyncIterator<Float>>;
+  ocfToDebt: () => Promise<AsyncIterator<Float>>;
+  ocfToInterestdebt: () => Promise<AsyncIterator<Float>>;
+  ocfToNetdebt: () => Promise<AsyncIterator<Float>>;
+  ebitToInterest: () => Promise<AsyncIterator<Float>>;
+  longdebtToWorkingcapital: () => Promise<AsyncIterator<Float>>;
+  ebitdaToDebt: () => Promise<AsyncIterator<Float>>;
+  turnDays: () => Promise<AsyncIterator<Float>>;
+  roaYearly: () => Promise<AsyncIterator<Float>>;
+  roaDp: () => Promise<AsyncIterator<Float>>;
+  fixedAssets: () => Promise<AsyncIterator<Float>>;
+  profitPrefinExp: () => Promise<AsyncIterator<Float>>;
+  nonOpProfit: () => Promise<AsyncIterator<Float>>;
+  opToEbt: () => Promise<AsyncIterator<Float>>;
+  nopToEbt: () => Promise<AsyncIterator<Float>>;
+  ocfToProfit: () => Promise<AsyncIterator<Float>>;
+  cashToLiqdebt: () => Promise<AsyncIterator<Float>>;
+  cashToLiqdebtWithinterest: () => Promise<AsyncIterator<Float>>;
+  opToLiqdebt: () => Promise<AsyncIterator<Float>>;
+  opToDebt: () => Promise<AsyncIterator<Float>>;
+  roicYearly: () => Promise<AsyncIterator<Float>>;
+  totalFaTrun: () => Promise<AsyncIterator<Float>>;
+  profitToOp: () => Promise<AsyncIterator<Float>>;
+  qOpincome: () => Promise<AsyncIterator<Float>>;
+  qInvestincome: () => Promise<AsyncIterator<Float>>;
+  qDtprofit: () => Promise<AsyncIterator<Float>>;
+  qEps: () => Promise<AsyncIterator<Float>>;
+  qNetprofitMargin: () => Promise<AsyncIterator<Float>>;
+  qGsprofitMargin: () => Promise<AsyncIterator<Float>>;
+  qExpToSales: () => Promise<AsyncIterator<Float>>;
+  qProfitToGr: () => Promise<AsyncIterator<Float>>;
+  qSaleexpToGr: () => Promise<AsyncIterator<Float>>;
+  qAdminexpToGr: () => Promise<AsyncIterator<Float>>;
+  qFinaexpToGr: () => Promise<AsyncIterator<Float>>;
+  qImpairToGrTtm: () => Promise<AsyncIterator<Float>>;
+  qGcToGr: () => Promise<AsyncIterator<Float>>;
+  qOpToGr: () => Promise<AsyncIterator<Float>>;
+  qRoe: () => Promise<AsyncIterator<Float>>;
+  qDtRoe: () => Promise<AsyncIterator<Float>>;
+  qNpta: () => Promise<AsyncIterator<Float>>;
+  qOpincomeToEbt: () => Promise<AsyncIterator<Float>>;
+  qInvestincomeToEbt: () => Promise<AsyncIterator<Float>>;
+  qDtprofitToProfit: () => Promise<AsyncIterator<Float>>;
+  qSalescashToOr: () => Promise<AsyncIterator<Float>>;
+  qOcfToSales: () => Promise<AsyncIterator<Float>>;
+  qOcfToOr: () => Promise<AsyncIterator<Float>>;
+  basicEpsYoy: () => Promise<AsyncIterator<Float>>;
+  dtEpsYoy: () => Promise<AsyncIterator<Float>>;
+  cfpsYoy: () => Promise<AsyncIterator<Float>>;
+  opYoy: () => Promise<AsyncIterator<Float>>;
+  ebtYoy: () => Promise<AsyncIterator<Float>>;
+  netprofitYoy: () => Promise<AsyncIterator<Float>>;
+  dtNetprofitYoy: () => Promise<AsyncIterator<Float>>;
+  ocfYoy: () => Promise<AsyncIterator<Float>>;
+  roeYoy: () => Promise<AsyncIterator<Float>>;
+  bpsYoy: () => Promise<AsyncIterator<Float>>;
+  assetsYoy: () => Promise<AsyncIterator<Float>>;
+  eqtYoy: () => Promise<AsyncIterator<Float>>;
+  trYoy: () => Promise<AsyncIterator<Float>>;
+  orYoy: () => Promise<AsyncIterator<Float>>;
+  qGrYoy: () => Promise<AsyncIterator<Float>>;
+  qGrQoq: () => Promise<AsyncIterator<Float>>;
+  qSalesYoy: () => Promise<AsyncIterator<Float>>;
+  qSalesQoq: () => Promise<AsyncIterator<Float>>;
+  qOpYoy: () => Promise<AsyncIterator<Float>>;
+  qOpQoq: () => Promise<AsyncIterator<Float>>;
+  qProfitYoy: () => Promise<AsyncIterator<Float>>;
+  qProfitQoq: () => Promise<AsyncIterator<Float>>;
+  qNetprofitYoy: () => Promise<AsyncIterator<Float>>;
+  qNetprofitQoq: () => Promise<AsyncIterator<Float>>;
+  equityYoy: () => Promise<AsyncIterator<Float>>;
+  rdExp: () => Promise<AsyncIterator<Float>>;
+  updateFlag: () => Promise<AsyncIterator<String>>;
+}
+
+export interface FinaIndicatorNullablePromise
+  extends Promise<FinaIndicator | null>,
+    Fragmentable {
+  id: () => Promise<ID_Output>;
+  company: <T = CompanyPromise>() => T;
+  symbol: () => Promise<String>;
+  annDate: () => Promise<String>;
+  endDate: () => Promise<String>;
+  eps: () => Promise<Float>;
+  dtEps: () => Promise<Float>;
+  totalRevenuePs: () => Promise<Float>;
+  revenuePs: () => Promise<Float>;
+  capitalResePs: () => Promise<Float>;
+  surplusResePs: () => Promise<Float>;
+  undistProfitPs: () => Promise<Float>;
+  extraItem: () => Promise<Float>;
+  profitDedt: () => Promise<Float>;
+  grossMargin: () => Promise<Float>;
+  currentRatio: () => Promise<Float>;
+  quickRatio: () => Promise<Float>;
+  cashRatio: () => Promise<Float>;
+  invturnDays: () => Promise<Float>;
+  arturnDays: () => Promise<Float>;
+  invTurn: () => Promise<Float>;
+  arTurn: () => Promise<Float>;
+  caTurn: () => Promise<Float>;
+  faTurn: () => Promise<Float>;
+  assetsTurn: () => Promise<Float>;
+  opIncome: () => Promise<Float>;
+  valuechangeIncome: () => Promise<Float>;
+  interstIncome: () => Promise<Float>;
+  daa: () => Promise<Float>;
+  ebit: () => Promise<Float>;
+  ebitda: () => Promise<Float>;
+  fcff: () => Promise<Float>;
+  fcfe: () => Promise<Float>;
+  currentExint: () => Promise<Float>;
+  noncurrentExint: () => Promise<Float>;
+  interestdebt: () => Promise<Float>;
+  netdebt: () => Promise<Float>;
+  tangibleAsset: () => Promise<Float>;
+  workingCapital: () => Promise<Float>;
+  networkingCapital: () => Promise<Float>;
+  investCapital: () => Promise<Float>;
+  retainedEarnings: () => Promise<Float>;
+  diluted2Eps: () => Promise<Float>;
+  bps: () => Promise<Float>;
+  ocfps: () => Promise<Float>;
+  retainedps: () => Promise<Float>;
+  cfps: () => Promise<Float>;
+  ebitPs: () => Promise<Float>;
+  fcffPs: () => Promise<Float>;
+  fcfePs: () => Promise<Float>;
+  netprofitMargin: () => Promise<Float>;
+  grossprofitMargin: () => Promise<Float>;
+  cogsOfSales: () => Promise<Float>;
+  expenseOfSales: () => Promise<Float>;
+  profitToGr: () => Promise<Float>;
+  saleexpToGr: () => Promise<Float>;
+  adminexpOfGr: () => Promise<Float>;
+  finaexpOfGr: () => Promise<Float>;
+  impaiTtm: () => Promise<Float>;
+  gcOfGr: () => Promise<Float>;
+  opOfGr: () => Promise<Float>;
+  ebitOfGr: () => Promise<Float>;
+  roe: () => Promise<Float>;
+  roeWaa: () => Promise<Float>;
+  roeDt: () => Promise<Float>;
+  roa: () => Promise<Float>;
+  npta: () => Promise<Float>;
+  roic: () => Promise<Float>;
+  roeYearly: () => Promise<Float>;
+  roa2Yearly: () => Promise<Float>;
+  roeAvg: () => Promise<Float>;
+  opincomeOfEbt: () => Promise<Float>;
+  investincomeOfEbt: () => Promise<Float>;
+  nOpProfitOfEbt: () => Promise<Float>;
+  taxToEbt: () => Promise<Float>;
+  dtprofitToProfit: () => Promise<Float>;
+  salescashToOr: () => Promise<Float>;
+  ocfToOr: () => Promise<Float>;
+  ocfToOpincome: () => Promise<Float>;
+  capitalizedToDa: () => Promise<Float>;
+  debtToAssets: () => Promise<Float>;
+  assetsToEqt: () => Promise<Float>;
+  dpAssetsToEqt: () => Promise<Float>;
+  caToAssets: () => Promise<Float>;
+  ncaToAssets: () => Promise<Float>;
+  tbassetsToTotalassets: () => Promise<Float>;
+  intToTalcap: () => Promise<Float>;
+  eqtToTalcapital: () => Promise<Float>;
+  currentdebtToDebt: () => Promise<Float>;
+  longdebToDebt: () => Promise<Float>;
+  ocfToShortdebt: () => Promise<Float>;
+  debtToEqt: () => Promise<Float>;
+  eqtToDebt: () => Promise<Float>;
+  eqtToInterestdebt: () => Promise<Float>;
+  tangibleassetToDebt: () => Promise<Float>;
+  tangassetToIntdebt: () => Promise<Float>;
+  tangibleassetToNetdebt: () => Promise<Float>;
+  ocfToDebt: () => Promise<Float>;
+  ocfToInterestdebt: () => Promise<Float>;
+  ocfToNetdebt: () => Promise<Float>;
+  ebitToInterest: () => Promise<Float>;
+  longdebtToWorkingcapital: () => Promise<Float>;
+  ebitdaToDebt: () => Promise<Float>;
+  turnDays: () => Promise<Float>;
+  roaYearly: () => Promise<Float>;
+  roaDp: () => Promise<Float>;
+  fixedAssets: () => Promise<Float>;
+  profitPrefinExp: () => Promise<Float>;
+  nonOpProfit: () => Promise<Float>;
+  opToEbt: () => Promise<Float>;
+  nopToEbt: () => Promise<Float>;
+  ocfToProfit: () => Promise<Float>;
+  cashToLiqdebt: () => Promise<Float>;
+  cashToLiqdebtWithinterest: () => Promise<Float>;
+  opToLiqdebt: () => Promise<Float>;
+  opToDebt: () => Promise<Float>;
+  roicYearly: () => Promise<Float>;
+  totalFaTrun: () => Promise<Float>;
+  profitToOp: () => Promise<Float>;
+  qOpincome: () => Promise<Float>;
+  qInvestincome: () => Promise<Float>;
+  qDtprofit: () => Promise<Float>;
+  qEps: () => Promise<Float>;
+  qNetprofitMargin: () => Promise<Float>;
+  qGsprofitMargin: () => Promise<Float>;
+  qExpToSales: () => Promise<Float>;
+  qProfitToGr: () => Promise<Float>;
+  qSaleexpToGr: () => Promise<Float>;
+  qAdminexpToGr: () => Promise<Float>;
+  qFinaexpToGr: () => Promise<Float>;
+  qImpairToGrTtm: () => Promise<Float>;
+  qGcToGr: () => Promise<Float>;
+  qOpToGr: () => Promise<Float>;
+  qRoe: () => Promise<Float>;
+  qDtRoe: () => Promise<Float>;
+  qNpta: () => Promise<Float>;
+  qOpincomeToEbt: () => Promise<Float>;
+  qInvestincomeToEbt: () => Promise<Float>;
+  qDtprofitToProfit: () => Promise<Float>;
+  qSalescashToOr: () => Promise<Float>;
+  qOcfToSales: () => Promise<Float>;
+  qOcfToOr: () => Promise<Float>;
+  basicEpsYoy: () => Promise<Float>;
+  dtEpsYoy: () => Promise<Float>;
+  cfpsYoy: () => Promise<Float>;
+  opYoy: () => Promise<Float>;
+  ebtYoy: () => Promise<Float>;
+  netprofitYoy: () => Promise<Float>;
+  dtNetprofitYoy: () => Promise<Float>;
+  ocfYoy: () => Promise<Float>;
+  roeYoy: () => Promise<Float>;
+  bpsYoy: () => Promise<Float>;
+  assetsYoy: () => Promise<Float>;
+  eqtYoy: () => Promise<Float>;
+  trYoy: () => Promise<Float>;
+  orYoy: () => Promise<Float>;
+  qGrYoy: () => Promise<Float>;
+  qGrQoq: () => Promise<Float>;
+  qSalesYoy: () => Promise<Float>;
+  qSalesQoq: () => Promise<Float>;
+  qOpYoy: () => Promise<Float>;
+  qOpQoq: () => Promise<Float>;
+  qProfitYoy: () => Promise<Float>;
+  qProfitQoq: () => Promise<Float>;
+  qNetprofitYoy: () => Promise<Float>;
+  qNetprofitQoq: () => Promise<Float>;
+  equityYoy: () => Promise<Float>;
+  rdExp: () => Promise<Float>;
+  updateFlag: () => Promise<String>;
+}
+
+export interface IndustryEvent {
+  id: ID_Output;
+  title: String;
+  src: String;
+  reportTime: DateTimeOutput;
+  happen: TimeKind;
+  happenTime: DateTimeOutput;
+  content: String;
+}
+
+export interface IndustryEventPromise
+  extends Promise<IndustryEvent>,
+    Fragmentable {
+  id: () => Promise<ID_Output>;
+  title: () => Promise<String>;
+  src: () => Promise<String>;
+  reportTime: () => Promise<DateTimeOutput>;
+  happen: () => Promise<TimeKind>;
+  happenTime: () => Promise<DateTimeOutput>;
+  content: () => Promise<String>;
+  Keywords: <T = FragmentableArray<Keyword>>(args?: {
+    where?: KeywordWhereInput;
+    orderBy?: KeywordOrderByInput;
+    skip?: Int;
+    after?: String;
+    before?: String;
+    first?: Int;
+    last?: Int;
+  }) => T;
+}
+
+export interface IndustryEventSubscription
+  extends Promise<AsyncIterator<IndustryEvent>>,
+    Fragmentable {
+  id: () => Promise<AsyncIterator<ID_Output>>;
+  title: () => Promise<AsyncIterator<String>>;
+  src: () => Promise<AsyncIterator<String>>;
+  reportTime: () => Promise<AsyncIterator<DateTimeOutput>>;
+  happen: () => Promise<AsyncIterator<TimeKind>>;
+  happenTime: () => Promise<AsyncIterator<DateTimeOutput>>;
+  content: () => Promise<AsyncIterator<String>>;
+  Keywords: <T = Promise<AsyncIterator<KeywordSubscription>>>(args?: {
+    where?: KeywordWhereInput;
+    orderBy?: KeywordOrderByInput;
+    skip?: Int;
+    after?: String;
+    before?: String;
+    first?: Int;
+    last?: Int;
+  }) => T;
+}
+
+export interface IndustryEventNullablePromise
+  extends Promise<IndustryEvent | null>,
+    Fragmentable {
+  id: () => Promise<ID_Output>;
+  title: () => Promise<String>;
+  src: () => Promise<String>;
+  reportTime: () => Promise<DateTimeOutput>;
+  happen: () => Promise<TimeKind>;
+  happenTime: () => Promise<DateTimeOutput>;
+  content: () => Promise<String>;
+  Keywords: <T = FragmentableArray<Keyword>>(args?: {
+    where?: KeywordWhereInput;
+    orderBy?: KeywordOrderByInput;
+    skip?: Int;
+    after?: String;
+    before?: String;
+    first?: Int;
+    last?: Int;
+  }) => T;
+}
+
+export interface CompanyEventSubscriptionPayload {
+  mutation: MutationType;
+  node: CompanyEvent;
+  updatedFields: String[];
+  previousValues: CompanyEventPreviousValues;
+}
+
+export interface CompanyEventSubscriptionPayloadPromise
+  extends Promise<CompanyEventSubscriptionPayload>,
+    Fragmentable {
+  mutation: () => Promise<MutationType>;
+  node: <T = CompanyEventPromise>() => T;
+  updatedFields: () => Promise<String[]>;
+  previousValues: <T = CompanyEventPreviousValuesPromise>() => T;
+}
+
+export interface CompanyEventSubscriptionPayloadSubscription
+  extends Promise<AsyncIterator<CompanyEventSubscriptionPayload>>,
+    Fragmentable {
+  mutation: () => Promise<AsyncIterator<MutationType>>;
+  node: <T = CompanyEventSubscription>() => T;
+  updatedFields: () => Promise<AsyncIterator<String[]>>;
+  previousValues: <T = CompanyEventPreviousValuesSubscription>() => T;
+}
+
+export interface IndustryEdge {
+  node: Industry;
+  cursor: String;
+}
+
+export interface IndustryEdgePromise
+  extends Promise<IndustryEdge>,
+    Fragmentable {
+  node: <T = IndustryPromise>() => T;
+  cursor: () => Promise<String>;
+}
+
+export interface IndustryEdgeSubscription
+  extends Promise<AsyncIterator<IndustryEdge>>,
+    Fragmentable {
+  node: <T = IndustrySubscription>() => T;
+  cursor: () => Promise<AsyncIterator<String>>;
+}
+
+export interface CompanyEventPreviousValues {
+  id: ID_Output;
+  title: String;
+  content: String;
+  reportTime: DateTimeOutput;
+  happen: TimeKind;
+  happenTime?: DateTimeOutput;
+  influence: String;
+  kind: FactorKind;
+  dierction: Direction;
+}
+
+export interface CompanyEventPreviousValuesPromise
+  extends Promise<CompanyEventPreviousValues>,
+    Fragmentable {
+  id: () => Promise<ID_Output>;
+  title: () => Promise<String>;
+  content: () => Promise<String>;
+  reportTime: () => Promise<DateTimeOutput>;
+  happen: () => Promise<TimeKind>;
+  happenTime: () => Promise<DateTimeOutput>;
+  influence: () => Promise<String>;
+  kind: () => Promise<FactorKind>;
+  dierction: () => Promise<Direction>;
+}
+
+export interface CompanyEventPreviousValuesSubscription
+  extends Promise<AsyncIterator<CompanyEventPreviousValues>>,
+    Fragmentable {
+  id: () => Promise<AsyncIterator<ID_Output>>;
+  title: () => Promise<AsyncIterator<String>>;
+  content: () => Promise<AsyncIterator<String>>;
+  reportTime: () => Promise<AsyncIterator<DateTimeOutput>>;
+  happen: () => Promise<AsyncIterator<TimeKind>>;
+  happenTime: () => Promise<AsyncIterator<DateTimeOutput>>;
+  influence: () => Promise<AsyncIterator<String>>;
+  kind: () => Promise<AsyncIterator<FactorKind>>;
+  dierction: () => Promise<AsyncIterator<Direction>>;
+}
+
+export interface AggregateFinaIndicator {
+  count: Int;
+}
+
+export interface AggregateFinaIndicatorPromise
+  extends Promise<AggregateFinaIndicator>,
+    Fragmentable {
+  count: () => Promise<Int>;
+}
+
+export interface AggregateFinaIndicatorSubscription
+  extends Promise<AsyncIterator<AggregateFinaIndicator>>,
+    Fragmentable {
+  count: () => Promise<AsyncIterator<Int>>;
+}
+
+export interface Daily {
+  id: ID_Output;
+  symbol?: String;
+  tradeDate: DateTimeOutput;
+  open?: Float;
+  high?: Float;
+  low?: Float;
+  close?: Float;
+  preClose?: Float;
+  change?: Float;
+  pctChg?: Float;
+  vol?: Float;
+  amount?: Float;
+}
+
+export interface DailyPromise extends Promise<Daily>, Fragmentable {
+  id: () => Promise<ID_Output>;
+  company: <T = CompanyPromise>() => T;
+  symbol: () => Promise<String>;
+  tradeDate: () => Promise<DateTimeOutput>;
+  open: () => Promise<Float>;
+  high: () => Promise<Float>;
+  low: () => Promise<Float>;
+  close: () => Promise<Float>;
+  preClose: () => Promise<Float>;
+  change: () => Promise<Float>;
+  pctChg: () => Promise<Float>;
+  vol: () => Promise<Float>;
+  amount: () => Promise<Float>;
+}
+
+export interface DailySubscription
+  extends Promise<AsyncIterator<Daily>>,
+    Fragmentable {
+  id: () => Promise<AsyncIterator<ID_Output>>;
+  company: <T = CompanySubscription>() => T;
+  symbol: () => Promise<AsyncIterator<String>>;
+  tradeDate: () => Promise<AsyncIterator<DateTimeOutput>>;
+  open: () => Promise<AsyncIterator<Float>>;
+  high: () => Promise<AsyncIterator<Float>>;
+  low: () => Promise<AsyncIterator<Float>>;
+  close: () => Promise<AsyncIterator<Float>>;
+  preClose: () => Promise<AsyncIterator<Float>>;
+  change: () => Promise<AsyncIterator<Float>>;
+  pctChg: () => Promise<AsyncIterator<Float>>;
+  vol: () => Promise<AsyncIterator<Float>>;
+  amount: () => Promise<AsyncIterator<Float>>;
+}
+
+export interface DailyNullablePromise
+  extends Promise<Daily | null>,
+    Fragmentable {
+  id: () => Promise<ID_Output>;
+  company: <T = CompanyPromise>() => T;
+  symbol: () => Promise<String>;
+  tradeDate: () => Promise<DateTimeOutput>;
+  open: () => Promise<Float>;
+  high: () => Promise<Float>;
+  low: () => Promise<Float>;
+  close: () => Promise<Float>;
+  preClose: () => Promise<Float>;
+  change: () => Promise<Float>;
+  pctChg: () => Promise<Float>;
+  vol: () => Promise<Float>;
+  amount: () => Promise<Float>;
+}
+
+export interface FinaIndicatorConnection {
+  pageInfo: PageInfo;
+  edges: FinaIndicatorEdge[];
+}
+
+export interface FinaIndicatorConnectionPromise
+  extends Promise<FinaIndicatorConnection>,
+    Fragmentable {
+  pageInfo: <T = PageInfoPromise>() => T;
+  edges: <T = FragmentableArray<FinaIndicatorEdge>>() => T;
+  aggregate: <T = AggregateFinaIndicatorPromise>() => T;
+}
+
+export interface FinaIndicatorConnectionSubscription
+  extends Promise<AsyncIterator<FinaIndicatorConnection>>,
+    Fragmentable {
+  pageInfo: <T = PageInfoSubscription>() => T;
+  edges: <T = Promise<AsyncIterator<FinaIndicatorEdgeSubscription>>>() => T;
+  aggregate: <T = AggregateFinaIndicatorSubscription>() => T;
+}
+
+export interface CompanyProductSubscriptionPayload {
+  mutation: MutationType;
+  node: CompanyProduct;
+  updatedFields: String[];
+  previousValues: CompanyProductPreviousValues;
+}
+
+export interface CompanyProductSubscriptionPayloadPromise
+  extends Promise<CompanyProductSubscriptionPayload>,
+    Fragmentable {
+  mutation: () => Promise<MutationType>;
+  node: <T = CompanyProductPromise>() => T;
+  updatedFields: () => Promise<String[]>;
+  previousValues: <T = CompanyProductPreviousValuesPromise>() => T;
+}
+
+export interface CompanyProductSubscriptionPayloadSubscription
+  extends Promise<AsyncIterator<CompanyProductSubscriptionPayload>>,
+    Fragmentable {
+  mutation: () => Promise<AsyncIterator<MutationType>>;
+  node: <T = CompanyProductSubscription>() => T;
+  updatedFields: () => Promise<AsyncIterator<String[]>>;
+  previousValues: <T = CompanyProductPreviousValuesSubscription>() => T;
+}
+
+export interface DailyEdge {
+  node: Daily;
+  cursor: String;
+}
+
+export interface DailyEdgePromise extends Promise<DailyEdge>, Fragmentable {
+  node: <T = DailyPromise>() => T;
+  cursor: () => Promise<String>;
+}
+
+export interface DailyEdgeSubscription
+  extends Promise<AsyncIterator<DailyEdge>>,
+    Fragmentable {
+  node: <T = DailySubscription>() => T;
+  cursor: () => Promise<AsyncIterator<String>>;
+}
+
+export interface CompanyProductPreviousValues {
+  id: ID_Output;
+  name: String;
+  introduce: String;
+}
+
+export interface CompanyProductPreviousValuesPromise
+  extends Promise<CompanyProductPreviousValues>,
+    Fragmentable {
+  id: () => Promise<ID_Output>;
+  name: () => Promise<String>;
+  introduce: () => Promise<String>;
+}
+
+export interface CompanyProductPreviousValuesSubscription
+  extends Promise<AsyncIterator<CompanyProductPreviousValues>>,
+    Fragmentable {
+  id: () => Promise<AsyncIterator<ID_Output>>;
+  name: () => Promise<AsyncIterator<String>>;
+  introduce: () => Promise<AsyncIterator<String>>;
+}
+
+export interface AggregateCompanyProduct {
+  count: Int;
+}
+
+export interface AggregateCompanyProductPromise
+  extends Promise<AggregateCompanyProduct>,
+    Fragmentable {
+  count: () => Promise<Int>;
+}
+
+export interface AggregateCompanyProductSubscription
+  extends Promise<AsyncIterator<AggregateCompanyProduct>>,
+    Fragmentable {
+  count: () => Promise<AsyncIterator<Int>>;
+}
+
+export interface CompanyEvent {
+  id: ID_Output;
+  title: String;
+  content: String;
+  reportTime: DateTimeOutput;
+  happen: TimeKind;
+  happenTime?: DateTimeOutput;
+  influence: String;
+  kind: FactorKind;
+  dierction: Direction;
+}
+
+export interface CompanyEventPromise
+  extends Promise<CompanyEvent>,
+    Fragmentable {
+  id: () => Promise<ID_Output>;
+  title: () => Promise<String>;
+  content: () => Promise<String>;
+  reportTime: () => Promise<DateTimeOutput>;
+  happen: () => Promise<TimeKind>;
+  happenTime: () => Promise<DateTimeOutput>;
+  influence: () => Promise<String>;
+  kind: () => Promise<FactorKind>;
+  dierction: () => Promise<Direction>;
+  company: <T = CompanyPromise>() => T;
+}
+
+export interface CompanyEventSubscription
+  extends Promise<AsyncIterator<CompanyEvent>>,
+    Fragmentable {
+  id: () => Promise<AsyncIterator<ID_Output>>;
+  title: () => Promise<AsyncIterator<String>>;
+  content: () => Promise<AsyncIterator<String>>;
+  reportTime: () => Promise<AsyncIterator<DateTimeOutput>>;
+  happen: () => Promise<AsyncIterator<TimeKind>>;
+  happenTime: () => Promise<AsyncIterator<DateTimeOutput>>;
+  influence: () => Promise<AsyncIterator<String>>;
+  kind: () => Promise<AsyncIterator<FactorKind>>;
+  dierction: () => Promise<AsyncIterator<Direction>>;
+  company: <T = CompanySubscription>() => T;
+}
+
+export interface CompanyEventNullablePromise
+  extends Promise<CompanyEvent | null>,
+    Fragmentable {
+  id: () => Promise<ID_Output>;
+  title: () => Promise<String>;
+  content: () => Promise<String>;
+  reportTime: () => Promise<DateTimeOutput>;
+  happen: () => Promise<TimeKind>;
+  happenTime: () => Promise<DateTimeOutput>;
+  influence: () => Promise<String>;
+  kind: () => Promise<FactorKind>;
+  dierction: () => Promise<Direction>;
+  company: <T = CompanyPromise>() => T;
+}
+
+export interface CompanyProductConnection {
+  pageInfo: PageInfo;
+  edges: CompanyProductEdge[];
+}
+
+export interface CompanyProductConnectionPromise
+  extends Promise<CompanyProductConnection>,
+    Fragmentable {
+  pageInfo: <T = PageInfoPromise>() => T;
+  edges: <T = FragmentableArray<CompanyProductEdge>>() => T;
+  aggregate: <T = AggregateCompanyProductPromise>() => T;
+}
+
+export interface CompanyProductConnectionSubscription
+  extends Promise<AsyncIterator<CompanyProductConnection>>,
+    Fragmentable {
+  pageInfo: <T = PageInfoSubscription>() => T;
+  edges: <T = Promise<AsyncIterator<CompanyProductEdgeSubscription>>>() => T;
+  aggregate: <T = AggregateCompanyProductSubscription>() => T;
+}
+
+export interface DailySubscriptionPayload {
+  mutation: MutationType;
+  node: Daily;
+  updatedFields: String[];
+  previousValues: DailyPreviousValues;
+}
+
+export interface DailySubscriptionPayloadPromise
+  extends Promise<DailySubscriptionPayload>,
+    Fragmentable {
+  mutation: () => Promise<MutationType>;
+  node: <T = DailyPromise>() => T;
+  updatedFields: () => Promise<String[]>;
+  previousValues: <T = DailyPreviousValuesPromise>() => T;
+}
+
+export interface DailySubscriptionPayloadSubscription
+  extends Promise<AsyncIterator<DailySubscriptionPayload>>,
+    Fragmentable {
+  mutation: () => Promise<AsyncIterator<MutationType>>;
+  node: <T = DailySubscription>() => T;
+  updatedFields: () => Promise<AsyncIterator<String[]>>;
+  previousValues: <T = DailyPreviousValuesSubscription>() => T;
+}
+
+export interface CompanyEventEdge {
+  node: CompanyEvent;
+  cursor: String;
+}
+
+export interface CompanyEventEdgePromise
+  extends Promise<CompanyEventEdge>,
+    Fragmentable {
+  node: <T = CompanyEventPromise>() => T;
+  cursor: () => Promise<String>;
+}
+
+export interface CompanyEventEdgeSubscription
+  extends Promise<AsyncIterator<CompanyEventEdge>>,
+    Fragmentable {
+  node: <T = CompanyEventSubscription>() => T;
+  cursor: () => Promise<AsyncIterator<String>>;
+}
+
+export interface DailyPreviousValues {
+  id: ID_Output;
+  symbol?: String;
+  tradeDate: DateTimeOutput;
+  open?: Float;
+  high?: Float;
+  low?: Float;
+  close?: Float;
+  preClose?: Float;
+  change?: Float;
+  pctChg?: Float;
+  vol?: Float;
+  amount?: Float;
+}
+
+export interface DailyPreviousValuesPromise
+  extends Promise<DailyPreviousValues>,
+    Fragmentable {
+  id: () => Promise<ID_Output>;
+  symbol: () => Promise<String>;
+  tradeDate: () => Promise<DateTimeOutput>;
+  open: () => Promise<Float>;
+  high: () => Promise<Float>;
+  low: () => Promise<Float>;
+  close: () => Promise<Float>;
+  preClose: () => Promise<Float>;
+  change: () => Promise<Float>;
+  pctChg: () => Promise<Float>;
+  vol: () => Promise<Float>;
+  amount: () => Promise<Float>;
+}
+
+export interface DailyPreviousValuesSubscription
+  extends Promise<AsyncIterator<DailyPreviousValues>>,
+    Fragmentable {
+  id: () => Promise<AsyncIterator<ID_Output>>;
+  symbol: () => Promise<AsyncIterator<String>>;
+  tradeDate: () => Promise<AsyncIterator<DateTimeOutput>>;
+  open: () => Promise<AsyncIterator<Float>>;
+  high: () => Promise<AsyncIterator<Float>>;
+  low: () => Promise<AsyncIterator<Float>>;
+  close: () => Promise<AsyncIterator<Float>>;
+  preClose: () => Promise<AsyncIterator<Float>>;
+  change: () => Promise<AsyncIterator<Float>>;
+  pctChg: () => Promise<AsyncIterator<Float>>;
+  vol: () => Promise<AsyncIterator<Float>>;
+  amount: () => Promise<AsyncIterator<Float>>;
+}
+
+export interface UserEdge {
+  node: User;
+  cursor: String;
+}
+
+export interface UserEdgePromise extends Promise<UserEdge>, Fragmentable {
+  node: <T = UserPromise>() => T;
+  cursor: () => Promise<String>;
+}
+
+export interface UserEdgeSubscription
+  extends Promise<AsyncIterator<UserEdge>>,
+    Fragmentable {
+  node: <T = UserSubscription>() => T;
+  cursor: () => Promise<AsyncIterator<String>>;
 }
 
 export interface CompanyProduct {
@@ -4561,1028 +10665,6 @@ export interface CompanyProductNullablePromise
   }) => T;
 }
 
-export interface CompanyEventEdge {
-  node: CompanyEvent;
-  cursor: String;
-}
-
-export interface CompanyEventEdgePromise
-  extends Promise<CompanyEventEdge>,
-    Fragmentable {
-  node: <T = CompanyEventPromise>() => T;
-  cursor: () => Promise<String>;
-}
-
-export interface CompanyEventEdgeSubscription
-  extends Promise<AsyncIterator<CompanyEventEdge>>,
-    Fragmentable {
-  node: <T = CompanyEventSubscription>() => T;
-  cursor: () => Promise<AsyncIterator<String>>;
-}
-
-export interface ProductPreviousValues {
-  id: ID_Output;
-  name: String;
-  introduce: String;
-}
-
-export interface ProductPreviousValuesPromise
-  extends Promise<ProductPreviousValues>,
-    Fragmentable {
-  id: () => Promise<ID_Output>;
-  name: () => Promise<String>;
-  introduce: () => Promise<String>;
-}
-
-export interface ProductPreviousValuesSubscription
-  extends Promise<AsyncIterator<ProductPreviousValues>>,
-    Fragmentable {
-  id: () => Promise<AsyncIterator<ID_Output>>;
-  name: () => Promise<AsyncIterator<String>>;
-  introduce: () => Promise<AsyncIterator<String>>;
-}
-
-export interface CompanyEventConnection {
-  pageInfo: PageInfo;
-  edges: CompanyEventEdge[];
-}
-
-export interface CompanyEventConnectionPromise
-  extends Promise<CompanyEventConnection>,
-    Fragmentable {
-  pageInfo: <T = PageInfoPromise>() => T;
-  edges: <T = FragmentableArray<CompanyEventEdge>>() => T;
-  aggregate: <T = AggregateCompanyEventPromise>() => T;
-}
-
-export interface CompanyEventConnectionSubscription
-  extends Promise<AsyncIterator<CompanyEventConnection>>,
-    Fragmentable {
-  pageInfo: <T = PageInfoSubscription>() => T;
-  edges: <T = Promise<AsyncIterator<CompanyEventEdgeSubscription>>>() => T;
-  aggregate: <T = AggregateCompanyEventSubscription>() => T;
-}
-
-export interface CompanyEdge {
-  node: Company;
-  cursor: String;
-}
-
-export interface CompanyEdgePromise extends Promise<CompanyEdge>, Fragmentable {
-  node: <T = CompanyPromise>() => T;
-  cursor: () => Promise<String>;
-}
-
-export interface CompanyEdgeSubscription
-  extends Promise<AsyncIterator<CompanyEdge>>,
-    Fragmentable {
-  node: <T = CompanySubscription>() => T;
-  cursor: () => Promise<AsyncIterator<String>>;
-}
-
-export interface BatchPayload {
-  count: Long;
-}
-
-export interface BatchPayloadPromise
-  extends Promise<BatchPayload>,
-    Fragmentable {
-  count: () => Promise<Long>;
-}
-
-export interface BatchPayloadSubscription
-  extends Promise<AsyncIterator<BatchPayload>>,
-    Fragmentable {
-  count: () => Promise<AsyncIterator<Long>>;
-}
-
-export interface AggregateUser {
-  count: Int;
-}
-
-export interface AggregateUserPromise
-  extends Promise<AggregateUser>,
-    Fragmentable {
-  count: () => Promise<Int>;
-}
-
-export interface AggregateUserSubscription
-  extends Promise<AsyncIterator<AggregateUser>>,
-    Fragmentable {
-  count: () => Promise<AsyncIterator<Int>>;
-}
-
-export interface ResearchSubscriptionPayload {
-  mutation: MutationType;
-  node: Research;
-  updatedFields: String[];
-  previousValues: ResearchPreviousValues;
-}
-
-export interface ResearchSubscriptionPayloadPromise
-  extends Promise<ResearchSubscriptionPayload>,
-    Fragmentable {
-  mutation: () => Promise<MutationType>;
-  node: <T = ResearchPromise>() => T;
-  updatedFields: () => Promise<String[]>;
-  previousValues: <T = ResearchPreviousValuesPromise>() => T;
-}
-
-export interface ResearchSubscriptionPayloadSubscription
-  extends Promise<AsyncIterator<ResearchSubscriptionPayload>>,
-    Fragmentable {
-  mutation: () => Promise<AsyncIterator<MutationType>>;
-  node: <T = ResearchSubscription>() => T;
-  updatedFields: () => Promise<AsyncIterator<String[]>>;
-  previousValues: <T = ResearchPreviousValuesSubscription>() => T;
-}
-
-export interface UserConnection {
-  pageInfo: PageInfo;
-  edges: UserEdge[];
-}
-
-export interface UserConnectionPromise
-  extends Promise<UserConnection>,
-    Fragmentable {
-  pageInfo: <T = PageInfoPromise>() => T;
-  edges: <T = FragmentableArray<UserEdge>>() => T;
-  aggregate: <T = AggregateUserPromise>() => T;
-}
-
-export interface UserConnectionSubscription
-  extends Promise<AsyncIterator<UserConnection>>,
-    Fragmentable {
-  pageInfo: <T = PageInfoSubscription>() => T;
-  edges: <T = Promise<AsyncIterator<UserEdgeSubscription>>>() => T;
-  aggregate: <T = AggregateUserSubscription>() => T;
-}
-
-export interface CompanyConnection {
-  pageInfo: PageInfo;
-  edges: CompanyEdge[];
-}
-
-export interface CompanyConnectionPromise
-  extends Promise<CompanyConnection>,
-    Fragmentable {
-  pageInfo: <T = PageInfoPromise>() => T;
-  edges: <T = FragmentableArray<CompanyEdge>>() => T;
-  aggregate: <T = AggregateCompanyPromise>() => T;
-}
-
-export interface CompanyConnectionSubscription
-  extends Promise<AsyncIterator<CompanyConnection>>,
-    Fragmentable {
-  pageInfo: <T = PageInfoSubscription>() => T;
-  edges: <T = Promise<AsyncIterator<CompanyEdgeSubscription>>>() => T;
-  aggregate: <T = AggregateCompanySubscription>() => T;
-}
-
-export interface ResearchPreviousValues {
-  id: ID_Output;
-  desc: String;
-}
-
-export interface ResearchPreviousValuesPromise
-  extends Promise<ResearchPreviousValues>,
-    Fragmentable {
-  id: () => Promise<ID_Output>;
-  desc: () => Promise<String>;
-}
-
-export interface ResearchPreviousValuesSubscription
-  extends Promise<AsyncIterator<ResearchPreviousValues>>,
-    Fragmentable {
-  id: () => Promise<AsyncIterator<ID_Output>>;
-  desc: () => Promise<AsyncIterator<String>>;
-}
-
-export interface AggregateComment {
-  count: Int;
-}
-
-export interface AggregateCommentPromise
-  extends Promise<AggregateComment>,
-    Fragmentable {
-  count: () => Promise<Int>;
-}
-
-export interface AggregateCommentSubscription
-  extends Promise<AsyncIterator<AggregateComment>>,
-    Fragmentable {
-  count: () => Promise<AsyncIterator<Int>>;
-}
-
-export interface AggregateResearch {
-  count: Int;
-}
-
-export interface AggregateResearchPromise
-  extends Promise<AggregateResearch>,
-    Fragmentable {
-  count: () => Promise<Int>;
-}
-
-export interface AggregateResearchSubscription
-  extends Promise<AsyncIterator<AggregateResearch>>,
-    Fragmentable {
-  count: () => Promise<AsyncIterator<Int>>;
-}
-
-export interface Comment {
-  id: ID_Output;
-  createTime?: DateTimeOutput;
-  desc: String;
-}
-
-export interface CommentPromise extends Promise<Comment>, Fragmentable {
-  id: () => Promise<ID_Output>;
-  createTime: () => Promise<DateTimeOutput>;
-  desc: () => Promise<String>;
-  company: <T = CompanyPromise>() => T;
-}
-
-export interface CommentSubscription
-  extends Promise<AsyncIterator<Comment>>,
-    Fragmentable {
-  id: () => Promise<AsyncIterator<ID_Output>>;
-  createTime: () => Promise<AsyncIterator<DateTimeOutput>>;
-  desc: () => Promise<AsyncIterator<String>>;
-  company: <T = CompanySubscription>() => T;
-}
-
-export interface CommentNullablePromise
-  extends Promise<Comment | null>,
-    Fragmentable {
-  id: () => Promise<ID_Output>;
-  createTime: () => Promise<DateTimeOutput>;
-  desc: () => Promise<String>;
-  company: <T = CompanyPromise>() => T;
-}
-
-export interface ResearchConnection {
-  pageInfo: PageInfo;
-  edges: ResearchEdge[];
-}
-
-export interface ResearchConnectionPromise
-  extends Promise<ResearchConnection>,
-    Fragmentable {
-  pageInfo: <T = PageInfoPromise>() => T;
-  edges: <T = FragmentableArray<ResearchEdge>>() => T;
-  aggregate: <T = AggregateResearchPromise>() => T;
-}
-
-export interface ResearchConnectionSubscription
-  extends Promise<AsyncIterator<ResearchConnection>>,
-    Fragmentable {
-  pageInfo: <T = PageInfoSubscription>() => T;
-  edges: <T = Promise<AsyncIterator<ResearchEdgeSubscription>>>() => T;
-  aggregate: <T = AggregateResearchSubscription>() => T;
-}
-
-export interface CommentSubscriptionPayload {
-  mutation: MutationType;
-  node: Comment;
-  updatedFields: String[];
-  previousValues: CommentPreviousValues;
-}
-
-export interface CommentSubscriptionPayloadPromise
-  extends Promise<CommentSubscriptionPayload>,
-    Fragmentable {
-  mutation: () => Promise<MutationType>;
-  node: <T = CommentPromise>() => T;
-  updatedFields: () => Promise<String[]>;
-  previousValues: <T = CommentPreviousValuesPromise>() => T;
-}
-
-export interface CommentSubscriptionPayloadSubscription
-  extends Promise<AsyncIterator<CommentSubscriptionPayload>>,
-    Fragmentable {
-  mutation: () => Promise<AsyncIterator<MutationType>>;
-  node: <T = CommentSubscription>() => T;
-  updatedFields: () => Promise<AsyncIterator<String[]>>;
-  previousValues: <T = CommentPreviousValuesSubscription>() => T;
-}
-
-export interface ProductEdge {
-  node: Product;
-  cursor: String;
-}
-
-export interface ProductEdgePromise extends Promise<ProductEdge>, Fragmentable {
-  node: <T = ProductPromise>() => T;
-  cursor: () => Promise<String>;
-}
-
-export interface ProductEdgeSubscription
-  extends Promise<AsyncIterator<ProductEdge>>,
-    Fragmentable {
-  node: <T = ProductSubscription>() => T;
-  cursor: () => Promise<AsyncIterator<String>>;
-}
-
-export interface CommentPreviousValues {
-  id: ID_Output;
-  createTime?: DateTimeOutput;
-  desc: String;
-}
-
-export interface CommentPreviousValuesPromise
-  extends Promise<CommentPreviousValues>,
-    Fragmentable {
-  id: () => Promise<ID_Output>;
-  createTime: () => Promise<DateTimeOutput>;
-  desc: () => Promise<String>;
-}
-
-export interface CommentPreviousValuesSubscription
-  extends Promise<AsyncIterator<CommentPreviousValues>>,
-    Fragmentable {
-  id: () => Promise<AsyncIterator<ID_Output>>;
-  createTime: () => Promise<AsyncIterator<DateTimeOutput>>;
-  desc: () => Promise<AsyncIterator<String>>;
-}
-
-export interface AggregateKeyword {
-  count: Int;
-}
-
-export interface AggregateKeywordPromise
-  extends Promise<AggregateKeyword>,
-    Fragmentable {
-  count: () => Promise<Int>;
-}
-
-export interface AggregateKeywordSubscription
-  extends Promise<AsyncIterator<AggregateKeyword>>,
-    Fragmentable {
-  count: () => Promise<AsyncIterator<Int>>;
-}
-
-export interface CommentEdge {
-  node: Comment;
-  cursor: String;
-}
-
-export interface CommentEdgePromise extends Promise<CommentEdge>, Fragmentable {
-  node: <T = CommentPromise>() => T;
-  cursor: () => Promise<String>;
-}
-
-export interface CommentEdgeSubscription
-  extends Promise<AsyncIterator<CommentEdge>>,
-    Fragmentable {
-  node: <T = CommentSubscription>() => T;
-  cursor: () => Promise<AsyncIterator<String>>;
-}
-
-export interface KeywordConnection {
-  pageInfo: PageInfo;
-  edges: KeywordEdge[];
-}
-
-export interface KeywordConnectionPromise
-  extends Promise<KeywordConnection>,
-    Fragmentable {
-  pageInfo: <T = PageInfoPromise>() => T;
-  edges: <T = FragmentableArray<KeywordEdge>>() => T;
-  aggregate: <T = AggregateKeywordPromise>() => T;
-}
-
-export interface KeywordConnectionSubscription
-  extends Promise<AsyncIterator<KeywordConnection>>,
-    Fragmentable {
-  pageInfo: <T = PageInfoSubscription>() => T;
-  edges: <T = Promise<AsyncIterator<KeywordEdgeSubscription>>>() => T;
-  aggregate: <T = AggregateKeywordSubscription>() => T;
-}
-
-export interface CompanySubscriptionPayload {
-  mutation: MutationType;
-  node: Company;
-  updatedFields: String[];
-  previousValues: CompanyPreviousValues;
-}
-
-export interface CompanySubscriptionPayloadPromise
-  extends Promise<CompanySubscriptionPayload>,
-    Fragmentable {
-  mutation: () => Promise<MutationType>;
-  node: <T = CompanyPromise>() => T;
-  updatedFields: () => Promise<String[]>;
-  previousValues: <T = CompanyPreviousValuesPromise>() => T;
-}
-
-export interface CompanySubscriptionPayloadSubscription
-  extends Promise<AsyncIterator<CompanySubscriptionPayload>>,
-    Fragmentable {
-  mutation: () => Promise<AsyncIterator<MutationType>>;
-  node: <T = CompanySubscription>() => T;
-  updatedFields: () => Promise<AsyncIterator<String[]>>;
-  previousValues: <T = CompanyPreviousValuesSubscription>() => T;
-}
-
-export interface IndustryInfluenceEdge {
-  node: IndustryInfluence;
-  cursor: String;
-}
-
-export interface IndustryInfluenceEdgePromise
-  extends Promise<IndustryInfluenceEdge>,
-    Fragmentable {
-  node: <T = IndustryInfluencePromise>() => T;
-  cursor: () => Promise<String>;
-}
-
-export interface IndustryInfluenceEdgeSubscription
-  extends Promise<AsyncIterator<IndustryInfluenceEdge>>,
-    Fragmentable {
-  node: <T = IndustryInfluenceSubscription>() => T;
-  cursor: () => Promise<AsyncIterator<String>>;
-}
-
-export interface CompanyPreviousValues {
-  id: ID_Output;
-  symbol: String;
-  name: String;
-  area?: String;
-  industry?: String;
-  fullname?: String;
-  enname?: String;
-  market?: String;
-  exchange?: String;
-  currType?: String;
-  listStatus?: String;
-  listDate?: String;
-  delistDate?: String;
-  isHS?: String;
-  scope?: String;
-  desc?: String;
-  pool?: Boolean;
-}
-
-export interface CompanyPreviousValuesPromise
-  extends Promise<CompanyPreviousValues>,
-    Fragmentable {
-  id: () => Promise<ID_Output>;
-  symbol: () => Promise<String>;
-  name: () => Promise<String>;
-  area: () => Promise<String>;
-  industry: () => Promise<String>;
-  fullname: () => Promise<String>;
-  enname: () => Promise<String>;
-  market: () => Promise<String>;
-  exchange: () => Promise<String>;
-  currType: () => Promise<String>;
-  listStatus: () => Promise<String>;
-  listDate: () => Promise<String>;
-  delistDate: () => Promise<String>;
-  isHS: () => Promise<String>;
-  scope: () => Promise<String>;
-  desc: () => Promise<String>;
-  pool: () => Promise<Boolean>;
-}
-
-export interface CompanyPreviousValuesSubscription
-  extends Promise<AsyncIterator<CompanyPreviousValues>>,
-    Fragmentable {
-  id: () => Promise<AsyncIterator<ID_Output>>;
-  symbol: () => Promise<AsyncIterator<String>>;
-  name: () => Promise<AsyncIterator<String>>;
-  area: () => Promise<AsyncIterator<String>>;
-  industry: () => Promise<AsyncIterator<String>>;
-  fullname: () => Promise<AsyncIterator<String>>;
-  enname: () => Promise<AsyncIterator<String>>;
-  market: () => Promise<AsyncIterator<String>>;
-  exchange: () => Promise<AsyncIterator<String>>;
-  currType: () => Promise<AsyncIterator<String>>;
-  listStatus: () => Promise<AsyncIterator<String>>;
-  listDate: () => Promise<AsyncIterator<String>>;
-  delistDate: () => Promise<AsyncIterator<String>>;
-  isHS: () => Promise<AsyncIterator<String>>;
-  scope: () => Promise<AsyncIterator<String>>;
-  desc: () => Promise<AsyncIterator<String>>;
-  pool: () => Promise<AsyncIterator<Boolean>>;
-}
-
-export interface AggregateIndustryEvent {
-  count: Int;
-}
-
-export interface AggregateIndustryEventPromise
-  extends Promise<AggregateIndustryEvent>,
-    Fragmentable {
-  count: () => Promise<Int>;
-}
-
-export interface AggregateIndustryEventSubscription
-  extends Promise<AsyncIterator<AggregateIndustryEvent>>,
-    Fragmentable {
-  count: () => Promise<AsyncIterator<Int>>;
-}
-
-export interface PageInfo {
-  hasNextPage: Boolean;
-  hasPreviousPage: Boolean;
-  startCursor?: String;
-  endCursor?: String;
-}
-
-export interface PageInfoPromise extends Promise<PageInfo>, Fragmentable {
-  hasNextPage: () => Promise<Boolean>;
-  hasPreviousPage: () => Promise<Boolean>;
-  startCursor: () => Promise<String>;
-  endCursor: () => Promise<String>;
-}
-
-export interface PageInfoSubscription
-  extends Promise<AsyncIterator<PageInfo>>,
-    Fragmentable {
-  hasNextPage: () => Promise<AsyncIterator<Boolean>>;
-  hasPreviousPage: () => Promise<AsyncIterator<Boolean>>;
-  startCursor: () => Promise<AsyncIterator<String>>;
-  endCursor: () => Promise<AsyncIterator<String>>;
-}
-
-export interface IndustryEventConnection {
-  pageInfo: PageInfo;
-  edges: IndustryEventEdge[];
-}
-
-export interface IndustryEventConnectionPromise
-  extends Promise<IndustryEventConnection>,
-    Fragmentable {
-  pageInfo: <T = PageInfoPromise>() => T;
-  edges: <T = FragmentableArray<IndustryEventEdge>>() => T;
-  aggregate: <T = AggregateIndustryEventPromise>() => T;
-}
-
-export interface IndustryEventConnectionSubscription
-  extends Promise<AsyncIterator<IndustryEventConnection>>,
-    Fragmentable {
-  pageInfo: <T = PageInfoSubscription>() => T;
-  edges: <T = Promise<AsyncIterator<IndustryEventEdgeSubscription>>>() => T;
-  aggregate: <T = AggregateIndustryEventSubscription>() => T;
-}
-
-export interface CompanyEventSubscriptionPayload {
-  mutation: MutationType;
-  node: CompanyEvent;
-  updatedFields: String[];
-  previousValues: CompanyEventPreviousValues;
-}
-
-export interface CompanyEventSubscriptionPayloadPromise
-  extends Promise<CompanyEventSubscriptionPayload>,
-    Fragmentable {
-  mutation: () => Promise<MutationType>;
-  node: <T = CompanyEventPromise>() => T;
-  updatedFields: () => Promise<String[]>;
-  previousValues: <T = CompanyEventPreviousValuesPromise>() => T;
-}
-
-export interface CompanyEventSubscriptionPayloadSubscription
-  extends Promise<AsyncIterator<CompanyEventSubscriptionPayload>>,
-    Fragmentable {
-  mutation: () => Promise<AsyncIterator<MutationType>>;
-  node: <T = CompanyEventSubscription>() => T;
-  updatedFields: () => Promise<AsyncIterator<String[]>>;
-  previousValues: <T = CompanyEventPreviousValuesSubscription>() => T;
-}
-
-export interface IndustryEvent {
-  id: ID_Output;
-  title: String;
-  src: String;
-  reportTime: DateTimeOutput;
-  happen: TimeKind;
-  happenTime: DateTimeOutput;
-  content: String;
-}
-
-export interface IndustryEventPromise
-  extends Promise<IndustryEvent>,
-    Fragmentable {
-  id: () => Promise<ID_Output>;
-  title: () => Promise<String>;
-  src: () => Promise<String>;
-  reportTime: () => Promise<DateTimeOutput>;
-  happen: () => Promise<TimeKind>;
-  happenTime: () => Promise<DateTimeOutput>;
-  content: () => Promise<String>;
-  Keywords: <T = FragmentableArray<Keyword>>(args?: {
-    where?: KeywordWhereInput;
-    orderBy?: KeywordOrderByInput;
-    skip?: Int;
-    after?: String;
-    before?: String;
-    first?: Int;
-    last?: Int;
-  }) => T;
-}
-
-export interface IndustryEventSubscription
-  extends Promise<AsyncIterator<IndustryEvent>>,
-    Fragmentable {
-  id: () => Promise<AsyncIterator<ID_Output>>;
-  title: () => Promise<AsyncIterator<String>>;
-  src: () => Promise<AsyncIterator<String>>;
-  reportTime: () => Promise<AsyncIterator<DateTimeOutput>>;
-  happen: () => Promise<AsyncIterator<TimeKind>>;
-  happenTime: () => Promise<AsyncIterator<DateTimeOutput>>;
-  content: () => Promise<AsyncIterator<String>>;
-  Keywords: <T = Promise<AsyncIterator<KeywordSubscription>>>(args?: {
-    where?: KeywordWhereInput;
-    orderBy?: KeywordOrderByInput;
-    skip?: Int;
-    after?: String;
-    before?: String;
-    first?: Int;
-    last?: Int;
-  }) => T;
-}
-
-export interface IndustryEventNullablePromise
-  extends Promise<IndustryEvent | null>,
-    Fragmentable {
-  id: () => Promise<ID_Output>;
-  title: () => Promise<String>;
-  src: () => Promise<String>;
-  reportTime: () => Promise<DateTimeOutput>;
-  happen: () => Promise<TimeKind>;
-  happenTime: () => Promise<DateTimeOutput>;
-  content: () => Promise<String>;
-  Keywords: <T = FragmentableArray<Keyword>>(args?: {
-    where?: KeywordWhereInput;
-    orderBy?: KeywordOrderByInput;
-    skip?: Int;
-    after?: String;
-    before?: String;
-    first?: Int;
-    last?: Int;
-  }) => T;
-}
-
-export interface CompanyEventPreviousValues {
-  id: ID_Output;
-  title: String;
-  content: String;
-  reportTime: DateTimeOutput;
-  happen: TimeKind;
-  happenTime?: DateTimeOutput;
-  influence: String;
-  kind: FactorKind;
-  dierction: Direction;
-}
-
-export interface CompanyEventPreviousValuesPromise
-  extends Promise<CompanyEventPreviousValues>,
-    Fragmentable {
-  id: () => Promise<ID_Output>;
-  title: () => Promise<String>;
-  content: () => Promise<String>;
-  reportTime: () => Promise<DateTimeOutput>;
-  happen: () => Promise<TimeKind>;
-  happenTime: () => Promise<DateTimeOutput>;
-  influence: () => Promise<String>;
-  kind: () => Promise<FactorKind>;
-  dierction: () => Promise<Direction>;
-}
-
-export interface CompanyEventPreviousValuesSubscription
-  extends Promise<AsyncIterator<CompanyEventPreviousValues>>,
-    Fragmentable {
-  id: () => Promise<AsyncIterator<ID_Output>>;
-  title: () => Promise<AsyncIterator<String>>;
-  content: () => Promise<AsyncIterator<String>>;
-  reportTime: () => Promise<AsyncIterator<DateTimeOutput>>;
-  happen: () => Promise<AsyncIterator<TimeKind>>;
-  happenTime: () => Promise<AsyncIterator<DateTimeOutput>>;
-  influence: () => Promise<AsyncIterator<String>>;
-  kind: () => Promise<AsyncIterator<FactorKind>>;
-  dierction: () => Promise<AsyncIterator<Direction>>;
-}
-
-export interface IndustryEdge {
-  node: Industry;
-  cursor: String;
-}
-
-export interface IndustryEdgePromise
-  extends Promise<IndustryEdge>,
-    Fragmentable {
-  node: <T = IndustryPromise>() => T;
-  cursor: () => Promise<String>;
-}
-
-export interface IndustryEdgeSubscription
-  extends Promise<AsyncIterator<IndustryEdge>>,
-    Fragmentable {
-  node: <T = IndustrySubscription>() => T;
-  cursor: () => Promise<AsyncIterator<String>>;
-}
-
-export interface CommentConnection {
-  pageInfo: PageInfo;
-  edges: CommentEdge[];
-}
-
-export interface CommentConnectionPromise
-  extends Promise<CommentConnection>,
-    Fragmentable {
-  pageInfo: <T = PageInfoPromise>() => T;
-  edges: <T = FragmentableArray<CommentEdge>>() => T;
-  aggregate: <T = AggregateCommentPromise>() => T;
-}
-
-export interface CommentConnectionSubscription
-  extends Promise<AsyncIterator<CommentConnection>>,
-    Fragmentable {
-  pageInfo: <T = PageInfoSubscription>() => T;
-  edges: <T = Promise<AsyncIterator<CommentEdgeSubscription>>>() => T;
-  aggregate: <T = AggregateCommentSubscription>() => T;
-}
-
-export interface AggregateDaily {
-  count: Int;
-}
-
-export interface AggregateDailyPromise
-  extends Promise<AggregateDaily>,
-    Fragmentable {
-  count: () => Promise<Int>;
-}
-
-export interface AggregateDailySubscription
-  extends Promise<AsyncIterator<AggregateDaily>>,
-    Fragmentable {
-  count: () => Promise<AsyncIterator<Int>>;
-}
-
-export interface CompanyProductSubscriptionPayload {
-  mutation: MutationType;
-  node: CompanyProduct;
-  updatedFields: String[];
-  previousValues: CompanyProductPreviousValues;
-}
-
-export interface CompanyProductSubscriptionPayloadPromise
-  extends Promise<CompanyProductSubscriptionPayload>,
-    Fragmentable {
-  mutation: () => Promise<MutationType>;
-  node: <T = CompanyProductPromise>() => T;
-  updatedFields: () => Promise<String[]>;
-  previousValues: <T = CompanyProductPreviousValuesPromise>() => T;
-}
-
-export interface CompanyProductSubscriptionPayloadSubscription
-  extends Promise<AsyncIterator<CompanyProductSubscriptionPayload>>,
-    Fragmentable {
-  mutation: () => Promise<AsyncIterator<MutationType>>;
-  node: <T = CompanyProductSubscription>() => T;
-  updatedFields: () => Promise<AsyncIterator<String[]>>;
-  previousValues: <T = CompanyProductPreviousValuesSubscription>() => T;
-}
-
-export interface DailyConnection {
-  pageInfo: PageInfo;
-  edges: DailyEdge[];
-}
-
-export interface DailyConnectionPromise
-  extends Promise<DailyConnection>,
-    Fragmentable {
-  pageInfo: <T = PageInfoPromise>() => T;
-  edges: <T = FragmentableArray<DailyEdge>>() => T;
-  aggregate: <T = AggregateDailyPromise>() => T;
-}
-
-export interface DailyConnectionSubscription
-  extends Promise<AsyncIterator<DailyConnection>>,
-    Fragmentable {
-  pageInfo: <T = PageInfoSubscription>() => T;
-  edges: <T = Promise<AsyncIterator<DailyEdgeSubscription>>>() => T;
-  aggregate: <T = AggregateDailySubscription>() => T;
-}
-
-export interface CompanyProductPreviousValues {
-  id: ID_Output;
-  name: String;
-  introduce: String;
-}
-
-export interface CompanyProductPreviousValuesPromise
-  extends Promise<CompanyProductPreviousValues>,
-    Fragmentable {
-  id: () => Promise<ID_Output>;
-  name: () => Promise<String>;
-  introduce: () => Promise<String>;
-}
-
-export interface CompanyProductPreviousValuesSubscription
-  extends Promise<AsyncIterator<CompanyProductPreviousValues>>,
-    Fragmentable {
-  id: () => Promise<AsyncIterator<ID_Output>>;
-  name: () => Promise<AsyncIterator<String>>;
-  introduce: () => Promise<AsyncIterator<String>>;
-}
-
-export interface CompanyProductEdge {
-  node: CompanyProduct;
-  cursor: String;
-}
-
-export interface CompanyProductEdgePromise
-  extends Promise<CompanyProductEdge>,
-    Fragmentable {
-  node: <T = CompanyProductPromise>() => T;
-  cursor: () => Promise<String>;
-}
-
-export interface CompanyProductEdgeSubscription
-  extends Promise<AsyncIterator<CompanyProductEdge>>,
-    Fragmentable {
-  node: <T = CompanyProductSubscription>() => T;
-  cursor: () => Promise<AsyncIterator<String>>;
-}
-
-export interface Daily {
-  id: ID_Output;
-  symbol?: String;
-  tradeDate: DateTimeOutput;
-  open?: Float;
-  high?: Float;
-  low?: Float;
-  close?: Float;
-  preClose?: Float;
-  change?: Float;
-  pctChg?: Float;
-  vol?: Float;
-  amount?: Float;
-}
-
-export interface DailyPromise extends Promise<Daily>, Fragmentable {
-  id: () => Promise<ID_Output>;
-  company: <T = CompanyPromise>() => T;
-  symbol: () => Promise<String>;
-  tradeDate: () => Promise<DateTimeOutput>;
-  open: () => Promise<Float>;
-  high: () => Promise<Float>;
-  low: () => Promise<Float>;
-  close: () => Promise<Float>;
-  preClose: () => Promise<Float>;
-  change: () => Promise<Float>;
-  pctChg: () => Promise<Float>;
-  vol: () => Promise<Float>;
-  amount: () => Promise<Float>;
-}
-
-export interface DailySubscription
-  extends Promise<AsyncIterator<Daily>>,
-    Fragmentable {
-  id: () => Promise<AsyncIterator<ID_Output>>;
-  company: <T = CompanySubscription>() => T;
-  symbol: () => Promise<AsyncIterator<String>>;
-  tradeDate: () => Promise<AsyncIterator<DateTimeOutput>>;
-  open: () => Promise<AsyncIterator<Float>>;
-  high: () => Promise<AsyncIterator<Float>>;
-  low: () => Promise<AsyncIterator<Float>>;
-  close: () => Promise<AsyncIterator<Float>>;
-  preClose: () => Promise<AsyncIterator<Float>>;
-  change: () => Promise<AsyncIterator<Float>>;
-  pctChg: () => Promise<AsyncIterator<Float>>;
-  vol: () => Promise<AsyncIterator<Float>>;
-  amount: () => Promise<AsyncIterator<Float>>;
-}
-
-export interface DailyNullablePromise
-  extends Promise<Daily | null>,
-    Fragmentable {
-  id: () => Promise<ID_Output>;
-  company: <T = CompanyPromise>() => T;
-  symbol: () => Promise<String>;
-  tradeDate: () => Promise<DateTimeOutput>;
-  open: () => Promise<Float>;
-  high: () => Promise<Float>;
-  low: () => Promise<Float>;
-  close: () => Promise<Float>;
-  preClose: () => Promise<Float>;
-  change: () => Promise<Float>;
-  pctChg: () => Promise<Float>;
-  vol: () => Promise<Float>;
-  amount: () => Promise<Float>;
-}
-
-export interface AggregateCompanyEvent {
-  count: Int;
-}
-
-export interface AggregateCompanyEventPromise
-  extends Promise<AggregateCompanyEvent>,
-    Fragmentable {
-  count: () => Promise<Int>;
-}
-
-export interface AggregateCompanyEventSubscription
-  extends Promise<AsyncIterator<AggregateCompanyEvent>>,
-    Fragmentable {
-  count: () => Promise<AsyncIterator<Int>>;
-}
-
-export interface DailySubscriptionPayload {
-  mutation: MutationType;
-  node: Daily;
-  updatedFields: String[];
-  previousValues: DailyPreviousValues;
-}
-
-export interface DailySubscriptionPayloadPromise
-  extends Promise<DailySubscriptionPayload>,
-    Fragmentable {
-  mutation: () => Promise<MutationType>;
-  node: <T = DailyPromise>() => T;
-  updatedFields: () => Promise<String[]>;
-  previousValues: <T = DailyPreviousValuesPromise>() => T;
-}
-
-export interface DailySubscriptionPayloadSubscription
-  extends Promise<AsyncIterator<DailySubscriptionPayload>>,
-    Fragmentable {
-  mutation: () => Promise<AsyncIterator<MutationType>>;
-  node: <T = DailySubscription>() => T;
-  updatedFields: () => Promise<AsyncIterator<String[]>>;
-  previousValues: <T = DailyPreviousValuesSubscription>() => T;
-}
-
-export interface UserEdge {
-  node: User;
-  cursor: String;
-}
-
-export interface UserEdgePromise extends Promise<UserEdge>, Fragmentable {
-  node: <T = UserPromise>() => T;
-  cursor: () => Promise<String>;
-}
-
-export interface UserEdgeSubscription
-  extends Promise<AsyncIterator<UserEdge>>,
-    Fragmentable {
-  node: <T = UserSubscription>() => T;
-  cursor: () => Promise<AsyncIterator<String>>;
-}
-
-export interface DailyPreviousValues {
-  id: ID_Output;
-  symbol?: String;
-  tradeDate: DateTimeOutput;
-  open?: Float;
-  high?: Float;
-  low?: Float;
-  close?: Float;
-  preClose?: Float;
-  change?: Float;
-  pctChg?: Float;
-  vol?: Float;
-  amount?: Float;
-}
-
-export interface DailyPreviousValuesPromise
-  extends Promise<DailyPreviousValues>,
-    Fragmentable {
-  id: () => Promise<ID_Output>;
-  symbol: () => Promise<String>;
-  tradeDate: () => Promise<DateTimeOutput>;
-  open: () => Promise<Float>;
-  high: () => Promise<Float>;
-  low: () => Promise<Float>;
-  close: () => Promise<Float>;
-  preClose: () => Promise<Float>;
-  change: () => Promise<Float>;
-  pctChg: () => Promise<Float>;
-  vol: () => Promise<Float>;
-  amount: () => Promise<Float>;
-}
-
-export interface DailyPreviousValuesSubscription
-  extends Promise<AsyncIterator<DailyPreviousValues>>,
-    Fragmentable {
-  id: () => Promise<AsyncIterator<ID_Output>>;
-  symbol: () => Promise<AsyncIterator<String>>;
-  tradeDate: () => Promise<AsyncIterator<DateTimeOutput>>;
-  open: () => Promise<AsyncIterator<Float>>;
-  high: () => Promise<AsyncIterator<Float>>;
-  low: () => Promise<AsyncIterator<Float>>;
-  close: () => Promise<AsyncIterator<Float>>;
-  preClose: () => Promise<AsyncIterator<Float>>;
-  change: () => Promise<AsyncIterator<Float>>;
-  pctChg: () => Promise<AsyncIterator<Float>>;
-  vol: () => Promise<AsyncIterator<Float>>;
-  amount: () => Promise<AsyncIterator<Float>>;
-}
-
 export interface User {
   id: ID_Output;
   username: String;
@@ -5615,61 +10697,29 @@ export interface UserNullablePromise
   role: () => Promise<Role>;
 }
 
-export interface CompanyEvent {
-  id: ID_Output;
-  title: String;
-  content: String;
-  reportTime: DateTimeOutput;
-  happen: TimeKind;
-  happenTime?: DateTimeOutput;
-  influence: String;
-  kind: FactorKind;
-  dierction: Direction;
+export interface FinaIndicatorSubscriptionPayload {
+  mutation: MutationType;
+  node: FinaIndicator;
+  updatedFields: String[];
+  previousValues: FinaIndicatorPreviousValues;
 }
 
-export interface CompanyEventPromise
-  extends Promise<CompanyEvent>,
+export interface FinaIndicatorSubscriptionPayloadPromise
+  extends Promise<FinaIndicatorSubscriptionPayload>,
     Fragmentable {
-  id: () => Promise<ID_Output>;
-  title: () => Promise<String>;
-  content: () => Promise<String>;
-  reportTime: () => Promise<DateTimeOutput>;
-  happen: () => Promise<TimeKind>;
-  happenTime: () => Promise<DateTimeOutput>;
-  influence: () => Promise<String>;
-  kind: () => Promise<FactorKind>;
-  dierction: () => Promise<Direction>;
-  company: <T = CompanyPromise>() => T;
+  mutation: () => Promise<MutationType>;
+  node: <T = FinaIndicatorPromise>() => T;
+  updatedFields: () => Promise<String[]>;
+  previousValues: <T = FinaIndicatorPreviousValuesPromise>() => T;
 }
 
-export interface CompanyEventSubscription
-  extends Promise<AsyncIterator<CompanyEvent>>,
+export interface FinaIndicatorSubscriptionPayloadSubscription
+  extends Promise<AsyncIterator<FinaIndicatorSubscriptionPayload>>,
     Fragmentable {
-  id: () => Promise<AsyncIterator<ID_Output>>;
-  title: () => Promise<AsyncIterator<String>>;
-  content: () => Promise<AsyncIterator<String>>;
-  reportTime: () => Promise<AsyncIterator<DateTimeOutput>>;
-  happen: () => Promise<AsyncIterator<TimeKind>>;
-  happenTime: () => Promise<AsyncIterator<DateTimeOutput>>;
-  influence: () => Promise<AsyncIterator<String>>;
-  kind: () => Promise<AsyncIterator<FactorKind>>;
-  dierction: () => Promise<AsyncIterator<Direction>>;
-  company: <T = CompanySubscription>() => T;
-}
-
-export interface CompanyEventNullablePromise
-  extends Promise<CompanyEvent | null>,
-    Fragmentable {
-  id: () => Promise<ID_Output>;
-  title: () => Promise<String>;
-  content: () => Promise<String>;
-  reportTime: () => Promise<DateTimeOutput>;
-  happen: () => Promise<TimeKind>;
-  happenTime: () => Promise<DateTimeOutput>;
-  influence: () => Promise<String>;
-  kind: () => Promise<FactorKind>;
-  dierction: () => Promise<Direction>;
-  company: <T = CompanyPromise>() => T;
+  mutation: () => Promise<AsyncIterator<MutationType>>;
+  node: <T = FinaIndicatorSubscription>() => T;
+  updatedFields: () => Promise<AsyncIterator<String[]>>;
+  previousValues: <T = FinaIndicatorPreviousValuesSubscription>() => T;
 }
 
 export interface AggregateProduct {
@@ -5688,29 +10738,521 @@ export interface AggregateProductSubscription
   count: () => Promise<AsyncIterator<Int>>;
 }
 
-export interface IndustrySubscriptionPayload {
-  mutation: MutationType;
-  node: Industry;
-  updatedFields: String[];
-  previousValues: IndustryPreviousValues;
+export interface FinaIndicatorPreviousValues {
+  id: ID_Output;
+  symbol?: String;
+  annDate?: String;
+  endDate?: String;
+  eps?: Float;
+  dtEps?: Float;
+  totalRevenuePs?: Float;
+  revenuePs?: Float;
+  capitalResePs?: Float;
+  surplusResePs?: Float;
+  undistProfitPs?: Float;
+  extraItem?: Float;
+  profitDedt?: Float;
+  grossMargin?: Float;
+  currentRatio?: Float;
+  quickRatio?: Float;
+  cashRatio?: Float;
+  invturnDays?: Float;
+  arturnDays?: Float;
+  invTurn?: Float;
+  arTurn?: Float;
+  caTurn?: Float;
+  faTurn?: Float;
+  assetsTurn?: Float;
+  opIncome?: Float;
+  valuechangeIncome?: Float;
+  interstIncome?: Float;
+  daa?: Float;
+  ebit?: Float;
+  ebitda?: Float;
+  fcff?: Float;
+  fcfe?: Float;
+  currentExint?: Float;
+  noncurrentExint?: Float;
+  interestdebt?: Float;
+  netdebt?: Float;
+  tangibleAsset?: Float;
+  workingCapital?: Float;
+  networkingCapital?: Float;
+  investCapital?: Float;
+  retainedEarnings?: Float;
+  diluted2Eps?: Float;
+  bps?: Float;
+  ocfps?: Float;
+  retainedps?: Float;
+  cfps?: Float;
+  ebitPs?: Float;
+  fcffPs?: Float;
+  fcfePs?: Float;
+  netprofitMargin?: Float;
+  grossprofitMargin?: Float;
+  cogsOfSales?: Float;
+  expenseOfSales?: Float;
+  profitToGr?: Float;
+  saleexpToGr?: Float;
+  adminexpOfGr?: Float;
+  finaexpOfGr?: Float;
+  impaiTtm?: Float;
+  gcOfGr?: Float;
+  opOfGr?: Float;
+  ebitOfGr?: Float;
+  roe?: Float;
+  roeWaa?: Float;
+  roeDt?: Float;
+  roa?: Float;
+  npta?: Float;
+  roic?: Float;
+  roeYearly?: Float;
+  roa2Yearly?: Float;
+  roeAvg?: Float;
+  opincomeOfEbt?: Float;
+  investincomeOfEbt?: Float;
+  nOpProfitOfEbt?: Float;
+  taxToEbt?: Float;
+  dtprofitToProfit?: Float;
+  salescashToOr?: Float;
+  ocfToOr?: Float;
+  ocfToOpincome?: Float;
+  capitalizedToDa?: Float;
+  debtToAssets?: Float;
+  assetsToEqt?: Float;
+  dpAssetsToEqt?: Float;
+  caToAssets?: Float;
+  ncaToAssets?: Float;
+  tbassetsToTotalassets?: Float;
+  intToTalcap?: Float;
+  eqtToTalcapital?: Float;
+  currentdebtToDebt?: Float;
+  longdebToDebt?: Float;
+  ocfToShortdebt?: Float;
+  debtToEqt?: Float;
+  eqtToDebt?: Float;
+  eqtToInterestdebt?: Float;
+  tangibleassetToDebt?: Float;
+  tangassetToIntdebt?: Float;
+  tangibleassetToNetdebt?: Float;
+  ocfToDebt?: Float;
+  ocfToInterestdebt?: Float;
+  ocfToNetdebt?: Float;
+  ebitToInterest?: Float;
+  longdebtToWorkingcapital?: Float;
+  ebitdaToDebt?: Float;
+  turnDays?: Float;
+  roaYearly?: Float;
+  roaDp?: Float;
+  fixedAssets?: Float;
+  profitPrefinExp?: Float;
+  nonOpProfit?: Float;
+  opToEbt?: Float;
+  nopToEbt?: Float;
+  ocfToProfit?: Float;
+  cashToLiqdebt?: Float;
+  cashToLiqdebtWithinterest?: Float;
+  opToLiqdebt?: Float;
+  opToDebt?: Float;
+  roicYearly?: Float;
+  totalFaTrun?: Float;
+  profitToOp?: Float;
+  qOpincome?: Float;
+  qInvestincome?: Float;
+  qDtprofit?: Float;
+  qEps?: Float;
+  qNetprofitMargin?: Float;
+  qGsprofitMargin?: Float;
+  qExpToSales?: Float;
+  qProfitToGr?: Float;
+  qSaleexpToGr?: Float;
+  qAdminexpToGr?: Float;
+  qFinaexpToGr?: Float;
+  qImpairToGrTtm?: Float;
+  qGcToGr?: Float;
+  qOpToGr?: Float;
+  qRoe?: Float;
+  qDtRoe?: Float;
+  qNpta?: Float;
+  qOpincomeToEbt?: Float;
+  qInvestincomeToEbt?: Float;
+  qDtprofitToProfit?: Float;
+  qSalescashToOr?: Float;
+  qOcfToSales?: Float;
+  qOcfToOr?: Float;
+  basicEpsYoy?: Float;
+  dtEpsYoy?: Float;
+  cfpsYoy?: Float;
+  opYoy?: Float;
+  ebtYoy?: Float;
+  netprofitYoy?: Float;
+  dtNetprofitYoy?: Float;
+  ocfYoy?: Float;
+  roeYoy?: Float;
+  bpsYoy?: Float;
+  assetsYoy?: Float;
+  eqtYoy?: Float;
+  trYoy?: Float;
+  orYoy?: Float;
+  qGrYoy?: Float;
+  qGrQoq?: Float;
+  qSalesYoy?: Float;
+  qSalesQoq?: Float;
+  qOpYoy?: Float;
+  qOpQoq?: Float;
+  qProfitYoy?: Float;
+  qProfitQoq?: Float;
+  qNetprofitYoy?: Float;
+  qNetprofitQoq?: Float;
+  equityYoy?: Float;
+  rdExp?: Float;
+  updateFlag?: String;
 }
 
-export interface IndustrySubscriptionPayloadPromise
-  extends Promise<IndustrySubscriptionPayload>,
+export interface FinaIndicatorPreviousValuesPromise
+  extends Promise<FinaIndicatorPreviousValues>,
     Fragmentable {
-  mutation: () => Promise<MutationType>;
-  node: <T = IndustryPromise>() => T;
-  updatedFields: () => Promise<String[]>;
-  previousValues: <T = IndustryPreviousValuesPromise>() => T;
+  id: () => Promise<ID_Output>;
+  symbol: () => Promise<String>;
+  annDate: () => Promise<String>;
+  endDate: () => Promise<String>;
+  eps: () => Promise<Float>;
+  dtEps: () => Promise<Float>;
+  totalRevenuePs: () => Promise<Float>;
+  revenuePs: () => Promise<Float>;
+  capitalResePs: () => Promise<Float>;
+  surplusResePs: () => Promise<Float>;
+  undistProfitPs: () => Promise<Float>;
+  extraItem: () => Promise<Float>;
+  profitDedt: () => Promise<Float>;
+  grossMargin: () => Promise<Float>;
+  currentRatio: () => Promise<Float>;
+  quickRatio: () => Promise<Float>;
+  cashRatio: () => Promise<Float>;
+  invturnDays: () => Promise<Float>;
+  arturnDays: () => Promise<Float>;
+  invTurn: () => Promise<Float>;
+  arTurn: () => Promise<Float>;
+  caTurn: () => Promise<Float>;
+  faTurn: () => Promise<Float>;
+  assetsTurn: () => Promise<Float>;
+  opIncome: () => Promise<Float>;
+  valuechangeIncome: () => Promise<Float>;
+  interstIncome: () => Promise<Float>;
+  daa: () => Promise<Float>;
+  ebit: () => Promise<Float>;
+  ebitda: () => Promise<Float>;
+  fcff: () => Promise<Float>;
+  fcfe: () => Promise<Float>;
+  currentExint: () => Promise<Float>;
+  noncurrentExint: () => Promise<Float>;
+  interestdebt: () => Promise<Float>;
+  netdebt: () => Promise<Float>;
+  tangibleAsset: () => Promise<Float>;
+  workingCapital: () => Promise<Float>;
+  networkingCapital: () => Promise<Float>;
+  investCapital: () => Promise<Float>;
+  retainedEarnings: () => Promise<Float>;
+  diluted2Eps: () => Promise<Float>;
+  bps: () => Promise<Float>;
+  ocfps: () => Promise<Float>;
+  retainedps: () => Promise<Float>;
+  cfps: () => Promise<Float>;
+  ebitPs: () => Promise<Float>;
+  fcffPs: () => Promise<Float>;
+  fcfePs: () => Promise<Float>;
+  netprofitMargin: () => Promise<Float>;
+  grossprofitMargin: () => Promise<Float>;
+  cogsOfSales: () => Promise<Float>;
+  expenseOfSales: () => Promise<Float>;
+  profitToGr: () => Promise<Float>;
+  saleexpToGr: () => Promise<Float>;
+  adminexpOfGr: () => Promise<Float>;
+  finaexpOfGr: () => Promise<Float>;
+  impaiTtm: () => Promise<Float>;
+  gcOfGr: () => Promise<Float>;
+  opOfGr: () => Promise<Float>;
+  ebitOfGr: () => Promise<Float>;
+  roe: () => Promise<Float>;
+  roeWaa: () => Promise<Float>;
+  roeDt: () => Promise<Float>;
+  roa: () => Promise<Float>;
+  npta: () => Promise<Float>;
+  roic: () => Promise<Float>;
+  roeYearly: () => Promise<Float>;
+  roa2Yearly: () => Promise<Float>;
+  roeAvg: () => Promise<Float>;
+  opincomeOfEbt: () => Promise<Float>;
+  investincomeOfEbt: () => Promise<Float>;
+  nOpProfitOfEbt: () => Promise<Float>;
+  taxToEbt: () => Promise<Float>;
+  dtprofitToProfit: () => Promise<Float>;
+  salescashToOr: () => Promise<Float>;
+  ocfToOr: () => Promise<Float>;
+  ocfToOpincome: () => Promise<Float>;
+  capitalizedToDa: () => Promise<Float>;
+  debtToAssets: () => Promise<Float>;
+  assetsToEqt: () => Promise<Float>;
+  dpAssetsToEqt: () => Promise<Float>;
+  caToAssets: () => Promise<Float>;
+  ncaToAssets: () => Promise<Float>;
+  tbassetsToTotalassets: () => Promise<Float>;
+  intToTalcap: () => Promise<Float>;
+  eqtToTalcapital: () => Promise<Float>;
+  currentdebtToDebt: () => Promise<Float>;
+  longdebToDebt: () => Promise<Float>;
+  ocfToShortdebt: () => Promise<Float>;
+  debtToEqt: () => Promise<Float>;
+  eqtToDebt: () => Promise<Float>;
+  eqtToInterestdebt: () => Promise<Float>;
+  tangibleassetToDebt: () => Promise<Float>;
+  tangassetToIntdebt: () => Promise<Float>;
+  tangibleassetToNetdebt: () => Promise<Float>;
+  ocfToDebt: () => Promise<Float>;
+  ocfToInterestdebt: () => Promise<Float>;
+  ocfToNetdebt: () => Promise<Float>;
+  ebitToInterest: () => Promise<Float>;
+  longdebtToWorkingcapital: () => Promise<Float>;
+  ebitdaToDebt: () => Promise<Float>;
+  turnDays: () => Promise<Float>;
+  roaYearly: () => Promise<Float>;
+  roaDp: () => Promise<Float>;
+  fixedAssets: () => Promise<Float>;
+  profitPrefinExp: () => Promise<Float>;
+  nonOpProfit: () => Promise<Float>;
+  opToEbt: () => Promise<Float>;
+  nopToEbt: () => Promise<Float>;
+  ocfToProfit: () => Promise<Float>;
+  cashToLiqdebt: () => Promise<Float>;
+  cashToLiqdebtWithinterest: () => Promise<Float>;
+  opToLiqdebt: () => Promise<Float>;
+  opToDebt: () => Promise<Float>;
+  roicYearly: () => Promise<Float>;
+  totalFaTrun: () => Promise<Float>;
+  profitToOp: () => Promise<Float>;
+  qOpincome: () => Promise<Float>;
+  qInvestincome: () => Promise<Float>;
+  qDtprofit: () => Promise<Float>;
+  qEps: () => Promise<Float>;
+  qNetprofitMargin: () => Promise<Float>;
+  qGsprofitMargin: () => Promise<Float>;
+  qExpToSales: () => Promise<Float>;
+  qProfitToGr: () => Promise<Float>;
+  qSaleexpToGr: () => Promise<Float>;
+  qAdminexpToGr: () => Promise<Float>;
+  qFinaexpToGr: () => Promise<Float>;
+  qImpairToGrTtm: () => Promise<Float>;
+  qGcToGr: () => Promise<Float>;
+  qOpToGr: () => Promise<Float>;
+  qRoe: () => Promise<Float>;
+  qDtRoe: () => Promise<Float>;
+  qNpta: () => Promise<Float>;
+  qOpincomeToEbt: () => Promise<Float>;
+  qInvestincomeToEbt: () => Promise<Float>;
+  qDtprofitToProfit: () => Promise<Float>;
+  qSalescashToOr: () => Promise<Float>;
+  qOcfToSales: () => Promise<Float>;
+  qOcfToOr: () => Promise<Float>;
+  basicEpsYoy: () => Promise<Float>;
+  dtEpsYoy: () => Promise<Float>;
+  cfpsYoy: () => Promise<Float>;
+  opYoy: () => Promise<Float>;
+  ebtYoy: () => Promise<Float>;
+  netprofitYoy: () => Promise<Float>;
+  dtNetprofitYoy: () => Promise<Float>;
+  ocfYoy: () => Promise<Float>;
+  roeYoy: () => Promise<Float>;
+  bpsYoy: () => Promise<Float>;
+  assetsYoy: () => Promise<Float>;
+  eqtYoy: () => Promise<Float>;
+  trYoy: () => Promise<Float>;
+  orYoy: () => Promise<Float>;
+  qGrYoy: () => Promise<Float>;
+  qGrQoq: () => Promise<Float>;
+  qSalesYoy: () => Promise<Float>;
+  qSalesQoq: () => Promise<Float>;
+  qOpYoy: () => Promise<Float>;
+  qOpQoq: () => Promise<Float>;
+  qProfitYoy: () => Promise<Float>;
+  qProfitQoq: () => Promise<Float>;
+  qNetprofitYoy: () => Promise<Float>;
+  qNetprofitQoq: () => Promise<Float>;
+  equityYoy: () => Promise<Float>;
+  rdExp: () => Promise<Float>;
+  updateFlag: () => Promise<String>;
 }
 
-export interface IndustrySubscriptionPayloadSubscription
-  extends Promise<AsyncIterator<IndustrySubscriptionPayload>>,
+export interface FinaIndicatorPreviousValuesSubscription
+  extends Promise<AsyncIterator<FinaIndicatorPreviousValues>>,
     Fragmentable {
-  mutation: () => Promise<AsyncIterator<MutationType>>;
-  node: <T = IndustrySubscription>() => T;
-  updatedFields: () => Promise<AsyncIterator<String[]>>;
-  previousValues: <T = IndustryPreviousValuesSubscription>() => T;
+  id: () => Promise<AsyncIterator<ID_Output>>;
+  symbol: () => Promise<AsyncIterator<String>>;
+  annDate: () => Promise<AsyncIterator<String>>;
+  endDate: () => Promise<AsyncIterator<String>>;
+  eps: () => Promise<AsyncIterator<Float>>;
+  dtEps: () => Promise<AsyncIterator<Float>>;
+  totalRevenuePs: () => Promise<AsyncIterator<Float>>;
+  revenuePs: () => Promise<AsyncIterator<Float>>;
+  capitalResePs: () => Promise<AsyncIterator<Float>>;
+  surplusResePs: () => Promise<AsyncIterator<Float>>;
+  undistProfitPs: () => Promise<AsyncIterator<Float>>;
+  extraItem: () => Promise<AsyncIterator<Float>>;
+  profitDedt: () => Promise<AsyncIterator<Float>>;
+  grossMargin: () => Promise<AsyncIterator<Float>>;
+  currentRatio: () => Promise<AsyncIterator<Float>>;
+  quickRatio: () => Promise<AsyncIterator<Float>>;
+  cashRatio: () => Promise<AsyncIterator<Float>>;
+  invturnDays: () => Promise<AsyncIterator<Float>>;
+  arturnDays: () => Promise<AsyncIterator<Float>>;
+  invTurn: () => Promise<AsyncIterator<Float>>;
+  arTurn: () => Promise<AsyncIterator<Float>>;
+  caTurn: () => Promise<AsyncIterator<Float>>;
+  faTurn: () => Promise<AsyncIterator<Float>>;
+  assetsTurn: () => Promise<AsyncIterator<Float>>;
+  opIncome: () => Promise<AsyncIterator<Float>>;
+  valuechangeIncome: () => Promise<AsyncIterator<Float>>;
+  interstIncome: () => Promise<AsyncIterator<Float>>;
+  daa: () => Promise<AsyncIterator<Float>>;
+  ebit: () => Promise<AsyncIterator<Float>>;
+  ebitda: () => Promise<AsyncIterator<Float>>;
+  fcff: () => Promise<AsyncIterator<Float>>;
+  fcfe: () => Promise<AsyncIterator<Float>>;
+  currentExint: () => Promise<AsyncIterator<Float>>;
+  noncurrentExint: () => Promise<AsyncIterator<Float>>;
+  interestdebt: () => Promise<AsyncIterator<Float>>;
+  netdebt: () => Promise<AsyncIterator<Float>>;
+  tangibleAsset: () => Promise<AsyncIterator<Float>>;
+  workingCapital: () => Promise<AsyncIterator<Float>>;
+  networkingCapital: () => Promise<AsyncIterator<Float>>;
+  investCapital: () => Promise<AsyncIterator<Float>>;
+  retainedEarnings: () => Promise<AsyncIterator<Float>>;
+  diluted2Eps: () => Promise<AsyncIterator<Float>>;
+  bps: () => Promise<AsyncIterator<Float>>;
+  ocfps: () => Promise<AsyncIterator<Float>>;
+  retainedps: () => Promise<AsyncIterator<Float>>;
+  cfps: () => Promise<AsyncIterator<Float>>;
+  ebitPs: () => Promise<AsyncIterator<Float>>;
+  fcffPs: () => Promise<AsyncIterator<Float>>;
+  fcfePs: () => Promise<AsyncIterator<Float>>;
+  netprofitMargin: () => Promise<AsyncIterator<Float>>;
+  grossprofitMargin: () => Promise<AsyncIterator<Float>>;
+  cogsOfSales: () => Promise<AsyncIterator<Float>>;
+  expenseOfSales: () => Promise<AsyncIterator<Float>>;
+  profitToGr: () => Promise<AsyncIterator<Float>>;
+  saleexpToGr: () => Promise<AsyncIterator<Float>>;
+  adminexpOfGr: () => Promise<AsyncIterator<Float>>;
+  finaexpOfGr: () => Promise<AsyncIterator<Float>>;
+  impaiTtm: () => Promise<AsyncIterator<Float>>;
+  gcOfGr: () => Promise<AsyncIterator<Float>>;
+  opOfGr: () => Promise<AsyncIterator<Float>>;
+  ebitOfGr: () => Promise<AsyncIterator<Float>>;
+  roe: () => Promise<AsyncIterator<Float>>;
+  roeWaa: () => Promise<AsyncIterator<Float>>;
+  roeDt: () => Promise<AsyncIterator<Float>>;
+  roa: () => Promise<AsyncIterator<Float>>;
+  npta: () => Promise<AsyncIterator<Float>>;
+  roic: () => Promise<AsyncIterator<Float>>;
+  roeYearly: () => Promise<AsyncIterator<Float>>;
+  roa2Yearly: () => Promise<AsyncIterator<Float>>;
+  roeAvg: () => Promise<AsyncIterator<Float>>;
+  opincomeOfEbt: () => Promise<AsyncIterator<Float>>;
+  investincomeOfEbt: () => Promise<AsyncIterator<Float>>;
+  nOpProfitOfEbt: () => Promise<AsyncIterator<Float>>;
+  taxToEbt: () => Promise<AsyncIterator<Float>>;
+  dtprofitToProfit: () => Promise<AsyncIterator<Float>>;
+  salescashToOr: () => Promise<AsyncIterator<Float>>;
+  ocfToOr: () => Promise<AsyncIterator<Float>>;
+  ocfToOpincome: () => Promise<AsyncIterator<Float>>;
+  capitalizedToDa: () => Promise<AsyncIterator<Float>>;
+  debtToAssets: () => Promise<AsyncIterator<Float>>;
+  assetsToEqt: () => Promise<AsyncIterator<Float>>;
+  dpAssetsToEqt: () => Promise<AsyncIterator<Float>>;
+  caToAssets: () => Promise<AsyncIterator<Float>>;
+  ncaToAssets: () => Promise<AsyncIterator<Float>>;
+  tbassetsToTotalassets: () => Promise<AsyncIterator<Float>>;
+  intToTalcap: () => Promise<AsyncIterator<Float>>;
+  eqtToTalcapital: () => Promise<AsyncIterator<Float>>;
+  currentdebtToDebt: () => Promise<AsyncIterator<Float>>;
+  longdebToDebt: () => Promise<AsyncIterator<Float>>;
+  ocfToShortdebt: () => Promise<AsyncIterator<Float>>;
+  debtToEqt: () => Promise<AsyncIterator<Float>>;
+  eqtToDebt: () => Promise<AsyncIterator<Float>>;
+  eqtToInterestdebt: () => Promise<AsyncIterator<Float>>;
+  tangibleassetToDebt: () => Promise<AsyncIterator<Float>>;
+  tangassetToIntdebt: () => Promise<AsyncIterator<Float>>;
+  tangibleassetToNetdebt: () => Promise<AsyncIterator<Float>>;
+  ocfToDebt: () => Promise<AsyncIterator<Float>>;
+  ocfToInterestdebt: () => Promise<AsyncIterator<Float>>;
+  ocfToNetdebt: () => Promise<AsyncIterator<Float>>;
+  ebitToInterest: () => Promise<AsyncIterator<Float>>;
+  longdebtToWorkingcapital: () => Promise<AsyncIterator<Float>>;
+  ebitdaToDebt: () => Promise<AsyncIterator<Float>>;
+  turnDays: () => Promise<AsyncIterator<Float>>;
+  roaYearly: () => Promise<AsyncIterator<Float>>;
+  roaDp: () => Promise<AsyncIterator<Float>>;
+  fixedAssets: () => Promise<AsyncIterator<Float>>;
+  profitPrefinExp: () => Promise<AsyncIterator<Float>>;
+  nonOpProfit: () => Promise<AsyncIterator<Float>>;
+  opToEbt: () => Promise<AsyncIterator<Float>>;
+  nopToEbt: () => Promise<AsyncIterator<Float>>;
+  ocfToProfit: () => Promise<AsyncIterator<Float>>;
+  cashToLiqdebt: () => Promise<AsyncIterator<Float>>;
+  cashToLiqdebtWithinterest: () => Promise<AsyncIterator<Float>>;
+  opToLiqdebt: () => Promise<AsyncIterator<Float>>;
+  opToDebt: () => Promise<AsyncIterator<Float>>;
+  roicYearly: () => Promise<AsyncIterator<Float>>;
+  totalFaTrun: () => Promise<AsyncIterator<Float>>;
+  profitToOp: () => Promise<AsyncIterator<Float>>;
+  qOpincome: () => Promise<AsyncIterator<Float>>;
+  qInvestincome: () => Promise<AsyncIterator<Float>>;
+  qDtprofit: () => Promise<AsyncIterator<Float>>;
+  qEps: () => Promise<AsyncIterator<Float>>;
+  qNetprofitMargin: () => Promise<AsyncIterator<Float>>;
+  qGsprofitMargin: () => Promise<AsyncIterator<Float>>;
+  qExpToSales: () => Promise<AsyncIterator<Float>>;
+  qProfitToGr: () => Promise<AsyncIterator<Float>>;
+  qSaleexpToGr: () => Promise<AsyncIterator<Float>>;
+  qAdminexpToGr: () => Promise<AsyncIterator<Float>>;
+  qFinaexpToGr: () => Promise<AsyncIterator<Float>>;
+  qImpairToGrTtm: () => Promise<AsyncIterator<Float>>;
+  qGcToGr: () => Promise<AsyncIterator<Float>>;
+  qOpToGr: () => Promise<AsyncIterator<Float>>;
+  qRoe: () => Promise<AsyncIterator<Float>>;
+  qDtRoe: () => Promise<AsyncIterator<Float>>;
+  qNpta: () => Promise<AsyncIterator<Float>>;
+  qOpincomeToEbt: () => Promise<AsyncIterator<Float>>;
+  qInvestincomeToEbt: () => Promise<AsyncIterator<Float>>;
+  qDtprofitToProfit: () => Promise<AsyncIterator<Float>>;
+  qSalescashToOr: () => Promise<AsyncIterator<Float>>;
+  qOcfToSales: () => Promise<AsyncIterator<Float>>;
+  qOcfToOr: () => Promise<AsyncIterator<Float>>;
+  basicEpsYoy: () => Promise<AsyncIterator<Float>>;
+  dtEpsYoy: () => Promise<AsyncIterator<Float>>;
+  cfpsYoy: () => Promise<AsyncIterator<Float>>;
+  opYoy: () => Promise<AsyncIterator<Float>>;
+  ebtYoy: () => Promise<AsyncIterator<Float>>;
+  netprofitYoy: () => Promise<AsyncIterator<Float>>;
+  dtNetprofitYoy: () => Promise<AsyncIterator<Float>>;
+  ocfYoy: () => Promise<AsyncIterator<Float>>;
+  roeYoy: () => Promise<AsyncIterator<Float>>;
+  bpsYoy: () => Promise<AsyncIterator<Float>>;
+  assetsYoy: () => Promise<AsyncIterator<Float>>;
+  eqtYoy: () => Promise<AsyncIterator<Float>>;
+  trYoy: () => Promise<AsyncIterator<Float>>;
+  orYoy: () => Promise<AsyncIterator<Float>>;
+  qGrYoy: () => Promise<AsyncIterator<Float>>;
+  qGrQoq: () => Promise<AsyncIterator<Float>>;
+  qSalesYoy: () => Promise<AsyncIterator<Float>>;
+  qSalesQoq: () => Promise<AsyncIterator<Float>>;
+  qOpYoy: () => Promise<AsyncIterator<Float>>;
+  qOpQoq: () => Promise<AsyncIterator<Float>>;
+  qProfitYoy: () => Promise<AsyncIterator<Float>>;
+  qProfitQoq: () => Promise<AsyncIterator<Float>>;
+  qNetprofitYoy: () => Promise<AsyncIterator<Float>>;
+  qNetprofitQoq: () => Promise<AsyncIterator<Float>>;
+  equityYoy: () => Promise<AsyncIterator<Float>>;
+  rdExp: () => Promise<AsyncIterator<Float>>;
+  updateFlag: () => Promise<AsyncIterator<String>>;
 }
 
 export interface KeywordEdge {
@@ -5728,52 +11270,6 @@ export interface KeywordEdgeSubscription
     Fragmentable {
   node: <T = KeywordSubscription>() => T;
   cursor: () => Promise<AsyncIterator<String>>;
-}
-
-export interface IndustryPreviousValues {
-  id: ID_Output;
-  code?: String;
-  name: String;
-  desc: String;
-}
-
-export interface IndustryPreviousValuesPromise
-  extends Promise<IndustryPreviousValues>,
-    Fragmentable {
-  id: () => Promise<ID_Output>;
-  code: () => Promise<String>;
-  name: () => Promise<String>;
-  desc: () => Promise<String>;
-}
-
-export interface IndustryPreviousValuesSubscription
-  extends Promise<AsyncIterator<IndustryPreviousValues>>,
-    Fragmentable {
-  id: () => Promise<AsyncIterator<ID_Output>>;
-  code: () => Promise<AsyncIterator<String>>;
-  name: () => Promise<AsyncIterator<String>>;
-  desc: () => Promise<AsyncIterator<String>>;
-}
-
-export interface IndustryInfluenceConnection {
-  pageInfo: PageInfo;
-  edges: IndustryInfluenceEdge[];
-}
-
-export interface IndustryInfluenceConnectionPromise
-  extends Promise<IndustryInfluenceConnection>,
-    Fragmentable {
-  pageInfo: <T = PageInfoPromise>() => T;
-  edges: <T = FragmentableArray<IndustryInfluenceEdge>>() => T;
-  aggregate: <T = AggregateIndustryInfluencePromise>() => T;
-}
-
-export interface IndustryInfluenceConnectionSubscription
-  extends Promise<AsyncIterator<IndustryInfluenceConnection>>,
-    Fragmentable {
-  pageInfo: <T = PageInfoSubscription>() => T;
-  edges: <T = Promise<AsyncIterator<IndustryInfluenceEdgeSubscription>>>() => T;
-  aggregate: <T = AggregateIndustryInfluenceSubscription>() => T;
 }
 
 export interface Product {
@@ -5856,6 +11352,52 @@ export interface ProductNullablePromise
     first?: Int;
     last?: Int;
   }) => T;
+}
+
+export interface IndustryInfluenceConnection {
+  pageInfo: PageInfo;
+  edges: IndustryInfluenceEdge[];
+}
+
+export interface IndustryInfluenceConnectionPromise
+  extends Promise<IndustryInfluenceConnection>,
+    Fragmentable {
+  pageInfo: <T = PageInfoPromise>() => T;
+  edges: <T = FragmentableArray<IndustryInfluenceEdge>>() => T;
+  aggregate: <T = AggregateIndustryInfluencePromise>() => T;
+}
+
+export interface IndustryInfluenceConnectionSubscription
+  extends Promise<AsyncIterator<IndustryInfluenceConnection>>,
+    Fragmentable {
+  pageInfo: <T = PageInfoSubscription>() => T;
+  edges: <T = Promise<AsyncIterator<IndustryInfluenceEdgeSubscription>>>() => T;
+  aggregate: <T = AggregateIndustryInfluenceSubscription>() => T;
+}
+
+export interface IndustrySubscriptionPayload {
+  mutation: MutationType;
+  node: Industry;
+  updatedFields: String[];
+  previousValues: IndustryPreviousValues;
+}
+
+export interface IndustrySubscriptionPayloadPromise
+  extends Promise<IndustrySubscriptionPayload>,
+    Fragmentable {
+  mutation: () => Promise<MutationType>;
+  node: <T = IndustryPromise>() => T;
+  updatedFields: () => Promise<String[]>;
+  previousValues: <T = IndustryPreviousValuesPromise>() => T;
+}
+
+export interface IndustrySubscriptionPayloadSubscription
+  extends Promise<AsyncIterator<IndustrySubscriptionPayload>>,
+    Fragmentable {
+  mutation: () => Promise<AsyncIterator<MutationType>>;
+  node: <T = IndustrySubscription>() => T;
+  updatedFields: () => Promise<AsyncIterator<String[]>>;
+  previousValues: <T = IndustryPreviousValuesSubscription>() => T;
 }
 
 export interface Company {
@@ -5950,6 +11492,15 @@ export interface CompanyPromise extends Promise<Company>, Fragmentable {
     first?: Int;
     last?: Int;
   }) => T;
+  finaIndicators: <T = FragmentableArray<FinaIndicator>>(args?: {
+    where?: FinaIndicatorWhereInput;
+    orderBy?: FinaIndicatorOrderByInput;
+    skip?: Int;
+    after?: String;
+    before?: String;
+    first?: Int;
+    last?: Int;
+  }) => T;
 }
 
 export interface CompanySubscription
@@ -6020,6 +11571,17 @@ export interface CompanySubscription
   dailies: <T = Promise<AsyncIterator<DailySubscription>>>(args?: {
     where?: DailyWhereInput;
     orderBy?: DailyOrderByInput;
+    skip?: Int;
+    after?: String;
+    before?: String;
+    first?: Int;
+    last?: Int;
+  }) => T;
+  finaIndicators: <
+    T = Promise<AsyncIterator<FinaIndicatorSubscription>>
+  >(args?: {
+    where?: FinaIndicatorWhereInput;
+    orderBy?: FinaIndicatorOrderByInput;
     skip?: Int;
     after?: String;
     before?: String;
@@ -6102,6 +11664,101 @@ export interface CompanyNullablePromise
     first?: Int;
     last?: Int;
   }) => T;
+  finaIndicators: <T = FragmentableArray<FinaIndicator>>(args?: {
+    where?: FinaIndicatorWhereInput;
+    orderBy?: FinaIndicatorOrderByInput;
+    skip?: Int;
+    after?: String;
+    before?: String;
+    first?: Int;
+    last?: Int;
+  }) => T;
+}
+
+export interface IndustryPreviousValues {
+  id: ID_Output;
+  code?: String;
+  name: String;
+  desc: String;
+}
+
+export interface IndustryPreviousValuesPromise
+  extends Promise<IndustryPreviousValues>,
+    Fragmentable {
+  id: () => Promise<ID_Output>;
+  code: () => Promise<String>;
+  name: () => Promise<String>;
+  desc: () => Promise<String>;
+}
+
+export interface IndustryPreviousValuesSubscription
+  extends Promise<AsyncIterator<IndustryPreviousValues>>,
+    Fragmentable {
+  id: () => Promise<AsyncIterator<ID_Output>>;
+  code: () => Promise<AsyncIterator<String>>;
+  name: () => Promise<AsyncIterator<String>>;
+  desc: () => Promise<AsyncIterator<String>>;
+}
+
+export interface IndustryConnection {
+  pageInfo: PageInfo;
+  edges: IndustryEdge[];
+}
+
+export interface IndustryConnectionPromise
+  extends Promise<IndustryConnection>,
+    Fragmentable {
+  pageInfo: <T = PageInfoPromise>() => T;
+  edges: <T = FragmentableArray<IndustryEdge>>() => T;
+  aggregate: <T = AggregateIndustryPromise>() => T;
+}
+
+export interface IndustryConnectionSubscription
+  extends Promise<AsyncIterator<IndustryConnection>>,
+    Fragmentable {
+  pageInfo: <T = PageInfoSubscription>() => T;
+  edges: <T = Promise<AsyncIterator<IndustryEdgeSubscription>>>() => T;
+  aggregate: <T = AggregateIndustrySubscription>() => T;
+}
+
+export interface Keyword {
+  id: ID_Output;
+  name: String;
+}
+
+export interface KeywordPromise extends Promise<Keyword>, Fragmentable {
+  id: () => Promise<ID_Output>;
+  name: () => Promise<String>;
+}
+
+export interface KeywordSubscription
+  extends Promise<AsyncIterator<Keyword>>,
+    Fragmentable {
+  id: () => Promise<AsyncIterator<ID_Output>>;
+  name: () => Promise<AsyncIterator<String>>;
+}
+
+export interface KeywordNullablePromise
+  extends Promise<Keyword | null>,
+    Fragmentable {
+  id: () => Promise<ID_Output>;
+  name: () => Promise<String>;
+}
+
+export interface AggregateDaily {
+  count: Int;
+}
+
+export interface AggregateDailyPromise
+  extends Promise<AggregateDaily>,
+    Fragmentable {
+  count: () => Promise<Int>;
+}
+
+export interface AggregateDailySubscription
+  extends Promise<AsyncIterator<AggregateDaily>>,
+    Fragmentable {
+  count: () => Promise<AsyncIterator<Int>>;
 }
 
 export interface IndustryEventSubscriptionPayload {
@@ -6129,25 +11786,23 @@ export interface IndustryEventSubscriptionPayloadSubscription
   previousValues: <T = IndustryEventPreviousValuesSubscription>() => T;
 }
 
-export interface IndustryConnection {
-  pageInfo: PageInfo;
-  edges: IndustryEdge[];
+export interface CompanyProductEdge {
+  node: CompanyProduct;
+  cursor: String;
 }
 
-export interface IndustryConnectionPromise
-  extends Promise<IndustryConnection>,
+export interface CompanyProductEdgePromise
+  extends Promise<CompanyProductEdge>,
     Fragmentable {
-  pageInfo: <T = PageInfoPromise>() => T;
-  edges: <T = FragmentableArray<IndustryEdge>>() => T;
-  aggregate: <T = AggregateIndustryPromise>() => T;
+  node: <T = CompanyProductPromise>() => T;
+  cursor: () => Promise<String>;
 }
 
-export interface IndustryConnectionSubscription
-  extends Promise<AsyncIterator<IndustryConnection>>,
+export interface CompanyProductEdgeSubscription
+  extends Promise<AsyncIterator<CompanyProductEdge>>,
     Fragmentable {
-  pageInfo: <T = PageInfoSubscription>() => T;
-  edges: <T = Promise<AsyncIterator<IndustryEdgeSubscription>>>() => T;
-  aggregate: <T = AggregateIndustrySubscription>() => T;
+  node: <T = CompanyProductSubscription>() => T;
+  cursor: () => Promise<AsyncIterator<String>>;
 }
 
 export interface IndustryEventPreviousValues {
@@ -6184,46 +11839,6 @@ export interface IndustryEventPreviousValuesSubscription
   content: () => Promise<AsyncIterator<String>>;
 }
 
-export interface AggregateCompanyProduct {
-  count: Int;
-}
-
-export interface AggregateCompanyProductPromise
-  extends Promise<AggregateCompanyProduct>,
-    Fragmentable {
-  count: () => Promise<Int>;
-}
-
-export interface AggregateCompanyProductSubscription
-  extends Promise<AsyncIterator<AggregateCompanyProduct>>,
-    Fragmentable {
-  count: () => Promise<AsyncIterator<Int>>;
-}
-
-export interface Research {
-  id: ID_Output;
-  desc: String;
-}
-
-export interface ResearchPromise extends Promise<Research>, Fragmentable {
-  id: () => Promise<ID_Output>;
-  desc: () => Promise<String>;
-}
-
-export interface ResearchSubscription
-  extends Promise<AsyncIterator<Research>>,
-    Fragmentable {
-  id: () => Promise<AsyncIterator<ID_Output>>;
-  desc: () => Promise<AsyncIterator<String>>;
-}
-
-export interface ResearchNullablePromise
-  extends Promise<Research | null>,
-    Fragmentable {
-  id: () => Promise<ID_Output>;
-  desc: () => Promise<String>;
-}
-
 export interface UserSubscriptionPayload {
   mutation: MutationType;
   node: User;
@@ -6247,180 +11862,6 @@ export interface UserSubscriptionPayloadSubscription
   node: <T = UserSubscription>() => T;
   updatedFields: () => Promise<AsyncIterator<String[]>>;
   previousValues: <T = UserPreviousValuesSubscription>() => T;
-}
-
-export interface IndustryInfluenceSubscriptionPayload {
-  mutation: MutationType;
-  node: IndustryInfluence;
-  updatedFields: String[];
-  previousValues: IndustryInfluencePreviousValues;
-}
-
-export interface IndustryInfluenceSubscriptionPayloadPromise
-  extends Promise<IndustryInfluenceSubscriptionPayload>,
-    Fragmentable {
-  mutation: () => Promise<MutationType>;
-  node: <T = IndustryInfluencePromise>() => T;
-  updatedFields: () => Promise<String[]>;
-  previousValues: <T = IndustryInfluencePreviousValuesPromise>() => T;
-}
-
-export interface IndustryInfluenceSubscriptionPayloadSubscription
-  extends Promise<AsyncIterator<IndustryInfluenceSubscriptionPayload>>,
-    Fragmentable {
-  mutation: () => Promise<AsyncIterator<MutationType>>;
-  node: <T = IndustryInfluenceSubscription>() => T;
-  updatedFields: () => Promise<AsyncIterator<String[]>>;
-  previousValues: <T = IndustryInfluencePreviousValuesSubscription>() => T;
-}
-
-export interface ResearchEdge {
-  node: Research;
-  cursor: String;
-}
-
-export interface ResearchEdgePromise
-  extends Promise<ResearchEdge>,
-    Fragmentable {
-  node: <T = ResearchPromise>() => T;
-  cursor: () => Promise<String>;
-}
-
-export interface ResearchEdgeSubscription
-  extends Promise<AsyncIterator<ResearchEdge>>,
-    Fragmentable {
-  node: <T = ResearchSubscription>() => T;
-  cursor: () => Promise<AsyncIterator<String>>;
-}
-
-export interface IndustryInfluencePreviousValues {
-  id: ID_Output;
-  keywordDirection: Direction;
-  kind: FactorKind;
-  desc: String;
-  direction: Direction;
-}
-
-export interface IndustryInfluencePreviousValuesPromise
-  extends Promise<IndustryInfluencePreviousValues>,
-    Fragmentable {
-  id: () => Promise<ID_Output>;
-  keywordDirection: () => Promise<Direction>;
-  kind: () => Promise<FactorKind>;
-  desc: () => Promise<String>;
-  direction: () => Promise<Direction>;
-}
-
-export interface IndustryInfluencePreviousValuesSubscription
-  extends Promise<AsyncIterator<IndustryInfluencePreviousValues>>,
-    Fragmentable {
-  id: () => Promise<AsyncIterator<ID_Output>>;
-  keywordDirection: () => Promise<AsyncIterator<Direction>>;
-  kind: () => Promise<AsyncIterator<FactorKind>>;
-  desc: () => Promise<AsyncIterator<String>>;
-  direction: () => Promise<AsyncIterator<Direction>>;
-}
-
-export interface AggregateIndustryInfluence {
-  count: Int;
-}
-
-export interface AggregateIndustryInfluencePromise
-  extends Promise<AggregateIndustryInfluence>,
-    Fragmentable {
-  count: () => Promise<Int>;
-}
-
-export interface AggregateIndustryInfluenceSubscription
-  extends Promise<AsyncIterator<AggregateIndustryInfluence>>,
-    Fragmentable {
-  count: () => Promise<AsyncIterator<Int>>;
-}
-
-export interface Keyword {
-  id: ID_Output;
-  name: String;
-}
-
-export interface KeywordPromise extends Promise<Keyword>, Fragmentable {
-  id: () => Promise<ID_Output>;
-  name: () => Promise<String>;
-}
-
-export interface KeywordSubscription
-  extends Promise<AsyncIterator<Keyword>>,
-    Fragmentable {
-  id: () => Promise<AsyncIterator<ID_Output>>;
-  name: () => Promise<AsyncIterator<String>>;
-}
-
-export interface KeywordNullablePromise
-  extends Promise<Keyword | null>,
-    Fragmentable {
-  id: () => Promise<ID_Output>;
-  name: () => Promise<String>;
-}
-
-export interface AggregateIndustry {
-  count: Int;
-}
-
-export interface AggregateIndustryPromise
-  extends Promise<AggregateIndustry>,
-    Fragmentable {
-  count: () => Promise<Int>;
-}
-
-export interface AggregateIndustrySubscription
-  extends Promise<AsyncIterator<AggregateIndustry>>,
-    Fragmentable {
-  count: () => Promise<AsyncIterator<Int>>;
-}
-
-export interface CompanyProductConnection {
-  pageInfo: PageInfo;
-  edges: CompanyProductEdge[];
-}
-
-export interface CompanyProductConnectionPromise
-  extends Promise<CompanyProductConnection>,
-    Fragmentable {
-  pageInfo: <T = PageInfoPromise>() => T;
-  edges: <T = FragmentableArray<CompanyProductEdge>>() => T;
-  aggregate: <T = AggregateCompanyProductPromise>() => T;
-}
-
-export interface CompanyProductConnectionSubscription
-  extends Promise<AsyncIterator<CompanyProductConnection>>,
-    Fragmentable {
-  pageInfo: <T = PageInfoSubscription>() => T;
-  edges: <T = Promise<AsyncIterator<CompanyProductEdgeSubscription>>>() => T;
-  aggregate: <T = AggregateCompanyProductSubscription>() => T;
-}
-
-export interface ProductSubscriptionPayload {
-  mutation: MutationType;
-  node: Product;
-  updatedFields: String[];
-  previousValues: ProductPreviousValues;
-}
-
-export interface ProductSubscriptionPayloadPromise
-  extends Promise<ProductSubscriptionPayload>,
-    Fragmentable {
-  mutation: () => Promise<MutationType>;
-  node: <T = ProductPromise>() => T;
-  updatedFields: () => Promise<String[]>;
-  previousValues: <T = ProductPreviousValuesPromise>() => T;
-}
-
-export interface ProductSubscriptionPayloadSubscription
-  extends Promise<AsyncIterator<ProductSubscriptionPayload>>,
-    Fragmentable {
-  mutation: () => Promise<AsyncIterator<MutationType>>;
-  node: <T = ProductSubscription>() => T;
-  updatedFields: () => Promise<AsyncIterator<String[]>>;
-  previousValues: <T = ProductPreviousValuesSubscription>() => T;
 }
 
 export interface IndustryInfluence {
@@ -6467,48 +11908,197 @@ export interface IndustryInfluenceNullablePromise
   direction: () => Promise<Direction>;
 }
 
-export interface KeywordPreviousValues {
-  id: ID_Output;
-  name: String;
+export interface ResearchEdge {
+  node: Research;
+  cursor: String;
 }
 
-export interface KeywordPreviousValuesPromise
-  extends Promise<KeywordPreviousValues>,
+export interface ResearchEdgePromise
+  extends Promise<ResearchEdge>,
     Fragmentable {
-  id: () => Promise<ID_Output>;
-  name: () => Promise<String>;
+  node: <T = ResearchPromise>() => T;
+  cursor: () => Promise<String>;
 }
 
-export interface KeywordPreviousValuesSubscription
-  extends Promise<AsyncIterator<KeywordPreviousValues>>,
+export interface ResearchEdgeSubscription
+  extends Promise<AsyncIterator<ResearchEdge>>,
     Fragmentable {
-  id: () => Promise<AsyncIterator<ID_Output>>;
-  name: () => Promise<AsyncIterator<String>>;
+  node: <T = ResearchSubscription>() => T;
+  cursor: () => Promise<AsyncIterator<String>>;
 }
 
-export interface KeywordSubscriptionPayload {
+export interface IndustryInfluenceSubscriptionPayload {
   mutation: MutationType;
-  node: Keyword;
+  node: IndustryInfluence;
   updatedFields: String[];
-  previousValues: KeywordPreviousValues;
+  previousValues: IndustryInfluencePreviousValues;
 }
 
-export interface KeywordSubscriptionPayloadPromise
-  extends Promise<KeywordSubscriptionPayload>,
+export interface IndustryInfluenceSubscriptionPayloadPromise
+  extends Promise<IndustryInfluenceSubscriptionPayload>,
     Fragmentable {
   mutation: () => Promise<MutationType>;
-  node: <T = KeywordPromise>() => T;
+  node: <T = IndustryInfluencePromise>() => T;
   updatedFields: () => Promise<String[]>;
-  previousValues: <T = KeywordPreviousValuesPromise>() => T;
+  previousValues: <T = IndustryInfluencePreviousValuesPromise>() => T;
 }
 
-export interface KeywordSubscriptionPayloadSubscription
-  extends Promise<AsyncIterator<KeywordSubscriptionPayload>>,
+export interface IndustryInfluenceSubscriptionPayloadSubscription
+  extends Promise<AsyncIterator<IndustryInfluenceSubscriptionPayload>>,
     Fragmentable {
   mutation: () => Promise<AsyncIterator<MutationType>>;
-  node: <T = KeywordSubscription>() => T;
+  node: <T = IndustryInfluenceSubscription>() => T;
   updatedFields: () => Promise<AsyncIterator<String[]>>;
-  previousValues: <T = KeywordPreviousValuesSubscription>() => T;
+  previousValues: <T = IndustryInfluencePreviousValuesSubscription>() => T;
+}
+
+export interface AggregateIndustryInfluence {
+  count: Int;
+}
+
+export interface AggregateIndustryInfluencePromise
+  extends Promise<AggregateIndustryInfluence>,
+    Fragmentable {
+  count: () => Promise<Int>;
+}
+
+export interface AggregateIndustryInfluenceSubscription
+  extends Promise<AsyncIterator<AggregateIndustryInfluence>>,
+    Fragmentable {
+  count: () => Promise<AsyncIterator<Int>>;
+}
+
+export interface IndustryInfluencePreviousValues {
+  id: ID_Output;
+  keywordDirection: Direction;
+  kind: FactorKind;
+  desc: String;
+  direction: Direction;
+}
+
+export interface IndustryInfluencePreviousValuesPromise
+  extends Promise<IndustryInfluencePreviousValues>,
+    Fragmentable {
+  id: () => Promise<ID_Output>;
+  keywordDirection: () => Promise<Direction>;
+  kind: () => Promise<FactorKind>;
+  desc: () => Promise<String>;
+  direction: () => Promise<Direction>;
+}
+
+export interface IndustryInfluencePreviousValuesSubscription
+  extends Promise<AsyncIterator<IndustryInfluencePreviousValues>>,
+    Fragmentable {
+  id: () => Promise<AsyncIterator<ID_Output>>;
+  keywordDirection: () => Promise<AsyncIterator<Direction>>;
+  kind: () => Promise<AsyncIterator<FactorKind>>;
+  desc: () => Promise<AsyncIterator<String>>;
+  direction: () => Promise<AsyncIterator<Direction>>;
+}
+
+export interface AggregateIndustry {
+  count: Int;
+}
+
+export interface AggregateIndustryPromise
+  extends Promise<AggregateIndustry>,
+    Fragmentable {
+  count: () => Promise<Int>;
+}
+
+export interface AggregateIndustrySubscription
+  extends Promise<AsyncIterator<AggregateIndustry>>,
+    Fragmentable {
+  count: () => Promise<AsyncIterator<Int>>;
+}
+
+export interface Research {
+  id: ID_Output;
+  desc: String;
+}
+
+export interface ResearchPromise extends Promise<Research>, Fragmentable {
+  id: () => Promise<ID_Output>;
+  desc: () => Promise<String>;
+}
+
+export interface ResearchSubscription
+  extends Promise<AsyncIterator<Research>>,
+    Fragmentable {
+  id: () => Promise<AsyncIterator<ID_Output>>;
+  desc: () => Promise<AsyncIterator<String>>;
+}
+
+export interface ResearchNullablePromise
+  extends Promise<Research | null>,
+    Fragmentable {
+  id: () => Promise<ID_Output>;
+  desc: () => Promise<String>;
+}
+
+export interface DailyConnection {
+  pageInfo: PageInfo;
+  edges: DailyEdge[];
+}
+
+export interface DailyConnectionPromise
+  extends Promise<DailyConnection>,
+    Fragmentable {
+  pageInfo: <T = PageInfoPromise>() => T;
+  edges: <T = FragmentableArray<DailyEdge>>() => T;
+  aggregate: <T = AggregateDailyPromise>() => T;
+}
+
+export interface DailyConnectionSubscription
+  extends Promise<AsyncIterator<DailyConnection>>,
+    Fragmentable {
+  pageInfo: <T = PageInfoSubscription>() => T;
+  edges: <T = Promise<AsyncIterator<DailyEdgeSubscription>>>() => T;
+  aggregate: <T = AggregateDailySubscription>() => T;
+}
+
+export interface ResearchPreviousValues {
+  id: ID_Output;
+  desc: String;
+}
+
+export interface ResearchPreviousValuesPromise
+  extends Promise<ResearchPreviousValues>,
+    Fragmentable {
+  id: () => Promise<ID_Output>;
+  desc: () => Promise<String>;
+}
+
+export interface ResearchPreviousValuesSubscription
+  extends Promise<AsyncIterator<ResearchPreviousValues>>,
+    Fragmentable {
+  id: () => Promise<AsyncIterator<ID_Output>>;
+  desc: () => Promise<AsyncIterator<String>>;
+}
+
+export interface ProductSubscriptionPayload {
+  mutation: MutationType;
+  node: Product;
+  updatedFields: String[];
+  previousValues: ProductPreviousValues;
+}
+
+export interface ProductSubscriptionPayloadPromise
+  extends Promise<ProductSubscriptionPayload>,
+    Fragmentable {
+  mutation: () => Promise<MutationType>;
+  node: <T = ProductPromise>() => T;
+  updatedFields: () => Promise<String[]>;
+  previousValues: <T = ProductPreviousValuesPromise>() => T;
+}
+
+export interface ProductSubscriptionPayloadSubscription
+  extends Promise<AsyncIterator<ProductSubscriptionPayload>>,
+    Fragmentable {
+  mutation: () => Promise<AsyncIterator<MutationType>>;
+  node: <T = ProductSubscription>() => T;
+  updatedFields: () => Promise<AsyncIterator<String[]>>;
+  previousValues: <T = ProductPreviousValuesSubscription>() => T;
 }
 
 export interface Industry {
@@ -6680,40 +12270,48 @@ export interface IndustryNullablePromise
   }) => T;
 }
 
-export interface DailyEdge {
-  node: Daily;
-  cursor: String;
+export interface KeywordPreviousValues {
+  id: ID_Output;
+  name: String;
 }
 
-export interface DailyEdgePromise extends Promise<DailyEdge>, Fragmentable {
-  node: <T = DailyPromise>() => T;
-  cursor: () => Promise<String>;
-}
-
-export interface DailyEdgeSubscription
-  extends Promise<AsyncIterator<DailyEdge>>,
+export interface KeywordPreviousValuesPromise
+  extends Promise<KeywordPreviousValues>,
     Fragmentable {
-  node: <T = DailySubscription>() => T;
-  cursor: () => Promise<AsyncIterator<String>>;
+  id: () => Promise<ID_Output>;
+  name: () => Promise<String>;
 }
 
-export interface IndustryEventEdge {
-  node: IndustryEvent;
-  cursor: String;
-}
-
-export interface IndustryEventEdgePromise
-  extends Promise<IndustryEventEdge>,
+export interface KeywordPreviousValuesSubscription
+  extends Promise<AsyncIterator<KeywordPreviousValues>>,
     Fragmentable {
-  node: <T = IndustryEventPromise>() => T;
-  cursor: () => Promise<String>;
+  id: () => Promise<AsyncIterator<ID_Output>>;
+  name: () => Promise<AsyncIterator<String>>;
 }
 
-export interface IndustryEventEdgeSubscription
-  extends Promise<AsyncIterator<IndustryEventEdge>>,
+export interface KeywordSubscriptionPayload {
+  mutation: MutationType;
+  node: Keyword;
+  updatedFields: String[];
+  previousValues: KeywordPreviousValues;
+}
+
+export interface KeywordSubscriptionPayloadPromise
+  extends Promise<KeywordSubscriptionPayload>,
     Fragmentable {
-  node: <T = IndustryEventSubscription>() => T;
-  cursor: () => Promise<AsyncIterator<String>>;
+  mutation: () => Promise<MutationType>;
+  node: <T = KeywordPromise>() => T;
+  updatedFields: () => Promise<String[]>;
+  previousValues: <T = KeywordPreviousValuesPromise>() => T;
+}
+
+export interface KeywordSubscriptionPayloadSubscription
+  extends Promise<AsyncIterator<KeywordSubscriptionPayload>>,
+    Fragmentable {
+  mutation: () => Promise<AsyncIterator<MutationType>>;
+  node: <T = KeywordSubscription>() => T;
+  updatedFields: () => Promise<AsyncIterator<String[]>>;
+  previousValues: <T = KeywordPreviousValuesSubscription>() => T;
 }
 
 export interface ProductConnection {
@@ -6737,18 +12335,77 @@ export interface ProductConnectionSubscription
   aggregate: <T = AggregateProductSubscription>() => T;
 }
 
-export type Long = string;
+export interface AggregateCompanyEvent {
+  count: Int;
+}
+
+export interface AggregateCompanyEventPromise
+  extends Promise<AggregateCompanyEvent>,
+    Fragmentable {
+  count: () => Promise<Int>;
+}
+
+export interface AggregateCompanyEventSubscription
+  extends Promise<AsyncIterator<AggregateCompanyEvent>>,
+    Fragmentable {
+  count: () => Promise<AsyncIterator<Int>>;
+}
+
+export interface FinaIndicatorEdge {
+  node: FinaIndicator;
+  cursor: String;
+}
+
+export interface FinaIndicatorEdgePromise
+  extends Promise<FinaIndicatorEdge>,
+    Fragmentable {
+  node: <T = FinaIndicatorPromise>() => T;
+  cursor: () => Promise<String>;
+}
+
+export interface FinaIndicatorEdgeSubscription
+  extends Promise<AsyncIterator<FinaIndicatorEdge>>,
+    Fragmentable {
+  node: <T = FinaIndicatorSubscription>() => T;
+  cursor: () => Promise<AsyncIterator<String>>;
+}
+
+export interface IndustryEventEdge {
+  node: IndustryEvent;
+  cursor: String;
+}
+
+export interface IndustryEventEdgePromise
+  extends Promise<IndustryEventEdge>,
+    Fragmentable {
+  node: <T = IndustryEventPromise>() => T;
+  cursor: () => Promise<String>;
+}
+
+export interface IndustryEventEdgeSubscription
+  extends Promise<AsyncIterator<IndustryEventEdge>>,
+    Fragmentable {
+  node: <T = IndustryEventSubscription>() => T;
+  cursor: () => Promise<AsyncIterator<String>>;
+}
 
 /*
-The `Int` scalar type represents non-fractional signed whole numeric values. Int can represent values between -(2^31) and 2^31 - 1.
+The `Float` scalar type represents signed double-precision fractional values as specified by [IEEE 754](https://en.wikipedia.org/wiki/IEEE_floating_point).
 */
-export type Int = number;
+export type Float = number;
+
+export type Long = string;
 
 /*
 The `ID` scalar type represents a unique identifier, often used to refetch an object or as key for a cache. The ID type appears in a JSON response as a String; however, it is not intended to be human-readable. When expected as an input type, any string (such as `"4"`) or integer (such as `4`) input value will be accepted as an ID.
 */
 export type ID_Input = string | number;
 export type ID_Output = string;
+
+/*
+The `Int` scalar type represents non-fractional signed whole numeric values. Int can represent values between -(2^31) and 2^31 - 1.
+*/
+export type Int = number;
 
 /*
 DateTime scalar input type, allowing Date
@@ -6764,11 +12421,6 @@ export type DateTimeOutput = string;
 The `String` scalar type represents textual data, represented as UTF-8 character sequences. The String type is most often used by GraphQL to represent free-form human-readable text.
 */
 export type String = string;
-
-/*
-The `Float` scalar type represents signed double-precision fractional values as specified by [IEEE 754](https://en.wikipedia.org/wiki/IEEE_floating_point).
-*/
-export type Float = number;
 
 /*
 The `Boolean` scalar type represents `true` or `false`.
@@ -6842,6 +12494,10 @@ export const models: Model[] = [
   },
   {
     name: "Daily",
+    embedded: false
+  },
+  {
+    name: "FinaIndicator",
     embedded: false
   }
 ];

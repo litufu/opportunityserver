@@ -7,6 +7,7 @@ const { IndustryInfluence } = require('./IndustryInfluence')
 const {Comment} = require('./Comment')
 const {CompanyProduct} = require('./CompanyProduct')
 const {Daily} = require('./Daily')
+const {FinaIndicator} = require('./FinaIndicator')
 
 const resolvers = {
   Query,
@@ -18,6 +19,7 @@ const resolvers = {
   Comment,
   CompanyProduct,
   Daily,
+  FinaIndicator,
 }
 
 module.exports = {
