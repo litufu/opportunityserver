@@ -60,30 +60,24 @@ const Query = {
     })
   },
   conditionSearchCompanies:async (parent, {years,qSalesYoy,dtNetprofitYoy,endDate}, ctx) => {
-    const today = getToday()
-    const companies = await ctx.prisma.companies()
-    const newCompanies = companies.filter(async company=>{
-      const companyfinaIndicators = await ctx.prisma.finaIndicators({
-        where:{
-          AND:[
-            {endDate:new Date(endDate)},
-            {symbol:company.symbol}
-          ]
-        }
-      })
-      const listDate = parseDate(company.listDate)
-      const dateSpan = today - listDate
-      const iDays = parseInt(dateSpan / (24 * 3600 * 1000))
-      if(iDays>(years-1)*365 && iDays<(years*365) 
-      && (companyfinaIndicators.length>0)
-      && (companyfinaIndicators[0].qSalesYoy>qSalesYoy)
-      && (companyfinaIndicators[0].dtNetprofitYoy>dtNetprofitYoy)
-      ){
-        return true
+    const year = new Date().getFullYear() - years
+    const date = new Date(endDate)
+    const companies = await ctx.prisma.companies({
+      where:{
+        AND:[
+          {listDate_starts_with:`${year}`},
+          {finaIndicators_some:{
+            AND:[
+              {endDate:date},
+              {qSalesYoy_gte:qSalesYoy},
+              {dtNetprofitYoy_gte:dtNetprofitYoy},
+            ]
+          }}
+        ]
       }
-      return false
     })
-    return newCompanies
+   
+    return companies
      
   },
   products:(parent, {inputvalue}, ctx) => {
