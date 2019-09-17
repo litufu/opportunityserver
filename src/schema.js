@@ -17,7 +17,7 @@ const typeDefs = gql`
     keywords(inputvalue:String!):[Keyword]
     allKeywords:[Keyword]
     bottomCrossCompanies(nowDay:String!,beforeDays:Int,firstNum:Int,resNum:Int):[Company]
-    bottomVolume(nowDay:String!,yesterday:String!,beforeDays:Int,firstNum:Int,resNum:Int):[Company]
+    bottomVolume(nowDay:String!,yesterday:String!,beforeDays:Int,firstNum:Int,resNum:Int,direction:String):[Company]
     companyFinaIndicators(symbol:String!):[FinaIndicator]
     finaIndicators(endDate:String):[FinaIndicator]
   }

@@ -139,12 +139,11 @@ const Query = {
     }
     return companies
   },
-  bottomVolume:async (parent,{nowDay,yesterday,beforeDays,firstNum,resNum},ctx)=>{
-    
+  bottomVolume:async (parent,{nowDay,yesterday,beforeDays,firstNum,resNum,direction},ctx)=>{
+      console.log(direction)
     const today = new Date(nowDay)
     const lastDay = new Date(yesterday)
     const beforeDay = getBeforeDate(nowDay,beforeDays)
-    console.log(beforeDay)
     const dailies = await ctx.prisma.dailies({
       where:{tradeDate:today}
     })
@@ -161,9 +160,19 @@ const Query = {
         res.push({symbol,change:vol/yesterdayVol})
       }
     }
-    res.sort(function(a, b){
-      return b.change-a.change
-    });
+
+    if(direction==="up"){
+      res.sort(function(a, b){
+        return b.change-a.change
+      });
+    }else if(direction==="down"){
+      res.sort(function(b, a){
+        return b.change-a.change
+      });
+    }else{
+      throw new Error('direction is error')
+    }
+    
     const companySymbols = res.slice(0,firstNum).map(r=>r.symbol)
     const firstDailies = await ctx.prisma.dailies({
       where:{
